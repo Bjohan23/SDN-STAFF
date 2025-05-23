@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
 
 // Importar la base de datos
@@ -27,12 +29,60 @@ app.use((req, res, next) => {
 // Rutas principales
 app.use('/api', routes);
 
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'SDN-STAFF API Documentation',
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true,
+    showExtensions: true,
+    showCommonExtensions: true
+  }
+}));
+
+// Ruta para obtener el JSON de Swagger
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Verificar estado del servidor
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Servidor funcionando correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 message:
+ *                   type: string
+ *                   example: SDN-STAFF Backend funcionando correctamente
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 documentation:
+ *                   type: string
+ *                   example: http://localhost:8000/api-docs
+ */
 // Ruta de health check
 app.get('/health', (req, res) => {
+  const port = process.env.PORT || 3000;
   res.status(200).json({ 
     status: 'OK', 
     message: 'SDN-STAFF Backend funcionando correctamente',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    documentation: `http://localhost:${port}/api-docs`
   });
 });
 
@@ -67,6 +117,8 @@ const initializeApp = async () => {
       console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/health`);
       console.log(`📊 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`📚 Documentación Swagger: http://localhost:${PORT}/api-docs`);
+      console.log(`📋 JSON Schema: http://localhost:${PORT}/api-docs.json`);
     });
 
     // Manejo de errores del servidor

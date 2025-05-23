@@ -11,6 +11,7 @@ Backend desarrollado con Node.js, Express y Sequelize ORM siguiendo arquitectura
 - **bcryptjs** - Encriptación de contraseñas
 - **JWT** - Autenticación
 - **dotenv** - Variables de entorno
+- **Swagger** - Documentación automática de API
 
 ## 📁 Estructura del Proyecto
 
@@ -113,6 +114,10 @@ El servidor se ejecutará en: `http://localhost:3000`
 
 ### Health Check
 - **GET** `/health` - Verificar estado del servidor
+
+### Documentación
+- **GET** `/api-docs` - Documentación interactiva Swagger UI
+- **GET** `/api-docs.json` - Esquema JSON de la API
 
 ### Usuarios (Nuevo modelo)
 - **GET** `/api/usuarios` - Obtener todos los usuarios
@@ -222,11 +227,16 @@ curl -X POST http://localhost:3000/api/users \\
 
 ```bash
 npm run dev          # Iniciar en modo desarrollo
+npm run dev:3001     # Iniciar en puerto 3001
+npm run dev:8000     # Iniciar en puerto 8000
 npm start           # Iniciar en modo producción
+npm run setup       # Configuración inicial completa
+npm run test-api    # Probar todos los endpoints
 npm run db:create   # Crear base de datos
 npm run db:migrate  # Ejecutar migraciones
 npm run db:migrate:undo  # Revertir última migración
 npm run db:seed     # Ejecutar seeders
+npm run db:reset    # Resetear BD completa
 ```
 
 ## 🏗️ Arquitectura de Capas

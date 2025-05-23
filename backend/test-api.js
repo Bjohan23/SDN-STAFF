@@ -68,6 +68,10 @@ const runTests = async () => {
     let result = await makeRequest('GET', '/health');
     showResult('Health Check', result);
 
+    // Swagger Documentation
+    result = await makeRequest('GET', '/api-docs.json');
+    showResult('Swagger JSON Schema', result);
+
     // API Info
     result = await makeRequest('GET', '/api');
     showResult('API Info', result);
@@ -123,6 +127,10 @@ const runTests = async () => {
     showResult('GET /api/users (modelo anterior)', result);
 
     console.log('\n🎉 Pruebas completadas!');
+    console.log('\n📚 Para ver la documentación completa de Swagger:');
+    console.log(`🔗 http://localhost:${BASE_URL.split(':')[2]}/api-docs`);
+    console.log('\n📋 Para obtener el JSON Schema:');
+    console.log(`🔗 http://localhost:${BASE_URL.split(':')[2]}/api-docs.json`);
 
   } catch (error) {
     console.error('❌ Error durante las pruebas:', error.message);
