@@ -49,7 +49,7 @@ async function testAPI() {
     log.info('2. Probando login con credenciales correctas...');
     try {
       const loginResponse = await axios.post(`${API_URL}/auth/login`, {
-        correo: 'admin',
+        correo: 'admin@admin.com',
         password: 'admin123'
       });
       
@@ -144,7 +144,7 @@ async function testAPI() {
       });
       
       log.success('Información del token obtenida');
-      log.info(`   Usuario: ${tokenInfoResponse.data.data.user.correo}`);
+      log.info(`   Correo: ${tokenInfoResponse.data.data.user.correo}`);
       log.info(`   Roles: ${tokenInfoResponse.data.data.user.roles.map(r => r.nombre_rol).join(', ')}`);
       log.info(`   Expira: ${tokenInfoResponse.data.data.token.expiresAt}`);
     } catch (error) {

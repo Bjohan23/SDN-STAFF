@@ -91,7 +91,7 @@ const runTests = async () => {
 
     // Login test
     result = await makeRequest('POST', '/api/usuarios/login', {
-      correo: 'admin',
+      correo: 'admin@admin.com',
       password: 'admin123'
     });
     showResult('POST /api/usuarios/login', result);
@@ -108,7 +108,7 @@ const runTests = async () => {
 
     // Test crear usuario
     result = await makeRequest('POST', '/api/usuarios', {
-      correo: 'testuser',
+      correo: 'admin@admin.com',
       password: '123456',
       estado: 'activo',
       roles: [3]

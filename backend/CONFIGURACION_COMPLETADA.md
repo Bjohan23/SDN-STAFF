@@ -70,7 +70,7 @@ npm run test-api
 ```bash
 curl -X POST http://localhost:3000/api/usuarios/login \
   -H "Content-Type: application/json" \
-  -d '{"correo": "admin", "password": "admin123"}'
+  -d '{"correo": "admin@admin.com", "password": "admin123"}'
 ```
 
 ### Listar usuarios:

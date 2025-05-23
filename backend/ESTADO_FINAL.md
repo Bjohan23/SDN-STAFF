@@ -44,11 +44,11 @@ npm run test-jwt
 
 ```javascript
 // Para login:
-correo: "admin"
+correo: "admin@admin.com"
 password: "admin123"
 
 // Usuario regular:
-correo: "usuario1"
+correo: "admin@admin.com"
 password: "usuario1123"
 ```
 
@@ -58,7 +58,7 @@ password: "usuario1123"
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"correo": "admin", "password": "admin123"}'
+  -d '{"correo": "admin@admin.com", "password": "admin123"}'
 ```
 
 ### 2. Usar el Token (copia el accessToken de la respuesta):

@@ -9,7 +9,7 @@ Este archivo contiene ejemplos prácticos de cómo usar la API con los nuevos mo
 curl -X POST http://localhost:3000/api/usuarios/login \
   -H "Content-Type: application/json" \
   -d '{
-    "correo": "admin",
+    "correo": "admin@admin.com",
     "password": "admin123"
   }'
 ```
@@ -21,7 +21,7 @@ curl -X POST http://localhost:3000/api/usuarios/login \
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "correo": "newuser",
+    "correo": "admin2@admin2.com",
     "password": "secure123",
     "estado": "activo"
   }'
@@ -32,7 +32,7 @@ curl -X POST http://localhost:3000/api/usuarios \
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "correo": "developer",
+    "correo": "admin3@admin3.com",
     "password": "dev123",
     "estado": "activo",
     "roles": [2, 3]
@@ -68,7 +68,7 @@ curl "http://localhost:3000/api/usuarios/correo/admin"
 curl -X PUT http://localhost:3000/api/usuarios/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "correo": "admin_updated",
+    "correo": "admin4@admin4.com",
     "estado": "activo"
   }'
 ```
@@ -208,7 +208,7 @@ curl "http://localhost:3000/api"
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "correo": "dev_juan",
+    "correo": "admin@admin.com",
     "password": "dev123secure",
     "estado": "activo"
   }'

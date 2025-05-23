@@ -26,11 +26,11 @@ Backend completo para sistema de gestión de staff con **autenticación JWT impl
 ### Credenciales de Prueba:
 ```javascript
 // Usuario Admin
-correo: "admin"
+correo: "admin@admin.com"
 password: "admin123"
 
 // Usuario Regular
-correo: "usuario1" 
+correo: "admin@admin.com" 
 password: "usuario1123"
 ```
 
@@ -111,7 +111,7 @@ node test-jwt-system.js
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"correo": "admin", "password": "admin123"}'
+  -d '{"correo": "admin@admin.com", "password": "admin123"}'
 ```
 
 **Respuesta:**
@@ -125,7 +125,7 @@ curl -X POST http://localhost:8000/api/auth/login \
     "expiresIn": "6h",
     "user": {
       "id_usuario": 1,
-      "correo": "admin",
+      "correo": "admin@admin.com",
       "roles": [{"nombre_rol": "Administrador"}]
     }
   }
