@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UsuarioController = require('../controllers/UsuarioController');
+const { authenticate, authorize, verifySelfOrAdmin } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -8,6 +9,8 @@ const UsuarioController = require('../controllers/UsuarioController');
  *   get:
  *     summary: Obtener lista de usuarios
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/PageParam'
  *       - $ref: '#/components/parameters/LimitParam'
@@ -25,12 +28,14 @@ const UsuarioController = require('../controllers/UsuarioController');
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PaginatedResponse'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  *       500:
  *         $ref: '#/components/responses/InternalError'
  */
-router.get('/', UsuarioController.getAllUsuarios);
+router.get('/', authenticate, authorize(['Administrador', 'Manager']), UsuarioController.getAllUsuarios);
 
 /**
  * @swagger
@@ -38,6 +43,8 @@ router.get('/', UsuarioController.getAllUsuarios);
  *   get:
  *     summary: Obtener estadísticas de usuarios
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Estadísticas obtenidas exitosamente
@@ -45,26 +52,24 @@ router.get('/', UsuarioController.getAllUsuarios);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       500:
  *         $ref: '#/components/responses/InternalError'
  */
-router.get('/stats', UsuarioController.getUsuarioStats);
+router.get('/stats', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioStats);
 
 /**
  * @swagger
- * /api/usuarios/login:
- *   post:
- *     summary: Iniciar sesión de usuario
+ * /api/usuarios/profile:
+ *   get:
+ *     summary: Obtener perfil del usuario autenticado
  *     tags: [Usuarios]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Login exitoso
+ *         description: Perfil obtenido exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -76,10 +81,8 @@ router.get('/stats', UsuarioController.getUsuarioStats);
  *                       $ref: '#/components/schemas/Usuario'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
- *       400:
- *         $ref: '#/components/responses/BadRequest'
  */
-router.post('/login', UsuarioController.login);
+router.get('/profile', authenticate, UsuarioController.getProfile);
 
 /**
  * @swagger
@@ -87,6 +90,8 @@ router.post('/login', UsuarioController.login);
  *   get:
  *     summary: Obtener usuario por ID
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -107,12 +112,16 @@ router.post('/login', UsuarioController.login);
  *                   properties:
  *                     data:
  *                       $ref: '#/components/schemas/Usuario'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         description: Sin permisos para ver este usuario
  *       404:
  *         $ref: '#/components/responses/NotFound'
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.get('/:id', UsuarioController.getUsuarioById);
+router.get('/:id', authenticate, verifySelfOrAdmin, UsuarioController.getUsuarioById);
 
 /**
  * @swagger
@@ -120,6 +129,8 @@ router.get('/:id', UsuarioController.getUsuarioById);
  *   get:
  *     summary: Obtener usuario por username
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: username
  *         in: path
@@ -140,10 +151,12 @@ router.get('/:id', UsuarioController.getUsuarioById);
  *                   properties:
  *                     data:
  *                       $ref: '#/components/schemas/Usuario'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.get('/username/:username', UsuarioController.getUsuarioByUsername);
+router.get('/username/:username', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioByUsername);
 
 /**
  * @swagger
@@ -151,6 +164,8 @@ router.get('/username/:username', UsuarioController.getUsuarioByUsername);
  *   post:
  *     summary: Crear nuevo usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -191,12 +206,14 @@ router.get('/username/:username', UsuarioController.getUsuarioByUsername);
  *                   properties:
  *                     data:
  *                       $ref: '#/components/schemas/Usuario'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  *       409:
  *         description: El username ya existe
  */
-router.post('/', UsuarioController.createUsuario);
+router.post('/', authenticate, authorize(['Administrador']), UsuarioController.createUsuario);
 
 /**
  * @swagger
@@ -204,6 +221,8 @@ router.post('/', UsuarioController.createUsuario);
  *   put:
  *     summary: Actualizar usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -244,12 +263,16 @@ router.post('/', UsuarioController.createUsuario);
  *                   properties:
  *                     data:
  *                       $ref: '#/components/schemas/Usuario'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         description: Sin permisos para actualizar este usuario
  *       404:
  *         $ref: '#/components/responses/NotFound'
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.put('/:id', UsuarioController.updateUsuario);
+router.put('/:id', authenticate, verifySelfOrAdmin, UsuarioController.updateUsuario);
 
 /**
  * @swagger
@@ -257,6 +280,8 @@ router.put('/:id', UsuarioController.updateUsuario);
  *   patch:
  *     summary: Cambiar estado de usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -284,10 +309,12 @@ router.put('/:id', UsuarioController.updateUsuario);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.patch('/:id/estado', UsuarioController.cambiarEstado);
+router.patch('/:id/estado', authenticate, authorize(['Administrador']), UsuarioController.cambiarEstado);
 
 /**
  * @swagger
@@ -295,6 +322,8 @@ router.patch('/:id/estado', UsuarioController.cambiarEstado);
  *   post:
  *     summary: Asignar roles a usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -319,8 +348,10 @@ router.patch('/:id/estado', UsuarioController.cambiarEstado);
  *     responses:
  *       200:
  *         $ref: '#/components/responses/Success'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
-router.post('/:id/roles', UsuarioController.assignRoles);
+router.post('/:id/roles', authenticate, authorize(['Administrador']), UsuarioController.assignRoles);
 
 /**
  * @swagger
@@ -328,6 +359,8 @@ router.post('/:id/roles', UsuarioController.assignRoles);
  *   get:
  *     summary: Verificar si usuario tiene rol específico
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -358,8 +391,10 @@ router.post('/:id/roles', UsuarioController.assignRoles);
  *                         tieneRol:
  *                           type: boolean
  *                           example: true
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
-router.get('/:id/rol', UsuarioController.verificarRol);
+router.get('/:id/rol', authenticate, UsuarioController.verificarRol);
 
 /**
  * @swagger
@@ -367,6 +402,8 @@ router.get('/:id/rol', UsuarioController.verificarRol);
  *   delete:
  *     summary: Eliminar usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -377,9 +414,11 @@ router.get('/:id/rol', UsuarioController.verificarRol);
  *     responses:
  *       200:
  *         $ref: '#/components/responses/Success'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.delete('/:id', UsuarioController.deleteUsuario);
+router.delete('/:id', authenticate, authorize(['Administrador']), UsuarioController.deleteUsuario);
 
 module.exports = router;

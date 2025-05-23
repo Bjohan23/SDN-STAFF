@@ -271,43 +271,17 @@ class UsuarioController {
   }
 
   /**
-   * Login de usuario (básico)
+   * Obtener perfil del usuario autenticado
    */
-  static async login(req, res, next) {
+  static async getProfile(req, res, next) {
     try {
-      const { username, password } = req.body;
-
-      if (!ValidationUtils.isNotEmpty(username) || !ValidationUtils.isNotEmpty(password)) {
-        return ApiResponse.validation(res, [{ field: 'credentials', message: 'Username y password son requeridos' }]);
-      }
-
-      // Obtener usuario con password
-      const usuario = await UsuarioService.getUsuarioForAuth(username);
-      
-      if (!usuario) {
-        return ApiResponse.unauthorized(res, 'Credenciales inválidas');
-      }
-
-      if (usuario.estado !== 'activo') {
-        return ApiResponse.unauthorized(res, 'Usuario inactivo o suspendido');
-      }
-
-      // Validar password
-      const passwordValido = await UsuarioService.validatePassword(password, usuario.password_hash);
-      
-      if (!passwordValido) {
-        return ApiResponse.unauthorized(res, 'Credenciales inválidas');
-      }
-
-      // Actualizar última sesión
-      await UsuarioService.updateUltimaSesion(usuario.id_usuario);
-
-      // Preparar respuesta (sin password)
-      const usuarioResponse = usuario.toJSON();
-      delete usuarioResponse.password_hash;
-
-      return ApiResponse.success(res, usuarioResponse, 'Login exitoso');
+      const userId = req.user.id_usuario;
+      const user = await UsuarioService.getUsuarioById(userId);
+      return ApiResponse.success(res, user, 'Perfil obtenido exitosamente');
     } catch (error) {
+      if (error.message === 'Usuario no encontrado') {
+        return ApiResponse.notFound(res, error.message);
+      }
       next(error);
     }
   }

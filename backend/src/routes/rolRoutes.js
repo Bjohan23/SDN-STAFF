@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const RolController = require('../controllers/RolController');
+const { authenticate, authorize } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -8,6 +9,8 @@ const RolController = require('../controllers/RolController');
  *   get:
  *     summary: Obtener todos los roles
  *     tags: [Roles]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: include_usuarios
  *         in: query
@@ -29,8 +32,10 @@ const RolController = require('../controllers/RolController');
  *                       type: array
  *                       items:
  *                         $ref: '#/components/schemas/Rol'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
-router.get('/', RolController.getAllRoles);
+router.get('/', authenticate, authorize(['Administrador', 'Manager']), RolController.getAllRoles);
 
 /**
  * @swagger
@@ -38,6 +43,8 @@ router.get('/', RolController.getAllRoles);
  *   get:
  *     summary: Obtener estadísticas de roles
  *     tags: [Roles]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Estadísticas obtenidas exitosamente
@@ -45,10 +52,12 @@ router.get('/', RolController.getAllRoles);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
-router.get('/stats', RolController.getRolStats);
+router.get('/stats', authenticate, authorize(['Administrador']), RolController.getRolStats);
 
-router.get('/sin-usuarios', RolController.getRolesSinUsuarios);
+router.get('/sin-usuarios', authenticate, authorize(['Administrador']), RolController.getRolesSinUsuarios);
 
 /**
  * @swagger
@@ -85,10 +94,10 @@ router.get('/sin-usuarios', RolController.getRolesSinUsuarios);
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.get('/:id', RolController.getRolById);
+router.get('/:id', authenticate, authorize(['Administrador', 'Manager']), RolController.getRolById);
 
-router.get('/nombre/:nombre', RolController.getRolByNombre);
-router.get('/:id/usuarios', RolController.getUsuariosByRol);
+router.get('/nombre/:nombre', authenticate, authorize(['Administrador']), RolController.getRolByNombre);
+router.get('/:id/usuarios', authenticate, authorize(['Administrador']), RolController.getUsuariosByRol);
 
 /**
  * @swagger
@@ -130,11 +139,11 @@ router.get('/:id/usuarios', RolController.getUsuariosByRol);
  *       409:
  *         description: El nombre del rol ya existe
  */
-router.post('/', RolController.createRol);
+router.post('/', authenticate, authorize(['Administrador']), RolController.createRol);
 
-router.put('/:id', RolController.updateRol);
-router.post('/:id/asignar', RolController.asignarRolAUsuario);
-router.delete('/:id/remover', RolController.removerRolDeUsuario);
-router.delete('/:id', RolController.deleteRol);
+router.put('/:id', authenticate, authorize(['Administrador']), RolController.updateRol);
+router.post('/:id/asignar', authenticate, authorize(['Administrador']), RolController.asignarRolAUsuario);
+router.delete('/:id/remover', authenticate, authorize(['Administrador']), RolController.removerRolDeUsuario);
+router.delete('/:id', authenticate, authorize(['Administrador']), RolController.deleteRol);
 
 module.exports = router;

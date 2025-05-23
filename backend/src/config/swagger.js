@@ -362,20 +362,28 @@ const swaggerOptions = {
     },
     tags: [
       {
+        name: 'Público',
+        description: 'Endpoints públicos que no requieren autenticación'
+      },
+      {
+        name: 'Autenticación',
+        description: 'Gestión de autenticación JWT y sesión de usuarios'
+      },
+      {
         name: 'Health',
         description: 'Endpoints de salud del sistema'
       },
       {
         name: 'Usuarios',
-        description: 'Gestión de usuarios (Nuevo modelo)'
+        description: 'Gestión de usuarios (Nuevo modelo) - Requiere JWT'
       },
       {
         name: 'Roles',
-        description: 'Gestión de roles del sistema'
+        description: 'Gestión de roles del sistema - Requiere JWT'
       },
       {
         name: 'Users',
-        description: 'Gestión de usuarios (Modelo anterior - Compatibilidad)'
+        description: 'Gestión de usuarios (Modelo anterior - Compatibilidad) - Requiere JWT'
       }
     ]
   },
