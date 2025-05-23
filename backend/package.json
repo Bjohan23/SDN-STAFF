@@ -11,6 +11,8 @@
     "start": "node index.js",
     "setup": "node setup-db.js",
     "test-api": "node test-api.js",
+    "dev:3001": "set PORT=3001 && nodemon index.js",
+    "dev:8000": "set PORT=8000 && nodemon index.js",
     "db:create": "sequelize-cli db:create",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
@@ -25,7 +27,9 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.4.0",
-    "sequelize": "^6.36.0"
+    "sequelize": "^6.36.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

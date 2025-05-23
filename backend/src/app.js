@@ -62,12 +62,31 @@ const initializeApp = async () => {
       console.log('✅ Modelos sincronizados con la base de datos.');
     }
     
-    // Iniciar servidor
-    app.listen(PORT, () => {
+    // Iniciar servidor con manejo de errores
+    const server = app.listen(PORT, 'localhost', () => {
       console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/health`);
       console.log(`📊 API Base URL: http://localhost:${PORT}/api`);
     });
+
+    // Manejo de errores del servidor
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Error: El puerto ${PORT} ya está en uso`);
+        console.log(`💡 Intenta con otro puerto: PORT=3001 npm run dev`);
+        console.log(`💡 O mata el proceso: netstat -ano | findstr :${PORT}`);
+        process.exit(1);
+      } else if (error.code === 'EACCES') {
+        console.error(`❌ Error de permisos en puerto ${PORT}`);
+        console.log(`💡 Intenta con otro puerto: PORT=8000 npm run dev`);
+        console.log(`💡 O ejecuta como administrador`);
+        process.exit(1);
+      } else {
+        console.error('❌ Error del servidor:', error);
+        process.exit(1);
+      }
+    });
+    
   } catch (error) {
     console.error('❌ Error al inicializar la aplicación:', error);
     process.exit(1);
@@ -85,9 +104,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-// Inicializar la aplicación
-if (require.main === module) {
-  initializeApp();
-}
+// Inicializar la aplicación siempre que se importe el módulo
+initializeApp();
 
 module.exports = app;
