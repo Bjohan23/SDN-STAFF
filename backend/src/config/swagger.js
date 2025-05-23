@@ -34,14 +34,14 @@ const swaggerOptions = {
       schemas: {
         Usuario: {
           type: 'object',
-          required: ['username', 'password'],
+          required: ['correo', 'password'],
           properties: {
             id_usuario: {
               type: 'integer',
               description: 'ID único del usuario',
               example: 1
             },
-            username: {
+            correo: {
               type: 'string',
               minLength: 3,
               maxLength: 50,
@@ -159,9 +159,9 @@ const swaggerOptions = {
         },
         LoginRequest: {
           type: 'object',
-          required: ['username', 'password'],
+          required: ['correo', 'password'],
           properties: {
-            username: {
+            correo: {
               type: 'string',
               description: 'Nombre de usuario',
               example: 'admin'

@@ -76,7 +76,7 @@ router.get('/', (req, res) => {
       }
     },
     howToUse: {
-      step1: 'POST /api/auth/login con username/password',
+      step1: 'POST /api/auth/login con correoassword',
       step2: 'Usar el accessToken en header: Authorization: Bearer <token>',
       step3: 'Acceder a endpoints protegidos con el token',
       step4: 'Renovar token con POST /api/auth/refresh cuando expire'

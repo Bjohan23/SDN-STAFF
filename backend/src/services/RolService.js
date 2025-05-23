@@ -35,7 +35,7 @@ class RolService {
         options.include = [{
           model: Usuario,
           as: 'usuarios',
-          attributes: ['id_usuario', 'username', 'estado'],
+          attributes: ['id_usuario', 'correo', 'estado'],
           through: {
             attributes: ['fecha_asignacion']
           }
@@ -60,7 +60,7 @@ class RolService {
         options.include = [{
           model: Usuario,
           as: 'usuarios',
-          attributes: ['id_usuario', 'username', 'estado'],
+          attributes: ['id_usuario', 'correo', 'estado'],
           through: {
             attributes: ['fecha_asignacion']
           }
@@ -153,7 +153,7 @@ class RolService {
         include: [{
           model: Usuario,
           as: 'usuario',
-          attributes: ['id_usuario', 'username', 'estado', 'fecha_creacion', 'ultima_sesion']
+          attributes: ['id_usuario', 'correo', 'estado', 'fecha_creacion', 'ultima_sesion']
         }],
         limit: parseInt(limit),
         offset: parseInt(offset),

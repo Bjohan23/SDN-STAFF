@@ -13,11 +13,11 @@ class AuthController {
    */
   static async login(req, res, next) {
     try {
-      const { username, password } = req.body;
+      const { correo, password } = req.body;
 
       // Validaciones básicas
-      if (!ValidationUtils.isNotEmpty(username)) {
-        return ApiResponse.validation(res, [{ field: 'username', message: 'El nombre de usuario es requerido' }]);
+      if (!ValidationUtils.isNotEmpty(correo)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El nombre de correo es requerido' }]);
       }
 
       if (!ValidationUtils.isNotEmpty(password)) {
@@ -25,7 +25,7 @@ class AuthController {
       }
 
       // Intentar login
-      const result = await AuthService.login({ username, password });
+      const result = await AuthService.login({ correo, password });
 
       return ApiResponse.success(res, result, 'Login exitoso', 200);
     } catch (error) {

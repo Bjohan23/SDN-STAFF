@@ -83,15 +83,15 @@ const runTests = async () => {
     result = await makeRequest('GET', '/api/usuarios/1');
     showResult('GET /api/usuarios/1', result);
 
-    result = await makeRequest('GET', '/api/usuarios/username/admin');
-    showResult('GET /api/usuarios/username/admin', result);
+    result = await makeRequest('GET', '/api/usuarios/correo/admin');
+    showResult('GET /api/usuarios/correo/admin', result);
 
     result = await makeRequest('GET', '/api/usuarios/stats');
     showResult('GET /api/usuarios/stats', result);
 
     // Login test
     result = await makeRequest('POST', '/api/usuarios/login', {
-      username: 'admin',
+      correo: 'admin',
       password: 'admin123'
     });
     showResult('POST /api/usuarios/login', result);
@@ -108,7 +108,7 @@ const runTests = async () => {
 
     // Test crear usuario
     result = await makeRequest('POST', '/api/usuarios', {
-      username: 'testuser',
+      correo: 'testuser',
       password: '123456',
       estado: 'activo',
       roles: [3]

@@ -21,7 +21,7 @@ class UsuarioService {
 
       // Crear usuario
       const usuario = await Usuario.create({
-        username: userData.username,
+        correo: userData.correo,
         password_hash: userData.password_hash,
         estado: userData.estado || 'activo',
         fecha_creacion: new Date()
@@ -50,7 +50,7 @@ class UsuarioService {
 
       // Aplicar filtros
       if (filters.search) {
-        whereClause.username = { [Op.like]: `%${filters.search}%` };
+        whereClause.correo = { [Op.like]: `%${filters.search}%` };
       }
 
       if (filters.estado) {
@@ -114,12 +114,12 @@ class UsuarioService {
   }
 
   /**
-   * Obtener usuario por username
+   * Obtener usuario por correo
    */
-  static async getUsuarioByUsername(username) {
+  static async getUsuarioBycorreo(correo) {
     try {
       const usuario = await Usuario.findOne({
-        where: { username },
+        where: { correo },
         include: [{
           model: Rol,
           as: 'roles',
@@ -139,11 +139,11 @@ class UsuarioService {
   /**
    * Obtener usuario con password para autenticación
    */
-  static async getUsuarioForAuth(username) {
+  static async getUsuarioForAuth(correo) {
     try {
       const usuario = await Usuario.findOne({
-        where: { username },
-        attributes: ['id_usuario', 'username', 'password_hash', 'estado'],
+        where: { correo },
+        attributes: ['id_usuario', 'correo', 'password_hash', 'estado'],
         include: [{
           model: Rol,
           as: 'roles',

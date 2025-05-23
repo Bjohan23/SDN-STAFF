@@ -2,7 +2,7 @@ import React from 'react';
 
 const InicioSesion = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <div className="flex justify-center mb-6">
           <div className="bg-blue-100 p-3 rounded-full">

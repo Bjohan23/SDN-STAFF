@@ -86,7 +86,7 @@ http://localhost:8000/api-docs
 ```json
 POST /api/usuarios/login
 {
-  "username": "admin",
+  "correo": "admin",
   "password": "admin123"
 }
 ```
@@ -95,7 +95,7 @@ POST /api/usuarios/login
 ```json
 POST /api/usuarios
 {
-  "username": "newuser",
+  "correo": "newuser",
   "password": "password123",
   "estado": "activo",
   "roles": [1, 3]
@@ -192,7 +192,7 @@ curl http://localhost:8000/api-docs.json
 # Probar endpoints
 curl -X POST http://localhost:8000/api/usuarios/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
+  -d '{"correo": "admin", "password": "admin123"}'
 ```
 
 ---

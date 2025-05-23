@@ -12,30 +12,30 @@ class UsuarioController {
    */
   static async createUsuario(req, res, next) {
     try {
-      const { username, password, estado, roles } = req.body;
+      const { correo, password, estado, roles } = req.body;
 
       // Validaciones básicas
-      if (!ValidationUtils.isNotEmpty(username)) {
-        return ApiResponse.validation(res, [{ field: 'username', message: 'El nombre de usuario es requerido' }]);
+      if (!ValidationUtils.isNotEmpty(correo)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El nombre de usuario es requerido' }]);
       }
 
-      if (!ValidationUtils.isValidLength(username, 3, 50)) {
-        return ApiResponse.validation(res, [{ field: 'username', message: 'El nombre de usuario debe tener entre 3 y 50 caracteres' }]);
+      if (!ValidationUtils.isValidLength(correo, 3, 50)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El nombre de usuario debe tener entre 3 y 50 caracteres' }]);
       }
 
       if (!ValidationUtils.isValidLength(password, 6)) {
         return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña debe tener al menos 6 caracteres' }]);
       }
 
-      // Verificar si el username ya existe
-      const existingUsuario = await UsuarioService.getUsuarioByUsername(username);
+      // Verificar si el correo ya existe
+      const existingUsuario = await UsuarioService.getUsuarioBycorreo(correo);
       if (existingUsuario) {
         return ApiResponse.error(res, 'El nombre de usuario ya está en uso', 409);
       }
 
       // Crear usuario
       const nuevoUsuario = await UsuarioService.createUsuario({
-        username: ValidationUtils.sanitizeString(username),
+        correo: ValidationUtils.sanitizeString(correo),
         password,
         estado: estado || 'activo',
         roles: roles || []
@@ -100,17 +100,17 @@ class UsuarioController {
   }
 
   /**
-   * Obtener usuario por username
+   * Obtener usuario por correo
    */
-  static async getUsuarioByUsername(req, res, next) {
+  static async getUsuarioBycorreo(req, res, next) {
     try {
-      const { username } = req.params;
+      const { correo } = req.params;
 
-      if (!ValidationUtils.isNotEmpty(username)) {
-        return ApiResponse.validation(res, [{ field: 'username', message: 'Username requerido' }]);
+      if (!ValidationUtils.isNotEmpty(correo)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'correo requerido' }]);
       }
 
-      const usuario = await UsuarioService.getUsuarioByUsername(username);
+      const usuario = await UsuarioService.getUsuarioBycorreo(correo);
       
       if (!usuario) {
         return ApiResponse.notFound(res, 'Usuario no encontrado');
@@ -134,9 +134,9 @@ class UsuarioController {
         return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
       }
 
-      // Validar username si se está actualizando
-      if (updateData.username && !ValidationUtils.isValidLength(updateData.username, 3, 50)) {
-        return ApiResponse.validation(res, [{ field: 'username', message: 'El username debe tener entre 3 y 50 caracteres' }]);
+      // Validar correo si se está actualizando
+      if (updateData.correo && !ValidationUtils.isValidLength(updateData.correo, 3, 50)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El correo debe tener entre 3 y 50 caracteres' }]);
       }
 
       // Validar password si se está actualizando
@@ -145,8 +145,8 @@ class UsuarioController {
       }
 
       // Sanitizar strings
-      if (updateData.username) {
-        updateData.username = ValidationUtils.sanitizeString(updateData.username);
+      if (updateData.correo) {
+        updateData.correo = ValidationUtils.sanitizeString(updateData.correo);
       }
 
       const usuarioActualizado = await UsuarioService.updateUsuario(id, updateData);

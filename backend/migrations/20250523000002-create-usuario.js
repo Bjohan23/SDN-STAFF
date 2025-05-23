@@ -10,7 +10,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
+      correo: {
         type: Sequelize.STRING(50),
         allowNull: false,
         unique: true
@@ -36,7 +36,7 @@ module.exports = {
     });
 
     // Crear índices
-    await queryInterface.addIndex('usuario', ['username'], { unique: true });
+    await queryInterface.addIndex('usuario', ['correo'], { unique: true });
     await queryInterface.addIndex('usuario', ['estado']);
     await queryInterface.addIndex('usuario', ['fecha_creacion']);
   },

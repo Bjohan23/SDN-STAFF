@@ -50,7 +50,7 @@ const authenticate = async (req, res, next) => {
     // Agregar información del usuario a la request
     req.user = {
       id_usuario: usuario.id_usuario,
-      username: usuario.username,
+      correo: usuario.correo,
       estado: usuario.estado,
       roles: usuario.roles || [],
       tokenData: decoded
@@ -134,7 +134,7 @@ const optionalAuth = async (req, res, next) => {
       if (usuario && usuario.estado === 'activo') {
         req.user = {
           id_usuario: usuario.id_usuario,
-          username: usuario.username,
+          correo: usuario.correo,
           estado: usuario.estado,
           roles: usuario.roles || [],
           tokenData: decoded

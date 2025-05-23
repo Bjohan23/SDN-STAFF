@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { Usuario, Rol } = require('../models');
 const JWTUtils = require('../utils/JWTUtils');
-const UsuarioService = require('./UsuarioService');
+const UsuarioService = require('../models/Usuario');
 
 /**
  * Servicio de Autenticación
@@ -13,16 +13,16 @@ class AuthService {
    */
   static async login(credentials) {
     try {
-      const { username, password } = credentials;
+      const { correo, password } = credentials;
 
       // Validar que se proporcionen las credenciales
-      if (!username || !password) {
-        throw new Error('Username y password son requeridos');
+      if (!correo || !password) {
+        throw new Error('correo y password son requeridos');
       }
 
       // Buscar usuario con password incluido
       const usuario = await Usuario.findOne({
-        where: { username },
+        where: { correo },
         include: [{
           model: Rol,
           as: 'roles',
@@ -49,7 +49,7 @@ class AuthService {
       // Generar payload para el token
       const tokenPayload = {
         id_usuario: usuario.id_usuario,
-        username: usuario.username,
+        correo: usuario.correo,
         estado: usuario.estado,
         roles: usuario.roles.map(rol => ({
           id_rol: rol.id_rol,
@@ -61,7 +61,7 @@ class AuthService {
       const accessToken = JWTUtils.generateToken(tokenPayload);
       const refreshToken = JWTUtils.generateRefreshToken({
         id_usuario: usuario.id_usuario,
-        username: usuario.username
+        correo: usuario.correo
       });
 
       // Actualizar última sesión
@@ -70,7 +70,7 @@ class AuthService {
       // Preparar respuesta del usuario (sin password)
       const usuarioResponse = {
         id_usuario: usuario.id_usuario,
-        username: usuario.username,
+        correo: usuario.correo,
         estado: usuario.estado,
         fecha_creacion: usuario.fecha_creacion,
         ultima_sesion: new Date(),
@@ -132,7 +132,7 @@ class AuthService {
       // Generar nuevo access token
       const tokenPayload = {
         id_usuario: usuario.id_usuario,
-        username: usuario.username,
+        correo: usuario.correo,
         estado: usuario.estado,
         roles: usuario.roles.map(rol => ({
           id_rol: rol.id_rol,
@@ -193,7 +193,7 @@ class AuthService {
         valid: true,
         user: {
           id_usuario: decoded.id_usuario,
-          username: decoded.username,
+          correo: decoded.correo,
           roles: decoded.roles
         },
         tokenInfo: {

@@ -9,7 +9,7 @@ Este archivo contiene ejemplos prácticos de cómo usar la API con los nuevos mo
 curl -X POST http://localhost:3000/api/usuarios/login \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "admin",
+    "correo": "admin",
     "password": "admin123"
   }'
 ```
@@ -21,7 +21,7 @@ curl -X POST http://localhost:3000/api/usuarios/login \
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "newuser",
+    "correo": "newuser",
     "password": "secure123",
     "estado": "activo"
   }'
@@ -32,7 +32,7 @@ curl -X POST http://localhost:3000/api/usuarios \
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "developer",
+    "correo": "developer",
     "password": "dev123",
     "estado": "activo",
     "roles": [2, 3]
@@ -47,7 +47,7 @@ curl "http://localhost:3000/api/usuarios"
 # Con paginación
 curl "http://localhost:3000/api/usuarios?page=1&limit=5"
 
-# Buscar por username
+# Buscar por correo
 curl "http://localhost:3000/api/usuarios?search=admin"
 
 # Filtrar por estado
@@ -59,8 +59,8 @@ curl "http://localhost:3000/api/usuarios?estado=activo"
 # Por ID
 curl "http://localhost:3000/api/usuarios/1"
 
-# Por username
-curl "http://localhost:3000/api/usuarios/username/admin"
+# Por correo
+curl "http://localhost:3000/api/usuarios/correo/admin"
 ```
 
 ### 5. Actualizar usuario
@@ -68,7 +68,7 @@ curl "http://localhost:3000/api/usuarios/username/admin"
 curl -X PUT http://localhost:3000/api/usuarios/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "admin_updated",
+    "correo": "admin_updated",
     "estado": "activo"
   }'
 ```
@@ -208,7 +208,7 @@ curl "http://localhost:3000/api"
 curl -X POST http://localhost:3000/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "dev_juan",
+    "correo": "dev_juan",
     "password": "dev123secure",
     "estado": "activo"
   }'
@@ -263,7 +263,7 @@ curl "http://localhost:3000/api/roles/stats"
 ## 🔧 Troubleshooting
 
 ### Error 409 - Conflicto
-- Username ya existe
+- correo ya existe
 - Rol ya existe
 - Usuario ya tiene el rol asignado
 

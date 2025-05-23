@@ -27,10 +27,10 @@ const { authenticate, optionalAuth } = require('../middlewares/auth');
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - correo
  *               - password
  *             properties:
- *               username:
+ *               correo:
  *                 type: string
  *                 description: Nombre de usuario
  *                 example: admin
@@ -206,7 +206,7 @@ router.post('/logout', authenticate, AuthController.logout);
  *                       properties:
  *                         id_usuario:
  *                           type: integer
- *                         username:
+ *                         correo:
  *                           type: string
  *                         roles:
  *                           type: array
@@ -252,7 +252,7 @@ router.get('/verify', AuthController.verifyToken);
  *                       properties:
  *                         id_usuario:
  *                           type: integer
- *                         username:
+ *                         correo:
  *                           type: string
  *                         estado:
  *                           type: string

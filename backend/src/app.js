@@ -105,7 +105,6 @@ const initializeApp = async () => {
     // Verificar conexión a la base de datos
     await db.sequelize.authenticate();
     console.log('✅ Conexión a la base de datos establecida correctamente.');
-    
     // Sincronizar modelos (solo en desarrollo)
     if (process.env.NODE_ENV === 'development') {
       await db.sequelize.sync({ alter: false });

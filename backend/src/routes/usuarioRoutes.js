@@ -125,14 +125,14 @@ router.get('/:id', authenticate, verifySelfOrAdmin, UsuarioController.getUsuario
 
 /**
  * @swagger
- * /api/usuarios/username/{username}:
+ * /api/usuarios/correo/{correo}:
  *   get:
- *     summary: Obtener usuario por username
+ *     summary: Obtener usuario por correo
  *     tags: [Usuarios]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: username
+ *       - name: correo
  *         in: path
  *         required: true
  *         description: Nombre de usuario
@@ -156,7 +156,7 @@ router.get('/:id', authenticate, verifySelfOrAdmin, UsuarioController.getUsuario
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.get('/username/:username', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioByUsername);
+router.get('/correo/:correo', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioBycorreo);
 
 /**
  * @swagger
@@ -173,10 +173,10 @@ router.get('/username/:username', authenticate, authorize(['Administrador']), Us
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - correo
  *               - password
  *             properties:
- *               username:
+ *               correo:
  *                 type: string
  *                 minLength: 3
  *                 maxLength: 50
@@ -211,7 +211,7 @@ router.get('/username/:username', authenticate, authorize(['Administrador']), Us
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  *       409:
- *         description: El username ya existe
+ *         description: El correo ya existe
  */
 router.post('/', authenticate, authorize(['Administrador']), UsuarioController.createUsuario);
 
@@ -237,7 +237,7 @@ router.post('/', authenticate, authorize(['Administrador']), UsuarioController.c
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               correo:
  *                 type: string
  *                 minLength: 3
  *                 maxLength: 50
