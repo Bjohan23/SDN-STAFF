@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axiosInstance from '../config/axios'
 
 const AuthContext = createContext()
 
@@ -8,13 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const navigate = useNavigate()
 
-
-  const login = async (email, password) => {
+  const login = async (correo, password) => {
     try {
-      // Aquí iría tu llamada API real
-      const response = 
-      localStorage.setItem('token', response.data.token)
-      setToken(response.data.token)
+      const response = await axiosInstance.post('/api/auth/login', { correo, password })
+      console.log('Login response:', response)
+
+      const { accessToken, user } = response.data.data
+      localStorage.setItem('token', accessToken)
+      setToken(accessToken)
+      setUser(user)
       navigate('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
@@ -24,8 +27,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      // Aquí iría tu llamada API real
-      console.log('Registering user:', userData)
+      const response = await axiosInstance.post('/api/auth/register', userData)
+      console.log('Registration response:', response)
       navigate('/login')
     } catch (error) {
       console.error('Registration error:', error)
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const hasRole = (requiredRole) => {
-    return user?.role === requiredRole
+    return user?.roles?.some(role => role.nombre_rol === requiredRole)
   }
 
   return (

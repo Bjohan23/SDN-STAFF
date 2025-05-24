@@ -224,6 +224,42 @@ class AuthController {
       }
     }, 'API funcionando correctamente - Endpoint público');
   }
+
+  /**
+   * Registrar nuevo usuario
+   */
+  static async register(req, res, next) {
+    try {
+      const { correo, password, estado, roles } = req.body;
+
+      // Validaciones básicas
+      if (!ValidationUtils.isNotEmpty(correo)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El correo es requerido' }]);
+      }
+
+      if (!ValidationUtils.isValidEmail(correo)) {
+        return ApiResponse.validation(res, [{ field: 'correo', message: 'El correo no es válido' }]);
+      }
+
+      if (!ValidationUtils.isNotEmpty(password)) {
+        return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña es requerida' }]);
+      }
+
+      if (!ValidationUtils.isValidLength(password, 6)) {
+        return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña debe tener al menos 6 caracteres' }]);
+      }
+
+      // Registrar usuario
+      const result = await AuthService.register({ correo, password, estado, roles });
+
+      return ApiResponse.success(res, result, 'Usuario registrado exitosamente', 201);
+    } catch (error) {
+      if (error.message.includes('ya está en uso')) {
+        return ApiResponse.error(res, error.message, 409);
+      }
+      next(error);
+    }
+  }
 }
 
 module.exports = AuthController;
