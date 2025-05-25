@@ -10,7 +10,7 @@ module.exports = {
     dialect: 'mysql',
     dialectOptions: {
       charset: 'utf8mb4',
-      collate: 'utf8mb4_unicode_ci',
+      
     },
     define: {
       timestamps: true,

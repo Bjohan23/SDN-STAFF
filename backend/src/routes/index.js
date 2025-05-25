@@ -39,6 +39,7 @@ router.get('/', (req, res) => {
       // Autenticación (público)
       auth: '/api/auth',
       login: 'POST /api/auth/login',
+      register: 'POST /api/auth/register',//registro de usuario
       refresh: 'POST /api/auth/refresh',
       public: 'GET /api/auth/public',
       // Modelo anterior User (compatibilidad - protegido)

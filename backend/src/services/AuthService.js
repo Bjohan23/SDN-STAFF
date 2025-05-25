@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { Usuario, Rol } = require('../models');
 const JWTUtils = require('../utils/JWTUtils');
-const UsuarioService = require('../models/Usuario');
 
 /**
  * Servicio de Autenticación
@@ -65,7 +64,9 @@ class AuthService {
       });
 
       // Actualizar última sesión
-      await UsuarioService.updateUltimaSesion(usuario.id_usuario);
+      const now = new Date();
+      usuario.ultima_sesion = now;
+      await usuario.save();
 
       // Preparar respuesta del usuario (sin password)
       const usuarioResponse = {
@@ -73,7 +74,7 @@ class AuthService {
         correo: usuario.correo,
         estado: usuario.estado,
         fecha_creacion: usuario.fecha_creacion,
-        ultima_sesion: new Date(),
+        ultima_sesion: now,
         roles: usuario.roles.map(rol => ({
           id_rol: rol.id_rol,
           nombre_rol: rol.nombre_rol,
@@ -297,6 +298,64 @@ class AuthService {
         message: 'Contraseña actualizada exitosamente',
         timestamp: new Date()
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Registrar nuevo usuario
+   */
+  static async register(userData) {
+    try {
+      const { correo, password, estado = 'activo', roles = [] } = userData;
+
+      // Verificar si el correo ya existe
+      const existingUser = await Usuario.f-indOne({ where: { correo } });
+      if (existingUser) {//
+        throw new Error('El correo ya está en uso');
+      }
+
+      // Encriptar password
+      const salt = await bcrypt.genSalt(10);
+      const password_hash = await bcrypt.hash(password, salt);
+
+      // Crear usuario
+      const usuario = await Usuario.create({
+        correo,
+        password_hash,
+        estado,
+        fecha_creacion: new Date()
+      });
+
+      // Asignar roles si se proporcionaron
+      if (roles.length > 0) {
+        const rolesEncontrados = await Rol.findAll({
+          where: {
+            id_rol: roles
+          }
+        });
+
+        if (rolesEncontrados.length > 0) {
+          await usuario.setRoles(rolesEncontrados);
+        }
+      }
+
+      // Obtener usuario con roles
+      const usuarioConRoles = await Usuario.findByPk(usuario.id_usuario, {
+        include: [{
+          model: Rol,
+          as: 'roles',
+          attributes: ['id_rol', 'nombre_rol', 'descripcion'],
+          through: { attributes: ['fecha_asignacion'] }
+        }]
+      });
+
+      // Preparar respuesta (sin password)
+      const usuarioResponse = usuarioConRoles.toJSON();
+      delete usuarioResponse.password_hash;
+
+      return usuarioResponse;
     } catch (error) {
       throw error;
     }

@@ -448,4 +448,62 @@ router.get('/token-info', authenticate, AuthController.getTokenInfo);
  */
 router.get('/public', AuthController.publicEndpoint);
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registrar nuevo usuario
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - correo
+ *               - password
+ *             properties:
+ *               correo:
+ *                 type: string
+ *                 description: Correo del usuario
+ *                 example: usuario@ejemplo.com
+ *               password:
+ *                 type: string
+ *                 description: Contraseña del usuario (mínimo 6 caracteres)
+ *                 example: password123
+ *               estado:
+ *                 type: string
+ *                 enum: [activo, inactivo, suspendido]
+ *                 default: activo
+ *                 description: Estado del usuario
+ *               roles:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Array de IDs de roles
+ *                 example: [1]
+ *     responses:
+ *       201:
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Usuario registrado exitosamente
+ *                 data:
+ *                   $ref: '#/components/schemas/Usuario'
+ *       400:
+ *         description: Datos inválidos
+ *       409:
+ *         description: El correo ya está registrado
+ */
+router.post('/register', AuthController.register);
+
 module.exports = router;
