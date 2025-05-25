@@ -166,7 +166,7 @@ class AuthService {
       // Por ahora solo verificamos que el token sea válido
       // En el futuro se podría implementar una blacklist de tokens
       JWTUtils.verifyToken(token);
-      
+
       return {
         message: 'Sesión cerrada exitosamente',
         timestamp: new Date()
@@ -182,10 +182,10 @@ class AuthService {
   static async verifyToken(token) {
     try {
       const decoded = JWTUtils.verifyToken(token);
-      
+
       // Verificar que el usuario aún existe y está activo
       const usuario = await Usuario.findByPk(decoded.id_usuario);
-      
+
       if (!usuario || usuario.estado !== 'activo') {
         throw new Error('Usuario no válido');
       }
@@ -217,7 +217,7 @@ class AuthService {
   static async getCurrentUser(token) {
     try {
       const decoded = JWTUtils.verifyToken(token);
-      
+
       const usuario = await Usuario.findByPk(decoded.id_usuario, {
         include: [{
           model: Rol,
@@ -276,7 +276,7 @@ class AuthService {
   static async changePassword(userId, currentPassword, newPassword) {
     try {
       const usuario = await Usuario.findByPk(userId);
-      
+
       if (!usuario) {
         throw new Error('Usuario no encontrado');
       }
@@ -308,11 +308,16 @@ class AuthService {
    */
   static async register(userData) {
     try {
-      const { correo, password, estado = 'activo', roles = [] } = userData;
+      const { correo, password, estado = 'activo' } = userData;
 
       // Verificar si el correo ya existe
-      const existingUser = await Usuario.f-indOne({ where: { correo } });
-      if (existingUser) {//
+      const existingUser = await Usuario.findOne({
+        where: {
+          correo: correo.toLowerCase().trim()
+        }
+      });
+
+      if (existingUser) {
         throw new Error('El correo ya está en uso');
       }
 
@@ -322,24 +327,19 @@ class AuthService {
 
       // Crear usuario
       const usuario = await Usuario.create({
-        correo,
+        correo: correo.toLowerCase().trim(),
         password_hash,
         estado,
         fecha_creacion: new Date()
       });
 
-      // Asignar roles si se proporcionaron
-      if (roles.length > 0) {
-        const rolesEncontrados = await Rol.findAll({
-          where: {
-            id_rol: roles
-          }
-        });
-
-        if (rolesEncontrados.length > 0) {
-          await usuario.setRoles(rolesEncontrados);
-        }
+      // Asignar rol de visitante (ID 4)
+      const rolVisitante = await Rol.findByPk(4);
+      if (!rolVisitante) {
+        throw new Error('Error al asignar rol de visitante');
       }
+
+      await usuario.setRoles([rolVisitante]);
 
       // Obtener usuario con roles
       const usuarioConRoles = await Usuario.findByPk(usuario.id_usuario, {

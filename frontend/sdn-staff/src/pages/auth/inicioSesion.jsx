@@ -97,7 +97,7 @@ const InicioSesion = () => {
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-300 text-gray-900"
             />
             <div className="text-right mt-1">
-              <Link to="/recuperar-password" className="text-sm text-blue-500 hover:underline">
+              <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -114,7 +114,7 @@ const InicioSesion = () => {
         
         <div className="mt-4 text-center text-sm text-gray-600">
           ¿No tienes una cuenta?{' '}
-          <Link to="/registro" className="text-blue-600 font-medium hover:underline">
+          <Link to="/register" className="text-blue-600 font-medium hover:underline">
             Regístrate
           </Link>
         </div>

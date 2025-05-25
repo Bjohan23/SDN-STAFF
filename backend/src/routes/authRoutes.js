@@ -172,7 +172,6 @@ router.post('/refresh', AuthController.refreshToken);
  *         $ref: '#/components/responses/Unauthorized'
  */
 router.post('/logout', authenticate, AuthController.logout);
-
 /**
  * @swagger
  * /api/auth/verify:
@@ -505,5 +504,6 @@ router.get('/public', AuthController.publicEndpoint);
  *         description: El correo ya está registrado
  */
 router.post('/register', AuthController.register);
-
+router.post('/forgot-password', AuthController.forgotPassword);
+router.post('/reset-password', AuthController.resetPassword);
 module.exports = router;

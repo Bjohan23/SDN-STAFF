@@ -16,7 +16,12 @@ const errorHandler = require('../src/middlewares/errorHandler');
 const app = express();
 
 // Middlewares globales
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -107,7 +112,7 @@ const initializeApp = async () => {
     console.log('✅ Conexión a la base de datos establecida correctamente.');
     // Sincronizar modelos (solo en desarrollo)
     if (process.env.NODE_ENV === 'development') {
-      await db.sequelize.sync({ alter: false });
+      await db.sequelize.sync({ alter: true });
       console.log('✅ Modelos sincronizados con la base de datos.');
     }
     

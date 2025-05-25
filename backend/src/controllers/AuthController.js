@@ -2,11 +2,89 @@ const AuthService = require('../services/AuthService');
 const ApiResponse = require('../utils/ApiResponse');
 const ValidationUtils = require('../utils/ValidationUtils');
 const JWTUtils = require('../utils/JWTUtils');
+const nodemailer = require('nodemailer');
+const { setResetCode, getResetData, clearResetCode } = require('../services/PasswordResetService');
+const { Usuario } = require('../models');
+const bcrypt = require('bcryptjs');
 
 /**
  * Controlador de Autenticación
  */
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
+  },
+});
+
+const resetRequestTimestamps = {};
+
 class AuthController {
+  static async forgotPassword(req, res, next) {
+    try {
+      const { correo } = req.body;
+      if (!correo) return res.status(400).json({ message: 'Correo requerido' });
+
+      // Limitar generación de código a 1 cada 4 minutos
+      const now = Date.now();
+      const lastRequest = resetRequestTimestamps[correo];
+      if (lastRequest && now - lastRequest < 4 * 60 * 1000) {
+        const secondsLeft = Math.ceil((4 * 60 * 1000 - (now - lastRequest)) / 1000);
+        return res.status(429).json({ message: `Debes esperar ${secondsLeft} segundos antes de solicitar un nuevo código.` });
+      }
+
+      const user = await Usuario.findOne({ where: { correo } });
+      if (!user) {
+        // Por seguridad, siempre respondemos igual
+        return res.json({ message: 'Si el correo existe, se ha enviado un código de recuperación.' });
+      }
+
+      // Guardar timestamp de solicitud
+      resetRequestTimestamps[correo] = now;
+
+      // Generar código con expiración de 4 minutos
+      const code = setResetCode(correo, user.id_usuario, 4 * 60 * 1000);
+
+      // Enviar correo
+      await transporter.sendMail({
+        from: process.env.GMAIL_USER,
+        to: correo,
+        subject: 'Código de recuperación de contraseña',
+        text: `Tu código de recuperación es: ${code}`,
+      });
+
+      return res.json({ message: 'Si el correo existe, se ha enviado un código de recuperación.' });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async resetPassword(req, res, next) {
+    try {
+      const { correo, code, newPassword } = req.body;
+      if (!correo || !code || !newPassword) {
+        return res.status(400).json({ message: 'Datos incompletos' });
+      }
+
+      const resetData = getResetData(correo);
+      if (!resetData || resetData.code !== code || resetData.expiresAt < Date.now()) {
+        return res.status(400).json({ message: 'Código inválido o expirado' });
+      }
+
+      const user = await Usuario.findByPk(resetData.userId);
+      if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+      const password_hash = await bcrypt.hash(newPassword, 10);
+      await user.update({ password_hash });
+
+      clearResetCode(correo);
+
+      return res.json({ message: 'Contraseña actualizada correctamente' });
+    } catch (err) {
+      next(err);
+    }
+  }
 
   /**
    * Iniciar sesión
@@ -29,9 +107,9 @@ class AuthController {
 
       return ApiResponse.success(res, result, 'Login exitoso', 200);
     } catch (error) {
-      if (error.message.includes('Credenciales inválidas') || 
-          error.message.includes('Usuario inactivo') ||
-          error.message.includes('Usuario suspendido')) {
+      if (error.message.includes('Credenciales inválidas') ||
+        error.message.includes('Usuario inactivo') ||
+        error.message.includes('Usuario suspendido')) {
         return ApiResponse.unauthorized(res, error.message);
       }
       next(error);
@@ -230,7 +308,7 @@ class AuthController {
    */
   static async register(req, res, next) {
     try {
-      const { correo, password, estado, roles } = req.body;
+      const { correo, password } = req.body;
 
       // Validaciones básicas
       if (!ValidationUtils.isNotEmpty(correo)) {
@@ -249,10 +327,14 @@ class AuthController {
         return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña debe tener al menos 6 caracteres' }]);
       }
 
-      // Registrar usuario
-      const result = await AuthService.register({ correo, password, estado, roles });
+      // Registrar usuario como visitante
+      const result = await AuthService.register({
+        correo: correo.toLowerCase().trim(),
+        password,
+        estado: 'activo'
+      });
 
-      return ApiResponse.success(res, result, 'Usuario registrado exitosamente', 201);
+      return ApiResponse.success(res, result, 'Usuario registrado exitosamente como visitante', 201);
     } catch (error) {
       if (error.message.includes('ya está en uso')) {
         return ApiResponse.error(res, error.message, 409);

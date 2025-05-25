@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Login from './pages/auth/inicioSesion'
 import Register from './pages/auth/registro'
 import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Profile from './pages/Dashboard/Profile'
 import RoleManagement from './pages/admin/RoleManagement'
@@ -19,7 +20,9 @@ function App() {
   const location = useLocation()
   
   // Determinar si mostrar el sidebar
-  const showLayout = !['/login', '/register', '/forgot-password'].includes(location.pathname)
+  const showLayout = location.pathname.startsWith('/dashboard') || 
+                    location.pathname.startsWith('/profile') || 
+                    location.pathname.startsWith('/admin')
 
   return (
     <AuthProvider>
@@ -49,18 +52,18 @@ function App() {
                     <RoleManagement />
                   </RoleRoute>
                 } />
-                
-                <Route path="/" element={<Home />} />
               </Routes>
             </main>
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </div>
       )}
