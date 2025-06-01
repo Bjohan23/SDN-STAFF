@@ -5,7 +5,7 @@ const Navbar = ({ setSidebarOpen }) => {
 
   return (
     <header className="bg-white shadow-sm">
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-0">
         <button 
           onClick={() => setSidebarOpen(prev => !prev)}
           className="md:hidden text-gray-500 hover:text-gray-600"

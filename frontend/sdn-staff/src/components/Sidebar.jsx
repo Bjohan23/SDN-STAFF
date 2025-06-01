@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const { user, logout } = useAuth()
+  const { user, logout, hasRole } = useAuth()
 
   const navItems = [
     { path: '/dashboard', name: 'Dashboard', icon: '🏠', roles: ['user', 'admin'] },
@@ -28,13 +28,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       <div className="p-4">
         <div className="mb-6">
           <p className="text-indigo-200">Bienvenido,</p>
-          <p className="font-semibold truncate">{user?.email || 'Usuario'}</p>
+          <p className="font-semibold truncate">{user?.correo || 'Usuario'}</p>
         </div>
         
         <nav>
           <ul className="space-y-2">
             {navItems.map((item) => (
-              item.roles.includes(user?.role) && (
+              item.roles.some(role => hasRole(role)) && (
                 <li key={item.path}>
                   <NavLink
                     to={item.path}

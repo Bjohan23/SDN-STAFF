@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 const RoleRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, hasRole } = useAuth()
   const navigate = useNavigate()
-
+  console.log('ROLE',hasRole)
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate('/login')
