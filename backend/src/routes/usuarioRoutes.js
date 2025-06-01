@@ -35,7 +35,7 @@ const { authenticate, authorize, verifySelfOrAdmin } = require('../middlewares/a
  *       500:
  *         $ref: '#/components/responses/InternalError'
  */
-router.get('/', authenticate, authorize(['Administrador', 'Manager']), UsuarioController.getAllUsuarios);
+router.get('/', authenticate, authorize(['admin', 'Manager']), UsuarioController.getAllUsuarios);
 
 /**
  * @swagger
@@ -57,7 +57,7 @@ router.get('/', authenticate, authorize(['Administrador', 'Manager']), UsuarioCo
  *       500:
  *         $ref: '#/components/responses/InternalError'
  */
-router.get('/stats', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioStats);
+router.get('/stats', authenticate, authorize(['admin']), UsuarioController.getUsuarioStats);
 
 /**
  * @swagger
@@ -156,7 +156,7 @@ router.get('/:id', authenticate, verifySelfOrAdmin, UsuarioController.getUsuario
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.get('/correo/:correo', authenticate, authorize(['Administrador']), UsuarioController.getUsuarioBycorreo);
+router.get('/correo/:correo', authenticate, authorize(['admin']), UsuarioController.getUsuarioBycorreo);
 
 /**
  * @swagger
@@ -213,7 +213,7 @@ router.get('/correo/:correo', authenticate, authorize(['Administrador']), Usuari
  *       409:
  *         description: El correo ya existe
  */
-router.post('/', authenticate, authorize(['Administrador']), UsuarioController.createUsuario);
+router.post('/', authenticate, authorize(['admin']), UsuarioController.createUsuario);
 
 /**
  * @swagger
@@ -314,7 +314,7 @@ router.put('/:id', authenticate, verifySelfOrAdmin, UsuarioController.updateUsua
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.patch('/:id/estado', authenticate, authorize(['Administrador']), UsuarioController.cambiarEstado);
+router.patch('/:id/estado', authenticate, authorize(['admin']), UsuarioController.cambiarEstado);
 
 /**
  * @swagger
@@ -351,7 +351,7 @@ router.patch('/:id/estado', authenticate, authorize(['Administrador']), UsuarioC
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
-router.post('/:id/roles', authenticate, authorize(['Administrador']), UsuarioController.assignRoles);
+router.post('/:id/roles', authenticate, authorize(['admin']), UsuarioController.assignRoles);
 
 /**
  * @swagger
@@ -374,7 +374,7 @@ router.post('/:id/roles', authenticate, authorize(['Administrador']), UsuarioCon
  *         description: Nombre del rol a verificar
  *         schema:
  *           type: string
- *           example: Administrador
+ *           example: admin
  *     responses:
  *       200:
  *         description: Verificación completada
@@ -419,6 +419,6 @@ router.get('/:id/rol', authenticate, UsuarioController.verificarRol);
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.delete('/:id', authenticate, authorize(['Administrador']), UsuarioController.deleteUsuario);
+router.delete('/:id', authenticate, authorize(['admin']), UsuarioController.deleteUsuario);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const JWTUtils = require('../utils/JWTUtils');
 const ApiResponse = require('../utils/ApiResponse');
 const { Usuario } = require('../models');
-
+const { Rol } = require('../models')
 /**
  * Middleware de autenticación JWT
  */
@@ -75,20 +75,28 @@ const authenticate = async (req, res, next) => {
  * Middleware de autorización por roles
  */
 const authorize = (allowedRoles = []) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {  // <-- async aquí
     try {
-      // Verificar que el usuario esté autenticado
       if (!req.user) {
         return ApiResponse.unauthorized(res, 'Autenticación requerida');
       }
 
-      // Si no se especifican roles, permitir acceso a cualquier usuario autenticado
-      if (!allowedRoles || allowedRoles.length === 0) {
-        return next();
+      const usuario = await Usuario.findByPk(req.user.id_usuario, {
+        include: [{
+          model: Rol,
+          as: 'roles',
+          attributes: ['nombre_rol'],
+          through: { attributes: [] }
+        }],
+        logging: false  // <- solo esta consulta no imprime
+      });
+
+      if (!usuario) {
+        return ApiResponse.error(res, 'Usuario no encontrado', 404);
       }
 
-      // Verificar si el usuario tiene alguno de los roles permitidos
-      const userRoles = req.user.roles.map(role => role.nombre_rol);
+      const userRoles = usuario.roles.map(r => r.nombre_rol);
+
       const hasPermission = allowedRoles.some(role => userRoles.includes(role));
 
       if (!hasPermission) {

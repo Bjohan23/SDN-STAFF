@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../config/axios'
 
@@ -6,8 +6,19 @@ const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem('token'))
+  const [token, setToken] = useState(null)
   const navigate = useNavigate()
+
+  // Al montar el contexto, leer datos guardados en localStorage
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token')
+    const savedUser = localStorage.getItem('user')
+
+    if (savedToken && savedUser) {
+      setToken(savedToken)
+      setUser(JSON.parse(savedUser))
+    }
+  }, [])
 
   const login = async (correo, password) => {
     try {
@@ -15,9 +26,14 @@ export const AuthProvider = ({ children }) => {
       console.log('Login response:', response)
 
       const { accessToken, user } = response.data.data
+
+      // Guardar token y usuario en localStorage para persistencia
       localStorage.setItem('token', accessToken)
+      localStorage.setItem('user', JSON.stringify(user))
+
       setToken(accessToken)
       setUser(user)
+
       navigate('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
@@ -38,6 +54,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')  // también borrar el usuario guardado
     setToken(null)
     setUser(null)
     navigate('/login')
