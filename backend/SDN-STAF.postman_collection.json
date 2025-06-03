@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "e9a53781-dc60-43c0-bfd4-ee2569f4d8c9",
+		"name": "SDN-STAF",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37068501",
+		"_collection_link": "https://martian-shadow-16460.postman.co/workspace/My-Workspace~0cf008d4-b014-4f79-8183-9e14ade1c76a/collection/37068501-e9a53781-dc60-43c0-bfd4-ee2569f4d8c9?action=share&source=collection_link&creator=37068501"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verifica que el código de estado sea 200\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"try {\r",
+									"  // Intenta parsear la respuesta como JSON\r",
+									"  var jsonData = pm.response.json();\r",
+									"  console.log(\"Respuesta completa:\", jsonData);\r",
+									"\r",
+									"  // Verifica que exista el objeto 'data' y que contenga los tokens\r",
+									"  pm.test(\"La respuesta contiene el objeto 'data'\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"data\");\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"La respuesta contiene el token de acceso\", function () {\r",
+									"    pm.expect(jsonData.data).to.have.property(\"accessToken\");\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"La respuesta contiene el token de refresco\", function () {\r",
+									"    pm.expect(jsonData.data).to.have.property(\"refreshToken\");\r",
+									"  });\r",
+									"\r",
+									"  // Guarda el token de acceso y refresh en variables de entorno\r",
+									"  pm.environment.set(\"accessToken\", jsonData.data.accessToken);\r",
+									"  pm.environment.set(\"refreshToken\", jsonData.data.refreshToken);\r",
+									"\r",
+									"  // También puedes guardar info adicional si la necesitas luego:\r",
+									"  if (jsonData.data.user) {\r",
+									"    pm.environment.set(\"userId\", jsonData.data.user.id_usuario);\r",
+									"    pm.environment.set(\"userEmail\", jsonData.data.user.correo);\r",
+									"  }\r",
+									"\r",
+									"} catch (error) {\r",
+									"  console.error(\"Error al parsear la respuesta JSON:\", error);\r",
+									"  pm.test(\"La respuesta debe estar en formato JSON válido\", function () {\r",
+									"    throw new Error(\"Respuesta no válida en formato JSON\");\r",
+									"  });\r",
+									"}\r",
+									"// Verifica que el código de estado sea 200\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"try {\r",
+									"  // Intenta parsear la respuesta como JSON\r",
+									"  var jsonData = pm.response.json();\r",
+									"  console.log(\"Respuesta completa:\", jsonData);\r",
+									"\r",
+									"  // Verifica que exista el objeto 'data' y que contenga los tokens\r",
+									"  pm.test(\"La respuesta contiene el objeto 'data'\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"data\");\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"La respuesta contiene el token de acceso\", function () {\r",
+									"    pm.expect(jsonData.data).to.have.property(\"accessToken\");\r",
+									"  });\r",
+									"\r",
+									"  pm.test(\"La respuesta contiene el token de refresco\", function () {\r",
+									"    pm.expect(jsonData.data).to.have.property(\"refreshToken\");\r",
+									"  });\r",
+									"\r",
+									"  // Guarda el token de acceso y refresh en variables de entorno\r",
+									"  pm.environment.set(\"accessToken\", jsonData.data.accessToken);\r",
+									"  pm.environment.set(\"refreshToken\", jsonData.data.refreshToken);\r",
+									"\r",
+									"  // También puedes guardar info adicional si la necesitas luego:\r",
+									"  if (jsonData.data.user) {\r",
+									"    pm.environment.set(\"userId\", jsonData.data.user.id_usuario);\r",
+									"    pm.environment.set(\"userEmail\", jsonData.data.user.correo);\r",
+									"  }\r",
+									"\r",
+									"} catch (error) {\r",
+									"  console.error(\"Error al parsear la respuesta JSON:\", error);\r",
+									"  pm.test(\"La respuesta debe estar en formato JSON válido\", function () {\r",
+									"    throw new Error(\"Respuesta no válida en formato JSON\");\r",
+									"  });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"ejemplo@correo.com\",\r\n    \"password\":\"josafat\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api"
+		},
+		{
+			"key": "empresa_id",
+			"value": "1"
+		}
+	]
+}
