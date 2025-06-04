@@ -3,13 +3,11 @@ const router = express.Router();
 
 // Importar rutas específicas aquí
 const authRoutes = require('./authRoutes');
-const userRoutes = require('./userRoutes');
 const usuarioRoutes = require('./usuarioRoutes');
 const rolRoutes = require('./rolRoutes');
 
 // Configurar rutas
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
-router.use('/users', userRoutes); // Modelo anterior (mantener por compatibilidad)
 router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
 

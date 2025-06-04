@@ -1,0 +1,489 @@
+{
+	"info": {
+		"_postman_id": "e9a53781-dc60-43c0-bfd4-ee2569f4d8c9",
+		"name": "SDN-STAF - Sistema de Auditoría",
+		"description": "Colección actualizada con funcionalidades de auditoría y gestión de roles",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37068501"
+	},
+	"item": [
+		{
+			"name": "🔐 Autenticación",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"try {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(\"Respuesta completa:\", jsonData);",
+									"    ",
+									"    if (jsonData.success && jsonData.data) {",
+									"        pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"        pm.environment.set(\"refreshToken\", jsonData.data.refreshToken);",
+									"        ",
+									"        if (jsonData.data.user) {",
+									"            pm.environment.set(\"userId\", jsonData.data.user.id_usuario);",
+									"            pm.environment.set(\"userEmail\", jsonData.data.user.correo);",
+									"        }",
+									"        ",
+									"        pm.test(\"Token guardado correctamente\", function () {",
+									"            pm.expect(pm.environment.get(\"accessToken\")).to.not.be.undefined;",
+									"        });",
+									"    }",
+									"} catch (error) {",
+									"    console.error(\"Error:\", error);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"correo\\\": \\\"ejemplo@correo.com\\\",\\n    \\\"password\\\": \\\"josafat\\\"\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 Gestión de Roles",
+			"item": [
+				{
+					"name": "📋 Obtener todos los roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles?include_usuarios=true&include_audit=true",
+							"host": ["{{base_url}}"],
+							"path": ["roles"],
+							"query": [
+								{
+									"key": "include_usuarios",
+									"value": "true",
+									"description": "Incluir usuarios asignados"
+								},
+								{
+									"key": "include_audit",
+									"value": "true",
+									"description": "Incluir información de auditoría"
+								},
+								{
+									"key": "include_deleted",
+									"value": "false",
+									"description": "Incluir roles eliminados",
+									"disabled": true
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "🔍 Obtener rol por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/1?include_usuarios=true&include_audit=true",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "1"],
+							"query": [
+								{
+									"key": "include_usuarios",
+									"value": "true"
+								},
+								{
+									"key": "include_audit",
+									"value": "true"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "➕ Crear nuevo rol",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"try {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success && jsonData.data) {",
+									"        pm.environment.set(\"newRolId\", jsonData.data.id_rol);",
+									"        console.log(\"Nuevo rol creado con ID:\", jsonData.data.id_rol);",
+									"    }",
+									"} catch (error) {",
+									"    console.error(\"Error:\", error);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"nombre_rol\\\": \\\"Tester\\\",\\n    \\\"descripcion\\\": \\\"Rol de prueba con auditoría completa\\\"\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles",
+							"host": ["{{base_url}}"],
+							"path": ["roles"]
+						}
+					}
+				},
+				{
+					"name": "✏️ Actualizar rol",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"descripcion\\\": \\\"Descripción actualizada con auditoría\\\"\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/{{newRolId}}",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "{{newRolId}}"]
+						}
+					}
+				},
+				{
+					"name": "🗑️ Eliminar rol (lógico)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/{{newRolId}}",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "{{newRolId}}"]
+						}
+					}
+				},
+				{
+					"name": "♻️ Restaurar rol eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/{{newRolId}}/restore",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "{{newRolId}}", "restore"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👤 Gestión de Usuarios-Roles",
+			"item": [
+				{
+					"name": "➕ Asignar rol a usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"usuario_id\\\": 1\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/1/asignar",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "1", "asignar"]
+						}
+					}
+				},
+				{
+					"name": "🚀 Asignar múltiples roles a usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"roles_ids\\\": [1, 2, 3]\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/usuarios/1/asignar-multiples",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "usuarios", "1", "asignar-multiples"]
+						}
+					}
+				},
+				{
+					"name": "➖ Remover rol de usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\\n    \\\"usuario_id\\\": 1\\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/1/remover",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "1", "remover"]
+						}
+					}
+				},
+				{
+					"name": "👤 Obtener roles de usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/usuarios/1/roles?include_deleted=false",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "usuarios", "1", "roles"],
+							"query": [
+								{
+									"key": "include_deleted",
+									"value": "false"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "📊 Obtener usuarios de un rol",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/1/usuarios?page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "1", "usuarios"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📈 Reportes y Estadísticas",
+			"item": [
+				{
+					"name": "📊 Estadísticas de roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/stats",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "stats"]
+						}
+					}
+				},
+				{
+					"name": "🔍 Roles sin usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/sin-usuarios",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "sin-usuarios"]
+						}
+					}
+				},
+				{
+					"name": "🗑️ Roles eliminados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/eliminados",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "eliminados"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🧪 Tests de Auditoría",
+			"item": [
+				{
+					"name": "🔄 Test completo de auditoría",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verificar estructura de auditoría\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success && jsonData.data) {",
+									"        // Verificar campos de auditoría",
+									"        pm.expect(jsonData.data).to.have.property('created_at');",
+									"        pm.expect(jsonData.data).to.have.property('updated_at');",
+									"        pm.expect(jsonData.data).to.have.property('created_by');",
+									"        console.log('✅ Campos de auditoría presentes');",
+									"    }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/1?include_audit=true",
+							"host": ["{{base_url}}"],
+							"path": ["roles", "1"],
+							"query": [
+								{
+									"key": "include_audit",
+									"value": "true"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "newRolId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

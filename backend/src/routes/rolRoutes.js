@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const RolController = require('../controllers/RolController');
 const { authenticate, authorize } = require('../middlewares/auth');
+const { auditCreate, auditUpdate, auditDelete } = require('../middlewares/audit');
 
 /**
  * @swagger
@@ -58,6 +59,10 @@ router.get('/', authenticate, authorize(['Administrador', 'Manager']), RolContro
 router.get('/stats', authenticate, authorize(['Administrador']), RolController.getRolStats);
 
 router.get('/sin-usuarios', authenticate, authorize(['Administrador']), RolController.getRolesSinUsuarios);
+
+// Nuevas rutas para auditoría y funcionalidad extendida
+router.get('/eliminados', authenticate, authorize(['Administrador']), RolController.getRolesEliminados);
+router.post('/:id/restore', authenticate, authorize(['Administrador']), RolController.restoreRol);
 
 /**
  * @swagger
@@ -139,11 +144,15 @@ router.get('/:id/usuarios', authenticate, authorize(['Administrador']), RolContr
  *       409:
  *         description: El nombre del rol ya existe
  */
-router.post('/', authenticate, authorize(['Administrador']), RolController.createRol);
+router.post('/', authenticate, authorize(['Administrador']), auditCreate, RolController.createRol);
 
-router.put('/:id', authenticate, authorize(['Administrador']), RolController.updateRol);
-router.post('/:id/asignar', authenticate, authorize(['Administrador']), RolController.asignarRolAUsuario);
-router.delete('/:id/remover', authenticate, authorize(['Administrador']), RolController.removerRolDeUsuario);
-router.delete('/:id', authenticate, authorize(['Administrador']), RolController.deleteRol);
+router.put('/:id', authenticate, authorize(['Administrador']), auditUpdate, RolController.updateRol);
+router.post('/:id/asignar', authenticate, authorize(['Administrador']), auditCreate, RolController.asignarRolAUsuario);
+router.delete('/:id/remover', authenticate, authorize(['Administrador']), auditDelete, RolController.removerRolDeUsuario);
+router.delete('/:id', authenticate, authorize(['Administrador']), auditDelete, RolController.deleteRol);
+
+// Nuevas rutas para gestión de múltiples roles
+router.post('/usuarios/:id/asignar-multiples', authenticate, authorize(['Administrador']), auditCreate, RolController.asignarMultiplesRoles);
+router.get('/usuarios/:id/roles', authenticate, authorize(['Administrador', 'Manager']), RolController.getRolesByUsuario);
 
 module.exports = router;
