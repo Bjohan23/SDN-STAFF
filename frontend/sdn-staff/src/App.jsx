@@ -22,7 +22,7 @@ function App() {
   // Determinar si mostrar el sidebar
   const showLayout = location.pathname.startsWith('/dashboard') || 
                     location.pathname.startsWith('/profile') || 
-                    location.pathname.startsWith('/administrador')
+                    location.pathname.startsWith('/admin/roles')
 
   return (
     <AuthProvider>
