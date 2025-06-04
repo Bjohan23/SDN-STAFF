@@ -22,7 +22,7 @@ function App() {
   // Determinar si mostrar el sidebar
   const showLayout = location.pathname.startsWith('/dashboard') || 
                     location.pathname.startsWith('/profile') || 
-                    location.pathname.startsWith('/admin')
+                    location.pathname.startsWith('/administrador')
 
   return (
     <AuthProvider>
@@ -48,7 +48,7 @@ function App() {
                 } />
                 
                 <Route path="/admin/roles" element={
-                  <RoleRoute allowedRoles={['admin']}>
+                  <RoleRoute allowedRoles={['administrador']}>
                     <RoleManagement />
                   </RoleRoute>
                 } />

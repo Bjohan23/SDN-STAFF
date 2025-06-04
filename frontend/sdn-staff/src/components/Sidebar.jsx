@@ -5,9 +5,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const { user, logout, hasRole } = useAuth()
 
   const navItems = [
-    { path: '/dashboard', name: 'Dashboard', icon: '🏠', roles: ['user', 'admin'] },
-    { path: '/profile', name: 'Perfil', icon: '👤', roles: ['user', 'admin'] },
-    { path: '/admin/roles', name: 'Gestión de Roles', icon: '🔑', roles: ['admin'] },
+    { path: '/dashboard', name: 'Dashboard', icon: '🏠', roles: ['user', 'administrador'] },
+    { path: '/profile', name: 'Perfil', icon: '👤', roles: ['user', 'administrador'] },
+    { path: '/admin/roles', name: 'Gestión de Roles', icon: '🔑', roles: ['administrador'] },
   ]
 
   return (

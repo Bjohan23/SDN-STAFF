@@ -600,7 +600,7 @@ const Dashboard = () => {
         <h2 className="text-xl font-bold mb-4 text-gray-700">
           Bienvenido, {user?.correo}
         </h2>
-        {hasRole("admin") && adminContent()}
+        {hasRole("administrador") && adminContent()}
         {hasRole("organizador") && organizerContent()}
         {hasRole("expositor") && exhibitorContent()}
         {hasRole("visitante") && visitorContent()}

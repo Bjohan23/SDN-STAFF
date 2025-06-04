@@ -19,7 +19,7 @@ import {
 const roleOptions = [
   {
     id: 1,
-    name: "admin",
+    name: "administrador",
     label: "Administrador",
     icon: <ShieldCheckIcon className="h-5 w-5 mr-2 text-purple-600" />,
     color: "bg-purple-100 text-purple-800",
