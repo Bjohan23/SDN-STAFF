@@ -152,7 +152,7 @@ router.delete('/:id/remover', authenticate, authorize(['Administrador']), auditD
 router.delete('/:id', authenticate, authorize(['Administrador']), auditDelete, RolController.deleteRol);
 
 // Nuevas rutas para gestión de múltiples roles
-router.post('/usuarios/:id/asignar-multiples', authenticate, authorize(['Administrador']), auditCreate, RolController.asignarMultiplesRoles);
+router.post('/usuarios/:id/asignar-multiples', authenticate, authorize(['administrador']), auditCreate, RolController.asignarMultiplesRoles);
 router.get('/usuarios/:id/roles', authenticate, authorize(['Administrador', 'Manager']), RolController.getRolesByUsuario);
 
 module.exports = router;
