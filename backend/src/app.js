@@ -17,7 +17,8 @@ const app = express();
 
 // Middlewares globales
 app.use(cors({
-  origin: ['http://${HOST}:5173', 'http://127.0.0.1:5173'],
+  origin: ['http://${HOST}:5173', 'http://127.0.0.1:5173',
+    'http://161.132.41.106', 'http://161.132.41.106:80'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
