@@ -5,6 +5,7 @@ on:
     branches: [ main, master ]
     paths:
       - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
   workflow_dispatch:
 
 jobs:
@@ -22,4 +23,3 @@ jobs:
           echo "🚀 Iniciando despliegue automático del frontend..."
           /var/www/sdn-staff/scripts/deploy-frontend.sh
           echo "✅ Despliegue del frontend completado!"
-          
