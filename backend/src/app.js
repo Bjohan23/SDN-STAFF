@@ -1,4 +1,5 @@
 const cors = require('cors');
+const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
@@ -17,7 +18,7 @@ const app = express();
 
 // Middlewares globales
 app.use(cors({
-  origin: ['http://${HOST}:5173', 'http://127.0.0.1:5173',
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173',
     'http://161.132.41.106', 'http://161.132.41.106:80'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
