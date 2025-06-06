@@ -1,49 +1,24 @@
-name: Frontend CI
+name: Deploy Frontend to VPS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
     paths:
       - 'frontend/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'frontend/**'
+  workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
+    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - name: 🚀 Deploy Frontend to VPS
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: frontend/sdn-staff/package-lock.json
-    
-    - name: Install Dependencies
-      run: |
-        cd frontend/sdn-staff
-        npm ci
-    
-    - name: Run Linting
-      run: |
-        cd frontend/sdn-staff
-        npm run lint
-    
-    - name: Run Tests
-      run: |
-        cd frontend/sdn-staff
-        npm test
-    
-    - name: Build
-      run: |
-        cd frontend/sdn-staff
-        npm run build 
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          echo "🚀 Iniciando despliegue automático del frontend..."
+          /var/www/sdn-staff/scripts/deploy-frontend.sh
+          echo "✅ Despliegue del frontend completado!"
