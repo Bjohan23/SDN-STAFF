@@ -1,4 +1,3 @@
-const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
@@ -6,7 +5,8 @@ require('dotenv').config();
 
 // Importar la base de datos
 const db = require('../src/models');
-
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '${HOST}';
 // Importar rutas
 const routes = require('../src/routes');
 
@@ -17,7 +17,7 @@ const app = express();
 
 // Middlewares globales
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: ['http://${HOST}:5173', 'http://127.0.0.1:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -78,16 +78,16 @@ app.get('/api-docs.json', (req, res) => {
  *                   format: date-time
  *                 documentation:
  *                   type: string
- *                   example: http://localhost:8000/api-docs
+ *                   example: http://${HOST}:8000/api-docs
  */
 // Ruta de health check
 app.get('/health', (req, res) => {
   const port = process.env.PORT || 3000;
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     message: 'SDN-STAFF Backend funcionando correctamente',
     timestamp: new Date().toISOString(),
-    documentation: `http://localhost:${port}/api-docs`
+    documentation: `http://${HOST}:${port}/api-docs`
   });
 });
 
@@ -102,7 +102,7 @@ app.use('*', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+
 
 // Función para inicializar la aplicación
 const initializeApp = async () => {
@@ -115,14 +115,14 @@ const initializeApp = async () => {
       await db.sequelize.sync({ alter: true });
       console.log('✅ Modelos sincronizados con la base de datos.');
     }
-    
+
     // Iniciar servidor con manejo de errores
-    const server = app.listen(PORT, 'localhost', () => {
+    const server = app.listen(PORT, HOST, () => {
       console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-      console.log(`📊 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`📚 Documentación Swagger: http://localhost:${PORT}/api-docs`);
-      console.log(`📋 JSON Schema: http://localhost:${PORT}/api-docs.json`);
+      console.log(`🔗 Health check: http://${HOST}:${PORT}/health`);
+      console.log(`📊 API Base URL: http://${HOST}:${PORT}/api`);
+      console.log(`📚 Documentación Swagger: http://${HOST}:${PORT}/api-docs`);
+      console.log(`📋 JSON Schema: http://${HOST}:${PORT}/api-docs.json`);
     });
 
     // Manejo de errores del servidor
@@ -142,7 +142,7 @@ const initializeApp = async () => {
         process.exit(1);
       }
     });
-    
+
   } catch (error) {
     console.error('❌ Error al inicializar la aplicación:', error);
     process.exit(1);
