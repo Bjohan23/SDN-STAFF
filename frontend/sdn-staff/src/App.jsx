@@ -64,6 +64,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            {/* ruta para paginas no encontradas  */}
+            <Route path="*" element={<h1 className="text-center text-2xl mt-10">Página no encontrada</h1>} />
           </Routes>
         </div>
       )}
