@@ -5,11 +5,15 @@ const router = express.Router();
 const authRoutes = require('./authRoutes');
 const usuarioRoutes = require('./usuarioRoutes');
 const rolRoutes = require('./rolRoutes');
+const eventoRoutes = require('./eventoRoutes');
+const tipoEventoRoutes = require('./tipoEventoRoutes');
 
 // Configurar rutas
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
 router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
+router.use('/eventos', eventoRoutes); // Eventos (protegido)
+router.use('/tipos-evento', tipoEventoRoutes); // Tipos de evento (protegido)
 
 // Ruta de prueba
 router.get('/', (req, res) => {
@@ -44,7 +48,9 @@ router.get('/', (req, res) => {
       users: '/api/users',
       // Nuevos modelos (protegidos con JWT)
       usuarios: '/api/usuarios',
-      roles: '/api/roles'
+      roles: '/api/roles',
+      eventos: '/api/eventos',
+      tipos_evento: '/api/tipos-evento'
     },
     protected_endpoints: {
       note: 'Todos los endpoints excepto los públicos requieren Bearer token',
@@ -72,6 +78,28 @@ router.get('/', (req, res) => {
         verify: 'GET /api/auth/verify (Any token)',
         changePassword: 'POST /api/auth/change-password (Authenticated)',
         tokenInfo: 'GET /api/auth/token-info (Authenticated)'
+      },
+      eventos_endpoints: {
+        lista: 'GET /api/eventos (Admin/Manager)',
+        crear: 'POST /api/eventos (Admin/Manager)',
+        obtener: 'GET /api/eventos/:id (Admin/Manager)',
+        actualizar: 'PUT /api/eventos/:id (Admin/Manager)',
+        eliminar: 'DELETE /api/eventos/:id (Admin)',
+        cambiarEstado: 'PATCH /api/eventos/:id/estado (Admin/Manager)',
+        duplicar: 'POST /api/eventos/:id/duplicate (Admin/Manager)',
+        stats: 'GET /api/eventos/stats (Admin)',
+        proximos: 'GET /api/eventos/proximos (Admin/Manager)',
+        activos: 'GET /api/eventos/activos (Admin/Manager)',
+        urlPublica: 'GET /api/eventos/public/url/:url (Público)'
+      },
+      tipos_evento_endpoints: {
+        lista: 'GET /api/tipos-evento (Admin/Manager)',
+        crear: 'POST /api/tipos-evento (Admin)',
+        obtener: 'GET /api/tipos-evento/:id (Admin/Manager)',
+        actualizar: 'PUT /api/tipos-evento/:id (Admin)',
+        eliminar: 'DELETE /api/tipos-evento/:id (Admin)',
+        stats: 'GET /api/tipos-evento/stats (Admin)',
+        eventos: 'GET /api/tipos-evento/:id/eventos (Admin/Manager)'
       }
     },
     howToUse: {

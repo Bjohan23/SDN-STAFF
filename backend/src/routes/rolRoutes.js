@@ -36,7 +36,7 @@ const { auditCreate, auditUpdate, auditDelete } = require('../middlewares/audit'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
-router.get('/', authenticate, authorize(['Administrador', 'Manager']), RolController.getAllRoles);
+router.get('/', authenticate, authorize(['administrador', 'manager']), RolController.getAllRoles);
 
 /**
  * @swagger
@@ -56,13 +56,13 @@ router.get('/', authenticate, authorize(['Administrador', 'Manager']), RolContro
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
-router.get('/stats', authenticate, authorize(['Administrador']), RolController.getRolStats);
+router.get('/stats', authenticate, authorize(['administrador']), RolController.getRolStats);
 
-router.get('/sin-usuarios', authenticate, authorize(['Administrador']), RolController.getRolesSinUsuarios);
+router.get('/sin-usuarios', authenticate, authorize(['administrador']), RolController.getRolesSinUsuarios);
 
 // Nuevas rutas para auditoría y funcionalidad extendida
-router.get('/eliminados', authenticate, authorize(['Administrador']), RolController.getRolesEliminados);
-router.post('/:id/restore', authenticate, authorize(['Administrador']), RolController.restoreRol);
+router.get('/eliminados', authenticate, authorize(['administrador']), RolController.getRolesEliminados);
+router.post('/:id/restore', authenticate, authorize(['administrador']), RolController.restoreRol);
 
 /**
  * @swagger
@@ -99,10 +99,10 @@ router.post('/:id/restore', authenticate, authorize(['Administrador']), RolContr
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.get('/:id', authenticate, authorize(['Administrador', 'Manager']), RolController.getRolById);
+router.get('/:id', authenticate, authorize(['administrador', 'manager']), RolController.getRolById);
 
-router.get('/nombre/:nombre', authenticate, authorize(['Administrador']), RolController.getRolByNombre);
-router.get('/:id/usuarios', authenticate, authorize(['Administrador']), RolController.getUsuariosByRol);
+router.get('/nombre/:nombre', authenticate, authorize(['administrador']), RolController.getRolByNombre);
+router.get('/:id/usuarios', authenticate, authorize(['administrador']), RolController.getUsuariosByRol);
 
 /**
  * @swagger
@@ -144,15 +144,15 @@ router.get('/:id/usuarios', authenticate, authorize(['Administrador']), RolContr
  *       409:
  *         description: El nombre del rol ya existe
  */
-router.post('/', authenticate, authorize(['Administrador']), auditCreate, RolController.createRol);
+router.post('/', authenticate, authorize(['administrador']), auditCreate, RolController.createRol);
 
-router.put('/:id', authenticate, authorize(['Administrador']), auditUpdate, RolController.updateRol);
-router.post('/:id/asignar', authenticate, authorize(['Administrador']), auditCreate, RolController.asignarRolAUsuario);
-router.delete('/:id/remover', authenticate, authorize(['Administrador']), auditDelete, RolController.removerRolDeUsuario);
-router.delete('/:id', authenticate, authorize(['Administrador']), auditDelete, RolController.deleteRol);
+router.put('/:id', authenticate, authorize(['administrador']), auditUpdate, RolController.updateRol);
+router.post('/:id/asignar', authenticate, authorize(['administrador']), auditCreate, RolController.asignarRolAUsuario);
+router.delete('/:id/remover', authenticate, authorize(['administrador']), auditDelete, RolController.removerRolDeUsuario);
+router.delete('/:id', authenticate, authorize(['administrador']), auditDelete, RolController.deleteRol);
 
 // Nuevas rutas para gestión de múltiples roles
 router.post('/usuarios/:id/asignar-multiples', authenticate, authorize(['administrador']), auditCreate, RolController.asignarMultiplesRoles);
-router.get('/usuarios/:id/roles', authenticate, authorize(['Administrador', 'Manager']), RolController.getRolesByUsuario);
+router.get('/usuarios/:id/roles', authenticate, authorize(['administrador', 'manager']), RolController.getRolesByUsuario);
 
 module.exports = router;

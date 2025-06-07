@@ -183,7 +183,7 @@ const verifySelfOrAdmin = (req, res, next) => {
     const userRoles = req.user.roles.map(role => role.nombre_rol);
 
     // Permitir si es admin o si es el mismo usuario
-    if (userRoles.includes('Administrador') || currentUserId === requestedUserId) {
+    if (userRoles.includes('administrador') || currentUserId === requestedUserId) {
       return next();
     }
 
