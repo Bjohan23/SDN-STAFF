@@ -473,6 +473,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'evento'
     });
 
+    // Relación con Stand asignado
+    EmpresaEvento.belongsTo(models.Stand, {
+      foreignKey: 'id_stand',
+      as: 'standAsignado'
+    });
+
     // Relación con Usuario que aprobó participación
     EmpresaEvento.belongsTo(models.Usuario, {
       foreignKey: 'aprobada_participacion_por',
