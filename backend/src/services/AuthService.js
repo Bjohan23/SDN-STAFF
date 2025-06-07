@@ -334,7 +334,7 @@ class AuthService {
       });
 
       // Asignar rol de visitante (ID 4)
-      const rolVisitante = await Rol.findByPk(4);
+      const rolVisitante = await Rol.findByPk(12);
       if (!rolVisitante) {
         throw new Error('Error al asignar rol de visitante');
       }

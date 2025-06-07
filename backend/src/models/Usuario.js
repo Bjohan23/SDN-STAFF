@@ -59,8 +59,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      // Campos de auditoría
-      created_by: {
+      // Auditoría nueva
+      created_by_usuario: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE'
       },
-      updated_by: {
+      updated_by_usuario: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
@@ -79,30 +79,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE'
-      },
-      deleted_by: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'usuario',
-          key: 'id_usuario'
-        },
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE'
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
-      deleted_at: {
-        type: DataTypes.DATE,
-        allowNull: true
       },
     },
     {
       tableName: "usuario",
-      timestamps: false, // No usar created_at/updated_at automáticos
-      underscored: false,
+      timestamps: true, // No usar created_at/updated_at automáticos
+      underscored: true,
       indexes: [
         {
           unique: true,
@@ -118,8 +100,7 @@ module.exports = (sequelize, DataTypes) => {
       scopes: {
         activo: {
           where: {
-            estado: "activo",
-            deleted_at: null
+            estado: "activo"
           },
         },
         withoutPassword: {
@@ -127,18 +108,7 @@ module.exports = (sequelize, DataTypes) => {
             exclude: ["password_hash"],
           },
         },
-        // Scope para obtener solo registros no eliminados
-        active: {
-          where: {
-            deleted_at: null
-          }
-        },
-        // Scope para obtener registros eliminados
-        deleted: {
-          where: {
-            deleted_at: { [Op.ne]: null }            
-          }
-        },
+
         // Scope completo con información de auditoría
         withAuditInfo: {
           include: [
@@ -150,11 +120,6 @@ module.exports = (sequelize, DataTypes) => {
             {
               model: require('./index').Usuario,
               as: 'updatedByUser', 
-              attributes: ['id_usuario', 'correo']
-            },
-            {
-              model: require('./index').Usuario,
-              as: 'deletedByUser',
               attributes: ['id_usuario', 'correo']
             }
           ]
@@ -171,26 +136,9 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Usuario.prototype.isActive = function () {
-    return this.estado === "activo" && !this.deleted_at;
+    return this.estado === "activo";
   };
 
-  Usuario.prototype.isDeleted = function () {
-    return this.deleted_at !== null;
-  };
-
-  Usuario.prototype.softDelete = function (deletedBy = null) {
-    return this.update({
-      deleted_at: new Date(),
-      deleted_by: deletedBy
-    });
-  };
-
-  Usuario.prototype.restore = function () {
-    return this.update({
-      deleted_at: null,
-      deleted_by: null
-    });
-  };
 
   // Asociaciones
   Usuario.associate = function (models) {
@@ -210,36 +158,22 @@ module.exports = (sequelize, DataTypes) => {
 
     // Asociaciones de auditoría - Usuario que creó
     Usuario.belongsTo(models.Usuario, {
-      foreignKey: 'created_by',
+      foreignKey: 'created_by_usuario',
       as: 'createdByUser'
     });
-
     // Usuario que actualizó
     Usuario.belongsTo(models.Usuario, {
-      foreignKey: 'updated_by',
+      foreignKey: 'updated_by_usuario',
       as: 'updatedByUser'
     });
-
-    // Usuario que eliminó
-    Usuario.belongsTo(models.Usuario, {
-      foreignKey: 'deleted_by',
-      as: 'deletedByUser'
-    });
-
     // Relaciones inversas para auditoría
     Usuario.hasMany(models.Usuario, {
-      foreignKey: 'created_by',
+      foreignKey: 'created_by_usuario',
       as: 'createdUsers'
     });
-
     Usuario.hasMany(models.Usuario, {
-      foreignKey: 'updated_by',
+      foreignKey: 'updated_by_usuario',
       as: 'updatedUsers'
-    });
-
-    Usuario.hasMany(models.Usuario, {
-      foreignKey: 'deleted_by',
-      as: 'deletedUsers'
     });
   };
 

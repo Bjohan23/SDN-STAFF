@@ -419,6 +419,6 @@ router.get('/:id/rol', authenticate, UsuarioController.verificarRol);
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
-router.delete('/:id', authenticate, authorize(['administrador']), UsuarioController.deleteUsuario);
+// router.delete('/:id', authenticate, authorize(['administrador']), UsuarioController.deleteUsuario);
 
 module.exports = router;

@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW
     },
     // Campos de auditoría
-    created_by: {
+    created_by_usuario: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-    updated_by: {
+    updated_by_usuario: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -64,28 +64,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-    deleted_by: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'usuario',
-        key: 'id_usuario'
-      },
-      onDelete: 'SET NULL',
-      onUpdate: 'CASCADE'
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    }
+
   }, {
     tableName: 'usuariorol',
-    timestamps: false, // No usar created_at/updated_at automáticos
-    underscored: false,
+    timestamps: true,
+    underscored: true,
     indexes: [
       {
         fields: ['id_usuario']
@@ -123,11 +106,7 @@ module.exports = (sequelize, DataTypes) => {
             as: 'updatedByUser',
             attributes: ['id_usuario', 'correo']
           },
-          {
-            model: require('./index').Usuario,
-            as: 'deletedByUser',
-            attributes: ['id_usuario', 'correo']
-          }
+
         ]
       }
     }
@@ -146,17 +125,15 @@ module.exports = (sequelize, DataTypes) => {
     return this.deleted_at !== null;
   };
 
-  UsuarioRol.prototype.softDelete = function(deletedBy = null) {
+  UsuarioRol.prototype.softDelete = function() {
     return this.update({
-      deleted_at: new Date(),
-      deleted_by: deletedBy
+      deleted_at: new Date()
     });
   };
 
   UsuarioRol.prototype.restore = function() {
     return this.update({
-      deleted_at: null,
-      deleted_by: null
+      deleted_at: null
     });
   };
 
@@ -176,19 +153,16 @@ module.exports = (sequelize, DataTypes) => {
 
     // Asociaciones de auditoría
     UsuarioRol.belongsTo(models.Usuario, {
-      foreignKey: 'created_by',
+      foreignKey: 'created_by_usuario',
       as: 'createdByUser'
     });
 
     UsuarioRol.belongsTo(models.Usuario, {
-      foreignKey: 'updated_by',
+      foreignKey: 'updated_by_usuario',
       as: 'updatedByUser'
     });
 
-    UsuarioRol.belongsTo(models.Usuario, {
-      foreignKey: 'deleted_by',
-      as: 'deletedByUser'
-    });
+
   };
 
   return UsuarioRol;

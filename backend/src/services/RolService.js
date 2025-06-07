@@ -1,6 +1,6 @@
 const { Rol, Usuario, UsuarioRol } = require('../models');
 const { Op } = require('sequelize');
-const AuditService = require('./AuditService');
+const AuditService = require('./AuditService'); // Importación agregada para auditoría
 
 /**
  * Servicio de Rol - Lógica de negocio
@@ -14,11 +14,10 @@ class RolService {
     try {
       const dataToCreate = {
         nombre_rol: rolData.nombre_rol,
-        descripcion: rolData.descripcion || null
+        descripcion: rolData.descripcion || null,
+        created_by_usuario: userId
       };
-      
-      const rol = await AuditService.createWithAudit(Rol, dataToCreate, userId);
-      
+      const rol = await Rol.create(dataToCreate);
       return rol;
     } catch (error) {
       throw error;
@@ -31,7 +30,7 @@ class RolService {
   static async getAllRoles(includeUsuarios = false, includeAudit = false, includeDeleted = false) {
     try {
       const options = {
-        where: includeDeleted ? {} : AuditService.getActiveWhereCondition(),
+        where: {}, // Eliminado filtro deleted_at para Rol
         order: [['nombre_rol', 'ASC']],
         include: []
       };
@@ -41,7 +40,7 @@ class RolService {
           model: Usuario,
           as: 'usuarios',
           attributes: ['id_usuario', 'correo', 'estado'],
-          where: AuditService.getActiveWhereCondition(),
+          // where: AuditService.getActiveWhereCondition(), // Eliminado filtro deleted_at para Rol
           required: false,
           through: {
             attributes: ['fecha_asignacion'],
@@ -76,7 +75,7 @@ class RolService {
           model: Usuario,
           as: 'usuarios',
           attributes: ['id_usuario', 'correo', 'estado'],
-          where: AuditService.getActiveWhereCondition(),
+          // where: AuditService.getActiveWhereCondition(), // Eliminado filtro deleted_at para Rol
           required: false,
           through: {
             attributes: ['fecha_asignacion'],
@@ -117,7 +116,7 @@ class RolService {
       };
 
       if (!includeDeleted) {
-        Object.assign(whereCondition, AuditService.getActiveWhereCondition());
+        // Object.assign(whereCondition, AuditService.getActiveWhereCondition()); // Eliminado filtro deleted_at para Rol
       }
 
       const rol = await Rol.findOne({
@@ -135,67 +134,13 @@ class RolService {
    */
   static async updateRol(id, updateData, userId = null) {
     try {
-      const rol = await AuditService.findByPkWithAudit(Rol, id);
-      
-      if (!rol) {
-        throw new Error('Rol no encontrado');
-      }
-
-      await AuditService.updateWithAudit(rol, updateData, userId);
-      
-      return await this.getRolById(id);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * Eliminar rol (eliminación lógica)
-   */
-  static async deleteRol(id, userId = null) {
-    try {
-      const rol = await AuditService.findByPkWithAudit(Rol, id);
-      
-      if (!rol) {
-        throw new Error('Rol no encontrado');
-      }
-
-      // Verificar si hay usuarios activos asignados a este rol
-      const usuariosConRol = await UsuarioRol.count({
-        where: AuditService.combineWhereWithActive({ id_rol: id })
-      });
-
-      if (usuariosConRol > 0) {
-        throw new Error(`No se puede eliminar el rol. Hay ${usuariosConRol} usuarios asignados a este rol`);
-      }
-
-      // Eliminación lógica del rol
-      await AuditService.softDelete(rol, userId);
-      
-      return { message: 'Rol eliminado correctamente' };
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * Restaurar rol eliminado
-   */
-  static async restoreRol(id) {
-    try {
       const rol = await Rol.findByPk(id);
-      
       if (!rol) {
         throw new Error('Rol no encontrado');
       }
-
-      if (!AuditService.isDeleted(rol)) {
-        throw new Error('El rol no está eliminado');
-      }
-
-      await AuditService.restore(rol);
-      
-      return { message: 'Rol restaurado correctamente' };
+      updateData.updated_by_usuario = userId;
+      await rol.update(updateData);
+      return await this.getRolById(id);
     } catch (error) {
       throw error;
     }
@@ -204,13 +149,13 @@ class RolService {
   /**
    * Obtener usuarios asignados a un rol (solo activos)
    */
-  static async getUsuariosByRol(rolId, page = 1, limit = 10, includeDeleted = false) {
+  static async getUsuariosByRol(rolId, page = 1, limit = 10) {
     try {
       const offset = (page - 1) * limit;
 
       const whereCondition = { id_rol: rolId };
       if (!includeDeleted) {
-        Object.assign(whereCondition, AuditService.getActiveWhereCondition());
+        // Object.assign(whereCondition, AuditService.getActiveWhereCondition()); // Eliminado filtro deleted_at para Rol
       }
 
       const { count, rows } = await UsuarioRol.findAndCountAll({
@@ -219,7 +164,7 @@ class RolService {
           model: Usuario,
           as: 'usuario',
           attributes: ['id_usuario', 'correo', 'estado', 'fecha_creacion', 'ultima_sesion'],
-          where: includeDeleted ? {} : AuditService.getActiveWhereCondition(),
+          where: {}, // Eliminado filtro deleted_at para Rol
           required: true
         }],
         limit: parseInt(limit),
@@ -329,9 +274,9 @@ class RolService {
 
       // Verificar que todos los roles existen y están activos
       const roles = await Rol.findAll({
-        where: AuditService.combineWhereWithActive({
+        where: {
           id_rol: { [Op.in]: rolesIds }
-        })
+        } // Eliminado filtro deleted_at para Rol
       });
 
       if (roles.length !== rolesIds.length) {
@@ -381,8 +326,8 @@ class RolService {
       
       const [totalRoles, activeRoles, deletedRoles] = await Promise.all([
         Rol.count(),
-        Rol.count({ where: AuditService.getActiveWhereCondition() }),
-        Rol.count({ where: AuditService.getDeletedWhereCondition() })
+        Rol.count() // Eliminado filtro deleted_at para Rol,
+        // Rol.count({ where: AuditService.getDeletedWhereCondition() }) // Eliminado filtro deleted_at para Rol
       ]);
       
       const rolesPorUsuario = await UsuarioRol.findAll({
@@ -423,13 +368,12 @@ class RolService {
         include: [{
           model: UsuarioRol,
           as: 'usuarioRoles',
-          where: AuditService.getActiveWhereCondition(),
+          // where: AuditService.getActiveWhereCondition(), // Eliminado filtro deleted_at para Rol
           required: false
         }],
         where: {
-          ...AuditService.getActiveWhereCondition(),
           '$usuarioRoles.id_rol$': null
-        }
+        } // Eliminado filtro deleted_at para Rol
       });
 
       return roles;
@@ -441,42 +385,26 @@ class RolService {
   /**
    * Obtener roles eliminados
    */
-  static async getRolesEliminados() {
-    try {
-      const roles = await Rol.findAll({
-        where: AuditService.getDeletedWhereCondition(),
-        include: AuditService.getAuditIncludeOptions(require('../models')),
-        order: [['deleted_at', 'DESC']]
-      });
 
-      return roles;
-    } catch (error) {
-      throw error;
-    }
-  }
 
   /**
    * Obtener roles de un usuario
    */
-  static async getRolesByUsuario(usuarioId, includeDeleted = false) {
+  static async getRolesByUsuario(usuarioId) {
     try {
       const usuario = await Usuario.findByPk(usuarioId, {
         include: [{
           model: Rol,
           as: 'roles',
-          where: includeDeleted ? {} : AuditService.getActiveWhereCondition(),
           required: false,
           through: {
-            attributes: ['fecha_asignacion', 'created_by', 'updated_by', 'deleted_by', 'deleted_at'],
-            where: includeDeleted ? {} : AuditService.getActiveWhereCondition()
+            attributes: ['fecha_asignacion']
           }
         }]
       });
-
       if (!usuario) {
         throw new Error('Usuario no encontrado');
       }
-
       return usuario.roles || [];
     } catch (error) {
       throw error;

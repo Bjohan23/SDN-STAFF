@@ -10,7 +10,7 @@ class UsuarioService {
   /**
    * Crear un nuevo usuario
    */
-  static async createUsuario(userData) {
+  static async createUsuario(userData, userId = null) {
     try {
       // Encriptar password
       if (userData.password) {
@@ -18,20 +18,18 @@ class UsuarioService {
         userData.password_hash = await bcrypt.hash(userData.password, salt);
         delete userData.password; // Remover password plano
       }
-
-      // Crear usuario
+      // Crear usuario con auditoría
       const usuario = await Usuario.create({
         correo: userData.correo,
         password_hash: userData.password_hash,
         estado: userData.estado || 'activo',
-        fecha_creacion: new Date()
+        fecha_creacion: new Date(),
+        created_by_usuario: userId
       });
-      
       // Si se proporcionan roles, asignarlos
       if (userData.roles && Array.isArray(userData.roles)) {
-        await this.assignRoles(usuario.id_usuario, userData.roles);
+        await this.assignRoles(usuario.id_usuario, userData.roles, userId);
       }
-      
       // Retornar usuario con roles
       const usuarioCompleto = await this.getUsuarioById(usuario.id_usuario);
       return usuarioCompleto;
@@ -160,28 +158,23 @@ class UsuarioService {
   /**
    * Actualizar usuario
    */
-  static async updateUsuario(id, updateData) {
+  static async updateUsuario(id, updateData, userId = null) {
     try {
       const usuario = await Usuario.findByPk(id);
-      
       if (!usuario) {
         throw new Error('Usuario no encontrado');
       }
-
-      // Si se actualiza la password, encriptarla
       if (updateData.password) {
         const salt = await bcrypt.genSalt(10);
         updateData.password_hash = await bcrypt.hash(updateData.password, salt);
         delete updateData.password;
       }
-
+      updateData.updated_by_usuario = userId;
       await usuario.update(updateData);
-      
       // Si se actualizan roles, reasignarlos
       if (updateData.roles && Array.isArray(updateData.roles)) {
-        await this.assignRoles(id, updateData.roles);
+        await this.assignRoles(id, updateData.roles, userId);
       }
-      
       // Retornar usuario actualizado
       const usuarioActualizado = await this.getUsuarioById(id);
       return usuarioActualizado;
@@ -193,22 +186,18 @@ class UsuarioService {
   /**
    * Eliminar usuario
    */
-  static async deleteUsuario(id) {
-    try {
-      const usuario = await Usuario.findByPk(id);
-      
-      if (!usuario) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      // Eliminar físicamente el usuario (las relaciones se eliminan por CASCADE)
-      await usuario.destroy();
-      
-      return { message: 'Usuario eliminado correctamente' };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // static async deleteUsuario(id) {
+  //   try {
+  //     const usuario = await Usuario.findByPk(id);
+  //     if (!usuario) {
+  //       throw new Error('Usuario no encontrado');
+  //     }
+  //     await usuario.destroy();
+  //     return { message: 'Usuario eliminado correctamente' };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   /**
    * Cambiar estado de usuario
@@ -232,18 +221,20 @@ class UsuarioService {
   /**
    * Asignar roles a usuario
    */
-  static async assignRoles(usuarioId, rolesIds) {
+  static async assignRoles(usuarioId, rolesIds, userIdAudit = null) {
     try {
       // Primero eliminar roles existentes
       await UsuarioRol.destroy({
         where: { id_usuario: usuarioId }
       });
 
-      // Crear nuevas asignaciones
+      // Crear nuevas asignaciones con auditoría
       const asignaciones = rolesIds.map(rolId => ({
         id_usuario: usuarioId,
         id_rol: rolId,
-        fecha_asignacion: new Date()
+        fecha_asignacion: new Date(),
+        created_by_usuario: userIdAudit,
+        updated_by_usuario: userIdAudit
       }));
 
       await UsuarioRol.bulkCreate(asignaciones);

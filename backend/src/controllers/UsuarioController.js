@@ -39,7 +39,7 @@ class UsuarioController {
         password,
         estado: estado || 'activo',
         roles: roles || []
-      });
+      }, req.user ? req.user.id_usuario : null);
 
       return ApiResponse.success(res, nuevoUsuario, 'Usuario creado exitosamente', 201);
     } catch (error) {
@@ -149,8 +149,7 @@ class UsuarioController {
         updateData.correo = ValidationUtils.sanitizeString(updateData.correo);
       }
 
-      const usuarioActualizado = await UsuarioService.updateUsuario(id, updateData);
-      
+      const usuarioActualizado = await UsuarioService.updateUsuario(id, updateData, req.user ? req.user.id_usuario : null);
       return ApiResponse.success(res, usuarioActualizado, 'Usuario actualizado exitosamente');
     } catch (error) {
       if (error.message === 'Usuario no encontrado') {
@@ -163,24 +162,21 @@ class UsuarioController {
   /**
    * Eliminar usuario
    */
-  static async deleteUsuario(req, res, next) {
-    try {
-      const { id } = req.params;
-
-      if (!ValidationUtils.isValidId(id)) {
-        return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
-      }
-
-      const result = await UsuarioService.deleteUsuario(id);
-      
-      return ApiResponse.success(res, null, result.message);
-    } catch (error) {
-      if (error.message === 'Usuario no encontrado') {
-        return ApiResponse.notFound(res, error.message);
-      }
-      next(error);
-    }
-  }
+  // static async deleteUsuario(req, res, next) {
+  //   try {
+  //     const { id } = req.params;
+  //     if (!ValidationUtils.isValidId(id)) {
+  //       return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
+  //     }
+  //     const result = await UsuarioService.deleteUsuario(id);
+  //     return ApiResponse.success(res, null, result.message);
+  //   } catch (error) {
+  //     if (error.message === 'Usuario no encontrado') {
+  //       return ApiResponse.notFound(res, error.message);
+  //     }
+  //     next(error);
+  //   }
+  // }
 
   /**
    * Cambiar estado de usuario
@@ -225,8 +221,7 @@ class UsuarioController {
         return ApiResponse.validation(res, [{ field: 'roles', message: 'Roles debe ser un array' }]);
       }
 
-      const result = await UsuarioService.assignRoles(id, roles);
-      
+      const result = await UsuarioService.assignRoles(id, roles, req.user ? req.user.id_usuario : null);
       return ApiResponse.success(res, null, result.message);
     } catch (error) {
       next(error);

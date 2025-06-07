@@ -25,63 +25,41 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     descripcion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    validate: {
-    len: {
-    args: [0, 500],
-    msg: 'La descripción no puede exceder 500 caracteres'
-    }
-    }
-    },
-      // Campos de auditoría
-      created_by: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'usuario',
-          key: 'id_usuario'
-        },
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE'
-      },
-      updated_by: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'usuario',
-          key: 'id_usuario'
-        },
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE'
-      },
-      deleted_by: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'usuario',
-          key: 'id_usuario'
-        },
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE'
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
-      deleted_at: {
-        type: DataTypes.DATE,
-        allowNull: true
+      type: DataTypes.TEXT,
+      allowNull: true,
+      validate: {
+        len: {
+          args: [0, 500],
+          msg: 'La descripción no puede exceder 500 caracteres'
+        }
       }
+    },
+    created_by_usuario: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+    updated_by_usuario: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+
+
   }, {
     tableName: 'rol',
-    timestamps: false, // No usar created_at/updated_at automáticos
-    underscored: false,
+    timestamps: true, // No usar created_at/updated_at automáticos
+    underscored: true,
     indexes: [
       {
         unique: true,
@@ -125,31 +103,15 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   // Métodos de instancia
-  Rol.prototype.getUsuariosCount = async function() {
+  Rol.prototype.getUsuariosCount = async function () {
     const count = await this.countUsuarios();
     return count;
   };
 
-  Rol.prototype.isDeleted = function() {
-    return this.deleted_at !== null;
-  };
 
-  Rol.prototype.softDelete = function(deletedBy = null) {
-    return this.update({
-      deleted_at: new Date(),
-      deleted_by: deletedBy
-    });
-  };
-
-  Rol.prototype.restore = function() {
-    return this.update({
-      deleted_at: null,
-      deleted_by: null
-    });
-  };
 
   // Asociaciones
-  Rol.associate = function(models) {
+  Rol.associate = function (models) {
     // Relación many-to-many con Usuario a través de UsuarioRol
     Rol.belongsToMany(models.Usuario, {
       through: models.UsuarioRol,
@@ -158,26 +120,19 @@ module.exports = (sequelize, DataTypes) => {
       as: 'usuarios'
     });
 
-    // Relación directa con UsuarioRol para acceder a fecha_asignacion
     Rol.hasMany(models.UsuarioRol, {
       foreignKey: 'id_rol',
       as: 'usuarioRoles'
     });
 
-    // Asociaciones de auditoría
+    // Asociación de auditoría
     Rol.belongsTo(models.Usuario, {
-      foreignKey: 'created_by',
+      foreignKey: 'created_by_usuario',
       as: 'createdByUser'
     });
-
     Rol.belongsTo(models.Usuario, {
-      foreignKey: 'updated_by',
+      foreignKey: 'updated_by_usuario',
       as: 'updatedByUser'
-    });
-
-    Rol.belongsTo(models.Usuario, {
-      foreignKey: 'deleted_by',
-      as: 'deletedByUser'
     });
   };
 

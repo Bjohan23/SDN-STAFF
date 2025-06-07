@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import usuarios from "../../services/usuarios";
+import rolesService from "../../services/roles";
 import {
   UserCircleIcon,
   ShieldCheckIcon,
@@ -16,44 +17,35 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 
-const roleOptions = [
-  {
-    id: 1,
-    name: "administrador",
-    label: "Administrador",
-    icon: <ShieldCheckIcon className="h-5 w-5 mr-2 text-purple-600" />,
-    color: "bg-purple-100 text-purple-800",
-    description:
-      "Rol con acceso completo al sistema. Puede gestionar usuarios, eventos y configuraciones.",
-  },
-  {
-    id: 2,
-    name: "organizador",
-    label: "Organizador",
-    icon: <CogIcon className="h-5 w-5 mr-2 text-blue-600" />,
-    color: "bg-blue-100 text-blue-800",
-    description: "Puede crear y gestionar ferias, stands y eventos.",
-  },
-  {
-    id: 3,
-    name: "expositor",
-    label: "Expositor",
-    icon: <PresentationChartBarIcon className="h-5 w-5 mr-2 text-green-600" />,
-    color: "bg-green-100 text-green-800",
-    description: "Puede gestionar su stand, productos y promociones.",
-  },
-  {
-    id: 4,
-    name: "visitante",
-    label: "Visitante",
-    icon: <EyeIcon className="h-5 w-5 mr-2 text-yellow-600" />,
-    color: "bg-yellow-100 text-yellow-800",
-    description:
-      "Rol con acceso solo a la navegación de ferias y visualización de información pública.",
-  },
-];
+const roleIconMap = {
+  administrador: <ShieldCheckIcon className="h-5 w-5 mr-2 text-purple-600" />,
+  organizador: <CogIcon className="h-5 w-5 mr-2 text-blue-600" />,
+  expositor: <PresentationChartBarIcon className="h-5 w-5 mr-2 text-green-600" />,
+  visitante: <EyeIcon className="h-5 w-5 mr-2 text-yellow-600" />,
+};
+const roleColorMap = {
+  administrador: "bg-purple-100 text-purple-800",
+  organizador: "bg-blue-100 text-blue-800",
+  expositor: "bg-green-100 text-green-800",
+  visitante: "bg-yellow-100 text-yellow-800",
+};
+const fallbackIcon = <UserCircleIcon className="h-5 w-5 mr-2 text-gray-600" />;
+const fallbackColor = "bg-gray-100 text-gray-800";
 
 const RoleManagement = () => {
+  const [rolesBackend, setRolesBackend] = useState([]);
+  useEffect(() => {
+    console.log('[DEBUG] Llamando rolesService.getRoles...');
+    rolesService.getRoles()
+      .then(roles => {
+        console.log('[DEBUG] rolesService.getRoles result:', roles);
+        setRolesBackend(Array.isArray(roles) ? roles : []);
+      })
+      .catch(error => {
+        console.error('[ERROR] rolesService.getRoles falló:', error);
+      });
+  }, []);
+
   const { user } = useAuth();
 
   // Estados
@@ -116,6 +108,12 @@ const RoleManagement = () => {
   // Guardar cambios de roles
   const saveRoleChanges = async (userId) => {
     try {
+      // Llamar servicio para guardar en backend, usando el usuario autenticado (auditor)
+      const roleIds = selectedRoles.map((roleName) => {
+        const option = rolesBackend.find((ro) => ro.nombre_rol === roleName);
+        return option?.id_rol;
+      });
+      await rolesService.asignarMultiplesRoles(userId, roleIds);
       // Actualización optimista en UI
       setUserList((prev) =>
         prev.map((u) => {
@@ -123,11 +121,11 @@ const RoleManagement = () => {
             const updatedRoles = selectedRoles.map((roleName) => {
               const existing = u.roles.find((r) => r.nombre_rol === roleName);
               if (existing) return existing;
-              const option = roleOptions.find((ro) => ro.name === roleName);
+              const option = rolesBackend.find((ro) => ro.nombre_rol === roleName);
               return {
-                id_rol: option?.id || null,
+                id_rol: option?.id_rol || null,
                 nombre_rol: roleName,
-                descripcion: option?.description || "",
+                descripcion: option?.descripcion || "",
                 UsuarioRol: { fecha_asignacion: new Date().toISOString() },
               };
             });
@@ -136,17 +134,16 @@ const RoleManagement = () => {
           return u;
         })
       );
-
-      // TODO: llamada real a backend para actualizar roles
-      // await usuarios.updateUsuarioRoles(userId, selectedRoles);
-
       setEditingUserId(null);
       setSelectedRoles([]);
-    } catch (error) {
-      console.error("Error al actualizar roles:", error);
-      // Opcional: mostrar mensaje de error al usuario
+      setError(null);
+      alert('Roles asignados correctamente');
+    } catch (err) {
+      setError("Error al asignar roles");
+      alert('Error al asignar roles');
     }
   };
+
 
   // Manejar cambio de página
   const handlePageChange = (newPage) => {
@@ -162,6 +159,34 @@ const RoleManagement = () => {
         : [...prev, roleName]
     );
   };
+
+  // Renderizado de checkboxes dinámicos para roles disponibles
+  const renderRoleCheckboxes = () => (
+    <div className="grid grid-cols-1 gap-2">
+      {rolesBackend.map((rol, idx) => {
+        const isChecked = selectedRoles.includes(rol.nombre_rol);
+        const Icon = roleIconMap[rol.nombre_rol] || fallbackIcon;
+        const colorClass = roleColorMap[rol.nombre_rol] || fallbackColor;
+        return (
+          <label
+            key={rol.id_rol || `rol-${idx}`}
+            className={`flex items-center p-2 rounded cursor-pointer border ${isChecked ? 'border-indigo-500' : 'border-gray-200'} ${colorClass}`}
+          >
+            <input
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-indigo-600 mr-2"
+              checked={isChecked}
+              onChange={() => toggleRoleSelection(rol.nombre_rol)}
+            />
+            {Icon}
+            <span className="font-medium mr-2">{rol.nombre_rol}</span>
+            <span className="text-xs text-gray-500">{rol.descripcion || 'Sin descripción'}</span>
+          </label>
+        );
+      })}
+    </div>
+  );
+
   console.log(pagination);
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -214,9 +239,9 @@ const RoleManagement = () => {
         ) : (
           <>
             <div className="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
-              {userList.map((u) => (
+              {userList.map((u, idx) => (
                 <div
-                  key={u.id_usuario}
+                  key={u.id_usuario || `usuario-${idx}`}
                   className="px-6 py-4 hover:bg-gray-50 transition"
                 >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -246,13 +271,13 @@ const RoleManagement = () => {
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
                       {/* Mostrar roles actuales */}
                       <div className="flex flex-wrap gap-2">
-                        {u.roles.map((role) => {
-                          const roleOption = roleOptions.find(
+                        {u.roles.map((role, idx) => {
+                          const roleOption = rolesBackend.find(
                             (r) => r.name === role.nombre_rol
                           );
                           return (
                             <span
-                              key={role.id_rol}
+                              key={role.id_rol || `role-${idx}`}
                               className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                                 roleOption?.color || "bg-gray-100 text-gray-800"
                               }`}
@@ -306,21 +331,25 @@ const RoleManagement = () => {
                         Selecciona los roles para este usuario:
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {roleOptions.map((role) => (
-                          <button
-                            key={role.id}
-                            type="button"
-                            onClick={() => toggleRoleSelection(role.name)}
-                            className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
-                              selectedRoles.includes(role.name)
-                                ? `${role.color} ring-2 ring-offset-1 ring-indigo-500`
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            }`}
-                          >
-                            {role.icon}
-                            {role.label}
-                          </button>
-                        ))}
+                        {rolesBackend.map((role, idx) => {
+                          const Icon = roleIconMap[role.nombre_rol] || fallbackIcon;
+                          const colorClass = roleColorMap[role.nombre_rol] || fallbackColor;
+                          const isSelected = selectedRoles.includes(role.nombre_rol);
+                          return (
+                            <button
+                              key={role.id_rol || idx}
+                              type="button"
+                              onClick={() => toggleRoleSelection(role.nombre_rol)}
+                              className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
+                                isSelected ? `${colorClass} ring-2 ring-offset-1 ring-indigo-500` : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                              }`}
+                            >
+                              {Icon}
+                              {role.nombre_rol}
+                              <span className="ml-1 text-xs text-gray-500">{role.descripcion || ''}</span>
+                            </button>
+                          );
+                        })}
                         {/* <button
                           type="button"
                           onClick={() => setShowAddRoleModal(true)}

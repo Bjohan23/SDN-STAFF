@@ -7,7 +7,7 @@ require('dotenv').config();
 // Importar la base de datos
 const db = require('../src/models');
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '${HOST}';
+const HOST = process.env.HOST || 'localhost';
 // Importar rutas
 const routes = require('../src/routes');
 
