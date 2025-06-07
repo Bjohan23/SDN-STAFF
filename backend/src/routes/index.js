@@ -7,6 +7,7 @@ const usuarioRoutes = require('./usuarioRoutes');
 const rolRoutes = require('./rolRoutes');
 const eventoRoutes = require('./eventoRoutes');
 const tipoEventoRoutes = require('./tipoEventoRoutes');
+const empresaExpositoraRoutes = require('./empresaExpositoraRoutes');
 
 // Configurar rutas
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
@@ -14,6 +15,7 @@ router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
 router.use('/eventos', eventoRoutes); // Eventos (protegido)
 router.use('/tipos-evento', tipoEventoRoutes); // Tipos de evento (protegido)
+router.use('/empresas-expositoras', empresaExpositoraRoutes); // Empresas expositoras (protegido/público)
 
 // Ruta de prueba
 router.get('/', (req, res) => {
@@ -50,7 +52,8 @@ router.get('/', (req, res) => {
       usuarios: '/api/usuarios',
       roles: '/api/roles',
       eventos: '/api/eventos',
-      tipos_evento: '/api/tipos-evento'
+      tipos_evento: '/api/tipos-evento',
+      empresas_expositoras: '/api/empresas-expositoras'
     },
     protected_endpoints: {
       note: 'Todos los endpoints excepto los públicos requieren Bearer token',
@@ -100,6 +103,21 @@ router.get('/', (req, res) => {
         eliminar: 'DELETE /api/tipos-evento/:id (Admin)',
         stats: 'GET /api/tipos-evento/stats (Admin)',
         eventos: 'GET /api/tipos-evento/:id/eventos (Admin/Manager)'
+      },
+      empresas_expositoras_endpoints: {
+        lista: 'GET /api/empresas-expositoras (Admin/Manager)',
+        crear: 'POST /api/empresas-expositoras (Admin/Manager)',
+        obtener: 'GET /api/empresas-expositoras/:id (Admin/Manager)',
+        actualizar: 'PUT /api/empresas-expositoras/:id (Admin/Manager)',
+        eliminar: 'DELETE /api/empresas-expositoras/:id (Admin)',
+        aprobar: 'POST /api/empresas-expositoras/:id/aprobar (Admin)',
+        rechazar: 'POST /api/empresas-expositoras/:id/rechazar (Admin)',
+        suspender: 'POST /api/empresas-expositoras/:id/suspender (Admin)',
+        stats: 'GET /api/empresas-expositoras/stats (Admin)',
+        pendientes: 'GET /api/empresas-expositoras/pendientes (Admin/Manager)',
+        registroPublico: 'POST /api/empresas-expositoras/registro-publico (Público)',
+        registrarEvento: 'POST /api/empresas-expositoras/:id/eventos (Admin/Manager)',
+        cargaMasiva: 'POST /api/empresas-expositoras/carga-masiva (Admin)'
       }
     },
     howToUse: {

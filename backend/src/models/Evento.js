@@ -313,6 +313,20 @@ module.exports = (sequelize, DataTypes) => {
       as: 'tipoEvento'
     });
 
+    // Relación many-to-many con EmpresaExpositora a través de EmpresaEvento
+    Evento.belongsToMany(models.EmpresaExpositora, {
+      through: 'EmpresaEvento',
+      foreignKey: 'id_evento',
+      otherKey: 'id_empresa',
+      as: 'empresasExpositoras'
+    });
+
+    // Relación directa con EmpresaEvento
+    Evento.hasMany(models.EmpresaEvento, {
+      foreignKey: 'id_evento',
+      as: 'participaciones'
+    });
+
     // Asociaciones de auditoría
     Evento.belongsTo(models.Usuario, {
       foreignKey: 'created_by',
