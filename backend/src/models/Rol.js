@@ -1,4 +1,5 @@
-const { Op, DataTypes } = require('sequelize');
+const { Op } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const Rol = sequelize.define('Rol', {
     id_rol: {
@@ -34,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    created_by_usuario: {
+    // ✅ Campos de auditoría consistentes
+    created_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -44,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-    updated_by_usuario: {
+    updated_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -54,64 +56,80 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-
-
+    deleted_by: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   }, {
     tableName: 'rol',
-    timestamps: true, // No usar created_at/updated_at automáticos
-    underscored: true,
+    timestamps: true, // ✅ Usar timestamps automáticos de Sequelize
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    underscored: false,
     indexes: [
       {
         unique: true,
         fields: ['nombre_rol']
+      },
+      {
+        fields: ['created_by']
+      },
+      {
+        fields: ['deleted_at']
       }
     ],
     scopes: {
-      // Scope para obtener solo registros no eliminados
+      // ✅ Scopes sin dependencias circulares
       active: {
         where: {
           deleted_at: null
         }
       },
-      // Scope para obtener registros eliminados
       deleted: {
         where: {
-          deleted_at: { [Op.ne]: null }  // ✅ Cambiado de sequelize.Op.ne a Op.ne
+          deleted_at: { [Op.ne]: null }
         }
-      },
-      // Scope con información de auditoría
-      withAuditInfo: {
-        include: [
-          {
-            model: require('./index').Usuario,
-            as: 'createdByUser',
-            attributes: ['id_usuario', 'correo']
-          },
-          {
-            model: require('./index').Usuario,
-            as: 'updatedByUser',
-            attributes: ['id_usuario', 'correo']
-          },
-          {
-            model: require('./index').Usuario,
-            as: 'deletedByUser',
-            attributes: ['id_usuario', 'correo']
-          }
-        ]
       }
+      // ✅ Removemos withAuditInfo para evitar dependencias circulares
     }
   });
 
   // Métodos de instancia
-  Rol.prototype.getUsuariosCount = async function () {
+  Rol.prototype.getUsuariosCount = async function() {
     const count = await this.countUsuarios();
     return count;
   };
 
+  Rol.prototype.isDeleted = function() {
+    return this.deleted_at !== null;
+  };
 
+  Rol.prototype.softDelete = function(deletedBy = null) {
+    return this.update({
+      deleted_at: new Date(),
+      deleted_by: deletedBy
+    });
+  };
 
-  // Asociaciones
-  Rol.associate = function (models) {
+  Rol.prototype.restore = function() {
+    return this.update({
+      deleted_at: null,
+      deleted_by: null
+    });
+  };
+
+  // ✅ Asociaciones limpias
+  Rol.associate = function(models) {
     // Relación many-to-many con Usuario a través de UsuarioRol
     Rol.belongsToMany(models.Usuario, {
       through: models.UsuarioRol,
@@ -120,19 +138,26 @@ module.exports = (sequelize, DataTypes) => {
       as: 'usuarios'
     });
 
+    // Relación directa con UsuarioRol
     Rol.hasMany(models.UsuarioRol, {
       foreignKey: 'id_rol',
       as: 'usuarioRoles'
     });
 
-    // Asociación de auditoría
+    // ✅ Asociaciones de auditoría con nombres consistentes
     Rol.belongsTo(models.Usuario, {
-      foreignKey: 'created_by_usuario',
+      foreignKey: 'created_by',
       as: 'createdByUser'
     });
+
     Rol.belongsTo(models.Usuario, {
-      foreignKey: 'updated_by_usuario',
+      foreignKey: 'updated_by',
       as: 'updatedByUser'
+    });
+
+    Rol.belongsTo(models.Usuario, {
+      foreignKey: 'deleted_by',
+      as: 'deletedByUser'
     });
   };
 

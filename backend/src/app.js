@@ -112,10 +112,45 @@ const initializeApp = async () => {
     // Verificar conexión a la base de datos
     await db.sequelize.authenticate();
     console.log('✅ Conexión a la base de datos establecida correctamente.');
+    
     // Sincronizar modelos (solo en desarrollo)
     if (process.env.NODE_ENV === 'development') {
-      await db.sequelize.sync({ alter: true });
-      console.log('✅ Modelos sincronizados con la base de datos.');
+      try {
+        // Primero, actualizar registros NULL para evitar conflictos
+        console.log('🔧 Verificando y corrigiendo datos NULL...');
+        
+        // Actualizar registros NULL en updated_at
+        await db.sequelize.query(`
+          UPDATE rol SET updated_at = created_at 
+          WHERE updated_at IS NULL AND created_at IS NOT NULL;
+        `);
+        
+        await db.sequelize.query(`
+          UPDATE usuario SET updated_at = fecha_creacion 
+          WHERE updated_at IS NULL AND fecha_creacion IS NOT NULL;
+        `);
+        
+        await db.sequelize.query(`
+          UPDATE usuariorol SET updated_at = NOW() 
+          WHERE updated_at IS NULL;
+        `);
+        
+        console.log('✅ Datos NULL corregidos.');
+        
+        // Ahora sincronizar con alter más conservador
+        await db.sequelize.sync({ 
+          alter: false, // Cambiar a true solo si es necesario ya que puede alterar la estructura de la base de datos 
+          force: false // Nunca usar force en desarrollo con datos importantes
+        });
+        console.log('✅ Modelos sincronizados con la base de datos.');
+        
+      } catch (syncError) {
+        console.warn('⚠️ Error en sincronización automática:', syncError.message);
+        console.log('💡 Continuando sin sincronización. Considera usar migraciones.');
+        
+        // Intentar solo verificar la conexión sin alterar estructura
+        await db.sequelize.authenticate();
+      }
     }
 
     // Iniciar servidor con manejo de errores
@@ -147,6 +182,17 @@ const initializeApp = async () => {
 
   } catch (error) {
     console.error('❌ Error al inicializar la aplicación:', error);
+    
+    // Proporcionar información útil de debugging
+    if (error.name === 'SequelizeDatabaseError') {
+      console.log('\n💡 Sugerencias para resolver el error de base de datos:');
+      console.log('1. Verifica que la base de datos existe');
+      console.log('2. Verifica las credenciales de conexión');
+      console.log('3. Si hay problemas con NULL values, ejecuta:');
+      console.log('   UPDATE rol SET updated_at = created_at WHERE updated_at IS NULL;');
+      console.log('4. Considera usar migraciones en lugar de sync para producción\n');
+    }
+    
     process.exit(1);
   }
 };
