@@ -15,6 +15,16 @@ import CrearEvento from './pages/admin/CrearEvento'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import './App.css'
+// Empresas expositoras
+import RegistroEmpresaPublica from './pages/empresas/RegistroEmpresaPublica'
+import ListadoEmpresas from './pages/empresas/ListadoEmpresas'
+import DetalleEmpresa from './pages/empresas/DetalleEmpresa'
+import AprobacionEmpresas from './pages/empresas/AprobacionEmpresas'
+import RegistroEnEvento from './pages/empresas/RegistroEnEvento'
+import HistorialParticipacion from './pages/empresas/HistorialParticipacion'
+import DetalleParticipacionEvento from './pages/empresas/DetalleParticipacionEvento'
+import DocumentosPorVencer from './pages/empresas/DocumentosPorVencer'
+import DashboardEmpresas from './pages/empresas/DashboardEmpresas'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -24,7 +34,8 @@ function App() {
   const showLayout = location.pathname.startsWith('/dashboard') || 
                     location.pathname.startsWith('/profile') || 
                     location.pathname.startsWith('/admin/roles') ||
-                    location.pathname.startsWith('/admin/crear-evento')
+                    location.pathname.startsWith('/admin/crear-evento') ||
+                    location.pathname.startsWith('/empresas');
 
   return (
     <AuthProvider>
@@ -59,7 +70,19 @@ function App() {
                     <CrearEvento />
                   </RoleRoute>
                 } />
-              </Routes>
+                {/* Gestión integral de empresas expositoras en una sola vista */}
+                <Route path="/empresas" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <ListadoEmpresas />
+                  </RoleRoute>
+                } />
+                {/* Redirección de cualquier subruta de empresas a la vista principal */}
+                <Route path="/empresas/*" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <ListadoEmpresas />
+                  </RoleRoute>
+                } />
+              </Routes> 
             </main>
           </div>
         </div>
@@ -71,6 +94,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            {/* Registro público de empresa */}
+            <Route path="/empresas/registro" element={<RegistroEmpresaPublica />} />
             {/* ruta para paginas no encontradas  */}
             <Route path="*" element={<h1 className="text-center text-2xl mt-10">Página no encontrada</h1>} />
           </Routes>
