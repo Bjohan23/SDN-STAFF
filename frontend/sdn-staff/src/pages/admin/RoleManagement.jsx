@@ -20,7 +20,9 @@ import {
 const roleIconMap = {
   administrador: <ShieldCheckIcon className="h-5 w-5 mr-2 text-purple-600" />,
   organizador: <CogIcon className="h-5 w-5 mr-2 text-blue-600" />,
-  expositor: <PresentationChartBarIcon className="h-5 w-5 mr-2 text-green-600" />,
+  expositor: (
+    <PresentationChartBarIcon className="h-5 w-5 mr-2 text-green-600" />
+  ),
   visitante: <EyeIcon className="h-5 w-5 mr-2 text-yellow-600" />,
 };
 const roleColorMap = {
@@ -35,14 +37,15 @@ const fallbackColor = "bg-gray-100 text-gray-800";
 const RoleManagement = () => {
   const [rolesBackend, setRolesBackend] = useState([]);
   useEffect(() => {
-    console.log('[DEBUG] Llamando rolesService.getRoles...');
-    rolesService.getRoles()
-      .then(roles => {
-        console.log('[DEBUG] rolesService.getRoles result:', roles);
+    console.log("[DEBUG] Llamando rolesService.getRoles...");
+    rolesService
+      .getRoles()
+      .then((roles) => {
+        console.log("[DEBUG] rolesService.getRoles result:", roles);
         setRolesBackend(Array.isArray(roles) ? roles : []);
       })
-      .catch(error => {
-        console.error('[ERROR] rolesService.getRoles falló:', error);
+      .catch((error) => {
+        console.error("[ERROR] rolesService.getRoles falló:", error);
       });
   }, []);
 
@@ -74,7 +77,7 @@ const RoleManagement = () => {
           currentPage: response.pagination.currentPage,
           totalPages: response.pagination.totalPages,
           itemsPerPage: response.pagination.itemsPerPage,
-          totalItems: response.pagination.totalItems
+          totalItems: response.pagination.totalItems,
         }));
       } else {
         setError("Error al obtener usuarios");
@@ -121,7 +124,9 @@ const RoleManagement = () => {
             const updatedRoles = selectedRoles.map((roleName) => {
               const existing = u.roles.find((r) => r.nombre_rol === roleName);
               if (existing) return existing;
-              const option = rolesBackend.find((ro) => ro.nombre_rol === roleName);
+              const option = rolesBackend.find(
+                (ro) => ro.nombre_rol === roleName
+              );
               return {
                 id_rol: option?.id_rol || null,
                 nombre_rol: roleName,
@@ -137,13 +142,12 @@ const RoleManagement = () => {
       setEditingUserId(null);
       setSelectedRoles([]);
       setError(null);
-      alert('Roles asignados correctamente');
-    } catch (err) {
+      alert("Roles asignados correctamente");
+    } catch {
       setError("Error al asignar roles");
-      alert('Error al asignar roles');
+      alert("Error al asignar roles");
     }
   };
-
 
   // Manejar cambio de página
   const handlePageChange = (newPage) => {
@@ -161,31 +165,31 @@ const RoleManagement = () => {
   };
 
   // Renderizado de checkboxes dinámicos para roles disponibles
-  const renderRoleCheckboxes = () => (
-    <div className="grid grid-cols-1 gap-2">
-      {rolesBackend.map((rol, idx) => {
-        const isChecked = selectedRoles.includes(rol.nombre_rol);
-        const Icon = roleIconMap[rol.nombre_rol] || fallbackIcon;
-        const colorClass = roleColorMap[rol.nombre_rol] || fallbackColor;
-        return (
-          <label
-            key={rol.id_rol || `rol-${idx}`}
-            className={`flex items-center p-2 rounded cursor-pointer border ${isChecked ? 'border-indigo-500' : 'border-gray-200'} ${colorClass}`}
-          >
-            <input
-              type="checkbox"
-              className="form-checkbox h-5 w-5 text-indigo-600 mr-2"
-              checked={isChecked}
-              onChange={() => toggleRoleSelection(rol.nombre_rol)}
-            />
-            {Icon}
-            <span className="font-medium mr-2">{rol.nombre_rol}</span>
-            <span className="text-xs text-gray-500">{rol.descripcion || 'Sin descripción'}</span>
-          </label>
-        );
-      })}
-    </div>
-  );
+  // const renderRoleCheckboxes = () => (
+  //   <div className="grid grid-cols-1 gap-2">
+  //     {rolesBackend.map((rol, idx) => {
+  //       const isChecked = selectedRoles.includes(rol.nombre_rol);
+  //       const Icon = roleIconMap[rol.nombre_rol] || fallbackIcon;
+  //       const colorClass = roleColorMap[rol.nombre_rol] || fallbackColor;
+  //       return (
+  //         <label
+  //           key={rol.id_rol || `rol-${idx}`}
+  //           className={`flex items-center p-2 rounded cursor-pointer border ${isChecked ? 'border-indigo-500' : 'border-gray-200'} ${colorClass}`}
+  //         >
+  //           <input
+  //             type="checkbox"
+  //             className="form-checkbox h-5 w-5 text-indigo-600 mr-2"
+  //             checked={isChecked}
+  //             onChange={() => toggleRoleSelection(rol.nombre_rol)}
+  //           />
+  //           {Icon}
+  //           <span className="font-medium mr-2">{rol.nombre_rol}</span>
+  //           <span className="text-xs text-gray-500">{rol.descripcion || 'Sin descripción'}</span>
+  //         </label>
+  //       );
+  //     })}
+  //   </div>
+  // );
 
   console.log(pagination);
   return (
@@ -332,21 +336,31 @@ const RoleManagement = () => {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {rolesBackend.map((role, idx) => {
-                          const Icon = roleIconMap[role.nombre_rol] || fallbackIcon;
-                          const colorClass = roleColorMap[role.nombre_rol] || fallbackColor;
-                          const isSelected = selectedRoles.includes(role.nombre_rol);
+                          const Icon =
+                            roleIconMap[role.nombre_rol] || fallbackIcon;
+                          const colorClass =
+                            roleColorMap[role.nombre_rol] || fallbackColor;
+                          const isSelected = selectedRoles.includes(
+                            role.nombre_rol
+                          );
                           return (
                             <button
                               key={role.id_rol || idx}
                               type="button"
-                              onClick={() => toggleRoleSelection(role.nombre_rol)}
+                              onClick={() =>
+                                toggleRoleSelection(role.nombre_rol)
+                              }
                               className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
-                                isSelected ? `${colorClass} ring-2 ring-offset-1 ring-indigo-500` : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                isSelected
+                                  ? `${colorClass} ring-2 ring-offset-1 ring-indigo-500`
+                                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                               }`}
                             >
                               {Icon}
                               {role.nombre_rol}
-                              <span className="ml-1 text-xs text-gray-500">{role.descripcion || ''}</span>
+                              <span className="ml-1 text-xs text-gray-500">
+                                {role.descripcion || ""}
+                              </span>
                             </button>
                           );
                         })}
