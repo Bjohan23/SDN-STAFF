@@ -120,26 +120,25 @@ const initializeApp = async () => {
         console.log('🔧 Verificando y corrigiendo datos NULL...');
         
         // Actualizar registros NULL en updated_at
-        await db.sequelize.query(`
-          UPDATE rol SET updated_at = created_at 
-          WHERE updated_at IS NULL AND created_at IS NOT NULL;
-        `);
+        // await db.sequelize.query(`
+        //   UPDATE rol SET updated_at = created_at 
+        //   WHERE updated_at IS NULL AND created_at IS NOT NULL;
+        // `);
         
-        await db.sequelize.query(`
-          UPDATE usuario SET updated_at = fecha_creacion 
-          WHERE updated_at IS NULL AND fecha_creacion IS NOT NULL;
-        `);
+        // await db.sequelize.query(`
+        //   UPDATE usuario SET updated_at = fecha_creacion 
+        //   WHERE updated_at IS NULL AND fecha_creacion IS NOT NULL;
+        // `);
         
-        await db.sequelize.query(`
-          UPDATE usuariorol SET updated_at = NOW() 
-          WHERE updated_at IS NULL;
-        `);
+        // await db.sequelize.query(`
+        //   UPDATE usuariorol SET updated_at = NOW() 
+        //   WHERE updated_at IS NULL;
+        // `);
         
         console.log('✅ Datos NULL corregidos.');
         
         // Ahora sincronizar con alter más conservador
         await db.sequelize.sync({ 
-          alter: false, // Cambiar a true solo si es necesario ya que puede alterar la estructura de la base de datos 
           force: false // Nunca usar force en desarrollo con datos importantes
         });
         console.log('✅ Modelos sincronizados con la base de datos.');

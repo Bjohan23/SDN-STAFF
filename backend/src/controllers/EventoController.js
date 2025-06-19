@@ -14,7 +14,7 @@ class EventoController {
     try {
       const userId = req.user ? req.user.id_usuario : null;
       const eventoData = req.body;
-
+      console.log(eventoData)
       // Validaciones básicas
       if (!ValidationUtils.isNotEmpty(eventoData.nombre_evento)) {
         return ApiResponse.validation(res, [{ field: 'nombre_evento', message: 'El nombre del evento es requerido' }]);
@@ -60,6 +60,9 @@ class EventoController {
 
       // Validar precio
       if (eventoData.precio_entrada && eventoData.precio_entrada < 0) {
+        console.log('El precio no puede ser negativo');
+        console.log(eventoData.precio_entrada);
+        console.log(eventoData);
         return ApiResponse.validation(res, [{ field: 'precio_entrada', message: 'El precio no puede ser negativo' }]);
       }
 

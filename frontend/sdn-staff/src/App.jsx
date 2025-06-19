@@ -11,6 +11,7 @@ import ResetPassword from './pages/auth/ResetPassword'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Profile from './pages/Dashboard/Profile'
 import RoleManagement from './pages/admin/RoleManagement'
+import CrearEvento from './pages/admin/CrearEvento'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import './App.css'
@@ -22,7 +23,8 @@ function App() {
   // Determinar si mostrar el sidebar
   const showLayout = location.pathname.startsWith('/dashboard') || 
                     location.pathname.startsWith('/profile') || 
-                    location.pathname.startsWith('/admin/roles')
+                    location.pathname.startsWith('/admin/roles') ||
+                    location.pathname.startsWith('/admin/crear-evento')
 
   return (
     <AuthProvider>
@@ -50,6 +52,11 @@ function App() {
                 <Route path="/admin/roles" element={
                   <RoleRoute allowedRoles={['administrador']}>
                     <RoleManagement />
+                  </RoleRoute>
+                } />
+                <Route path="/admin/crear-evento" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <CrearEvento />
                   </RoleRoute>
                 } />
               </Routes>

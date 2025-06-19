@@ -8,6 +8,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     { path: '/dashboard', name: 'Dashboard', icon: '🏠', roles: ['user', 'administrador'] },
     { path: '/profile', name: 'Perfil', icon: '👤', roles: ['user', 'administrador'] },
     { path: '/admin/roles', name: 'Gestión de Roles', icon: '🔑', roles: ['administrador'] },
+    { path: '/admin/crear-evento', name: 'Crear Evento', icon: '📅', roles: ['administrador', 'manager'] },
   ]
 
   return (
