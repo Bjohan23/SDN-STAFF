@@ -19,39 +19,39 @@ router.get('/stand/:stand_id/evento/:evento_id', ServicioAdicionalController.get
 // Rutas protegidas - Contratación de servicios (empresas)
 router.post('/:id/contratar', 
   authenticate, 
-  authorize(['Administrador', 'Editor', 'Usuario']), 
+  authorize(['administrador', 'editor', 'usuario']), 
   ServicioAdicionalController.contratarServicio
 );
 
 router.put('/contratacion/:id/estado', 
   authenticate, 
-  authorize(['Administrador', 'Editor']), 
+  authorize(['administrador', 'editor']), 
   ServicioAdicionalController.actualizarEstadoContratacion
 );
 
 // Rutas protegidas - Solo admin y organizadores
 router.post('/', 
   authenticate, 
-  authorize(['Administrador', 'Editor']), 
+  authorize(['administrador', 'editor']), 
   ServicioAdicionalController.createServicioAdicional
 );
 
 router.put('/:id', 
   authenticate, 
-  authorize(['Administrador', 'Editor']), 
+  authorize(['administrador', 'editor']), 
   ServicioAdicionalController.updateServicioAdicional
 );
 
 router.delete('/:id', 
   authenticate, 
-  authorize(['Administrador']), 
+  authorize(['administrador']), 
   ServicioAdicionalController.deleteServicioAdicional
 );
 
 // Rutas administrativas
 router.post('/:id/restore', 
   authenticate, 
-  authorize(['Administrador']), 
+  authorize(['administrador']), 
   ServicioAdicionalController.restoreServicioAdicional
 );
 

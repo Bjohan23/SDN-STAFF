@@ -17,31 +17,35 @@ Backend completo para sistema de gestión de staff con **autenticación JWT impl
 ## 🔐 Sistema de Autenticación JWT
 
 ### Características Implementadas:
+
 - **Token Expiration**: 6 horas (como solicitaste)
 - **Refresh Token**: 7 días de duración
-- **Role-based Authorization**: Administrador, Manager, Usuario
+- **Role-based Authorization**: administrador, Manager, Usuario
 - **Middleware Security**: Protección completa de endpoints
 - **Password Hashing**: bcryptjs para seguridad
 
 ### Credenciales de Prueba:
+
 ```javascript
 // Usuario Admin
-correo: "admin@admin.com"
-password: "admin123"
+correo: "admin@admin.com";
+password: "admin123";
 
 // Usuario Regular
-correo: "admin@admin.com" 
-password: "usuario1123"
+correo: "admin@admin.com";
+password: "usuario1123";
 ```
 
 ## 🚀 Inicio Rápido
 
 ### 1. Instalar dependencias (ya completado):
+
 ```bash
 npm install
 ```
 
 ### 2. Iniciar el servidor:
+
 ```bash
 # Puerto 8000 (recomendado)
 npm run dev:8000
@@ -54,6 +58,7 @@ npm run dev:3001
 ```
 
 ### 3. Probar el sistema JWT:
+
 ```bash
 node test-jwt-system.js
 ```
@@ -61,6 +66,7 @@ node test-jwt-system.js
 ## 🌐 Endpoints Principales
 
 ### 🔓 Rutas Públicas (Sin autenticación):
+
 - `GET /` - Información de la API
 - `GET /health` - Health check
 - `GET /api` - Información de endpoints
@@ -72,6 +78,7 @@ node test-jwt-system.js
 ### 🔐 Rutas Protegidas (Requieren JWT):
 
 #### Autenticación:
+
 - `GET /api/auth/me` - Información del usuario actual
 - `GET /api/auth/profile` - Perfil del usuario
 - `POST /api/auth/logout` - Cerrar sesión
@@ -80,6 +87,7 @@ node test-jwt-system.js
 - `POST /api/auth/change-password` - Cambiar contraseña
 
 #### Usuarios (Nuevo Modelo):
+
 - `GET /api/usuarios` - Listar usuarios (Admin/Manager)
 - `POST /api/usuarios` - Crear usuario (Admin)
 - `GET /api/usuarios/:id` - Obtener usuario (Self/Admin)
@@ -89,6 +97,7 @@ node test-jwt-system.js
 - `GET /api/usuarios/stats` - Estadísticas (Admin)
 
 #### Roles:
+
 - `GET /api/roles` - Listar roles (Admin/Manager)
 - `POST /api/roles` - Crear rol (Admin)
 - `GET /api/roles/:id` - Obtener rol (Admin/Manager)
@@ -97,6 +106,7 @@ node test-jwt-system.js
 - `GET /api/roles/stats` - Estadísticas (Admin)
 
 #### Users (Modelo Anterior - Compatibilidad):
+
 - `GET /api/users` - Listar users (Admin/Manager)
 - `POST /api/users` - Crear user (Admin)
 - `GET /api/users/:id` - Obtener user (Self/Admin)
@@ -108,6 +118,7 @@ node test-jwt-system.js
 ## 🔑 Uso del Sistema JWT
 
 ### 1. Login:
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -115,6 +126,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -126,19 +138,21 @@ curl -X POST http://localhost:8000/api/auth/login \
     "user": {
       "id_usuario": 1,
       "correo": "admin@admin.com",
-      "roles": [{"nombre_rol": "Administrador"}]
+      "roles": [{ "nombre_rol": "administrador" }]
     }
   }
 }
 ```
 
 ### 2. Usar el Token:
+
 ```bash
 curl -X GET http://localhost:8000/api/usuarios \
   -H "Authorization: Bearer <ACCESS_TOKEN_AQUÍ>"
 ```
 
 ### 3. Renovar Token:
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/refresh \
   -H "Content-Type: application/json" \
@@ -147,17 +161,20 @@ curl -X POST http://localhost:8000/api/auth/refresh \
 
 ## 📊 Niveles de Autorización
 
-### Administrador:
+### administrador:
+
 - Acceso completo a todos los endpoints
 - Puede crear, leer, actualizar y eliminar cualquier recurso
 - Acceso a estadísticas y reportes
 
 ### Manager:
+
 - Puede ver usuarios y roles
 - Acceso limitado a modificaciones
 - No puede eliminar recursos críticos
 
 ### Usuario:
+
 - Acceso a su propia información
 - Puede actualizar su perfil
 - Acceso limitado de solo lectura
@@ -165,22 +182,26 @@ curl -X POST http://localhost:8000/api/auth/refresh \
 ## 📚 Documentación
 
 ### Swagger UI:
+
 - **URL**: [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
 - **Autenticación**: Incluye soporte para JWT Bearer tokens
 - **Testing**: Puedes probar todos los endpoints directamente
 
 ### Health Check:
+
 - **URL**: [http://localhost:8000/health](http://localhost:8000/health)
 - **Respuesta**: Estado del servidor y enlaces útiles
 
 ## 🧪 Scripts de Prueba
 
 ### Test Completo del Sistema JWT:
+
 ```bash
 node test-jwt-system.js
 ```
 
 ### Test de la API (script existente):
+
 ```bash
 npm run test-api
 ```
@@ -188,27 +209,30 @@ npm run test-api
 ## 🗃️ Base de Datos
 
 ### Tablas Creadas:
+
 - `usuario` - Usuarios del sistema con JWT
 - `rol` - Roles de autorización
 - `usuariorol` - Relación muchos a muchos
 - `users` - Modelo anterior (compatibilidad)
 
 ### Datos de Prueba:
+
 ```sql
 -- Usuarios (modelo nuevo)
-admin / admin123 (Administrador)
+admin / admin123 (administrador)
 usuario1 / usuario1123 (Usuario)
 usuario2 / usuario2123 (Editor + Usuario)
 
 -- Roles
-1. Administrador - Control total del sistema
-2. Editor - Puede editar contenidos y datos  
+1. administrador - Control total del sistema
+2. Editor - Puede editar contenidos y datos
 3. Usuario - Acceso básico limitado
 ```
 
 ## ⚙️ Configuración
 
 ### Variables de Entorno (.env):
+
 ```env
 # Base de datos
 DB_NAME=sdn-staff
@@ -232,12 +256,14 @@ CORS_ORIGIN=http://localhost:5173
 ## 🚨 Seguridad Implementada
 
 ### Middlewares de Protección:
+
 - `authenticate` - Verifica token JWT válido
 - `authorize(roles)` - Autorización por roles específicos
 - `verifySelfOrAdmin` - Solo admin o datos propios
 - `optionalAuth` - Autenticación opcional
 
 ### Características de Seguridad:
+
 - Passwords hasheados con bcryptjs
 - Tokens JWT con expiración
 - Validación de roles granular
@@ -247,11 +273,13 @@ CORS_ORIGIN=http://localhost:5173
 ## 🌍 URLs de Acceso
 
 ### Desarrollo:
+
 - **API Base**: http://localhost:8000/api
 - **Swagger**: http://localhost:8000/api-docs
 - **Health**: http://localhost:8000/health
 
 ### Comandos npm:
+
 ```bash
 npm run dev:8000    # Puerto 8000 (recomendado)
 npm run dev:3001    # Puerto 3001
@@ -262,6 +290,7 @@ npm start           # Producción
 ## 🔧 Troubleshooting
 
 ### Error de Puerto Ocupado:
+
 ```bash
 # Windows
 netstat -ano | findstr :8000
@@ -272,11 +301,13 @@ npm run dev:3001
 ```
 
 ### Error de Base de Datos:
+
 1. Verificar que MySQL esté corriendo en puerto 3307
 2. Verificar credenciales en `.env`
 3. Ejecutar migraciones: `npm run db:migrate`
 
 ### Error de Token:
+
 - Verificar que el header sea: `Authorization: Bearer <token>`
 - Verificar que el token no haya expirado
 - Usar `/api/auth/refresh` para renovar
@@ -301,10 +332,12 @@ npm run dev:3001
 Tu backend SDN-STAFF está **100% completado** con autenticación JWT funcional.
 
 **Para empezar:**
+
 1. `npm run dev:8000`
 2. Visita: http://localhost:8000/api-docs
 3. Haz login con: admin/admin123
 4. ¡Disfruta tu API segura!
 
 ---
+
 **Desarrollado con ❤️ para SDN-STAFF**
