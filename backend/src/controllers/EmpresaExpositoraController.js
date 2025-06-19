@@ -35,14 +35,14 @@ class EmpresaExpositoraController {
         }
       }
 
-      // Validar sitio web si se proporciona
-      if (empresaData.sitio_web && empresaData.sitio_web.trim() !== '') {
-        try {
-          new URL(empresaData.sitio_web);
-        } catch {
-          return ApiResponse.validation(res, [{ field: 'sitio_web', message: 'El sitio web debe ser una URL válida' }]);
-        }
-      }
+      // // Validar sitio web si se proporciona
+      // if (empresaData.sitio_web && empresaData.sitio_web.trim() !== '') {
+      //   try {
+      //     new URL(empresaData.sitio_web);
+      //   } catch {
+      //     return ApiResponse.validation(res, [{ field: 'sitio_web', message: 'El sitio web debe ser una URL válida' }]);
+      //   }
+      // }
 
       // Validar tamaño de empresa
       if (empresaData.tamaño_empresa) {

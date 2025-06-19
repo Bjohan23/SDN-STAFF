@@ -9,13 +9,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     { path: '/profile', name: 'Perfil', icon: '👤', roles: ['user', 'administrador'] },
     { path: '/admin/roles', name: 'Gestión de Roles', icon: '🔑', roles: ['administrador'] },
     { path: '/admin/crear-evento', name: 'Crear Evento', icon: '📅', roles: ['administrador', 'manager'] },
-  ]
+  ];
+  const empresaMenu = [
+    { path: '/empresas', name: 'Empresas', icon: '🏢' },
+  ];
 
   return (
     <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
       md:translate-x-0 fixed md:static inset-y-0 left-0 w-64 bg-indigo-700 
       text-white transition-transform duration-300 ease-in-out z-50`}>
-      
       <div className="p-4 flex items-center justify-between border-b border-indigo-600">
         <h1 className="text-xl font-bold">SDN Staff</h1>
         <button 
@@ -25,13 +27,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           ✕
         </button>
       </div>
-      
       <div className="p-4">
         <div className="mb-6">
           <p className="text-indigo-200">Bienvenido,</p>
           <p className="font-semibold truncate">{user?.correo || 'Usuario'}</p>
         </div>
-        
         <nav>
           <ul className="space-y-2">
             {navItems.map((item) => (
@@ -51,6 +51,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               )
             ))}
           </ul>
+          {/* Grupo de menú de Empresas Expositoras */}
+          {(hasRole('administrador') || hasRole('manager')) && (
+            <div className="mt-8">
+              <p className="uppercase text-xs text-indigo-200 font-semibold mb-2 tracking-wider">Empresas Expositoras</p>
+              <ul className="space-y-1">
+                {empresaMenu.map((item) => (
+                  <li key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `flex items-center p-2 rounded-md transition-colors text-sm ${isActive ? 'bg-indigo-800 font-bold' : 'hover:bg-indigo-600'}`
+                      }
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <span className="mr-2">{item.icon}</span>
+                      {item.name}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </nav>
       </div>
       
