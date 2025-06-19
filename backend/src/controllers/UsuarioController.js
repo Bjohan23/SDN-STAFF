@@ -162,21 +162,21 @@ class UsuarioController {
   /**
    * Eliminar usuario
    */
-  // static async deleteUsuario(req, res, next) {
-  //   try {
-  //     const { id } = req.params;
-  //     if (!ValidationUtils.isValidId(id)) {
-  //       return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
-  //     }
-  //     const result = await UsuarioService.deleteUsuario(id);
-  //     return ApiResponse.success(res, null, result.message);
-  //   } catch (error) {
-  //     if (error.message === 'Usuario no encontrado') {
-  //       return ApiResponse.notFound(res, error.message);
-  //     }
-  //     next(error);
-  //   }
-  // }
+  static async deleteUsuario(req, res, next) {
+    try {
+      const { id } = req.params;
+      if (!ValidationUtils.isValidId(id)) {
+        return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
+      }
+      const result = await UsuarioService.deleteUsuario(id);
+      return ApiResponse.success(res, null, result.message);
+    } catch (error) {
+      if (error.message === 'Usuario no encontrado') {
+        return ApiResponse.notFound(res, error.message);
+      }
+      next(error);
+    }
+  }
 
   /**
    * Cambiar estado de usuario

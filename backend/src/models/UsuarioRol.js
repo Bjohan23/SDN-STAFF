@@ -43,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
-    // Campos de auditoría
-    created_by_usuario: {
+    // ✅ Campos de auditoría consistentes (sin _usuario)
+    created_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-    updated_by_usuario: {
+    updated_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -64,11 +64,27 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-
+    deleted_by: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+    // ✅ Agregamos deleted_at que faltaba
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   }, {
     tableName: 'usuariorol',
-    timestamps: true,
-    underscored: true,
+    timestamps: true, // ✅ Usar timestamps automáticos
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    underscored: false, // ✅ Consistencia con otros modelos
     indexes: [
       {
         fields: ['id_usuario']
@@ -78,36 +94,25 @@ module.exports = (sequelize, DataTypes) => {
       },
       {
         fields: ['fecha_asignacion']
+      },
+      {
+        fields: ['created_by']
+      },
+      {
+        fields: ['deleted_at']
       }
     ],
     scopes: {
-      // Scope para obtener solo registros no eliminados
+      // ✅ Scopes sin dependencias circulares
       active: {
         where: {
           deleted_at: null
         }
       },
-      // Scope para obtener registros eliminados
       deleted: {
         where: {
           deleted_at: { [Op.ne]: null }
         }
-      },
-      // Scope con información de auditoría
-      withAuditInfo: {
-        include: [
-          {
-            model: require('./index').Usuario,
-            as: 'createdByUser',
-            attributes: ['id_usuario', 'correo']
-          },
-          {
-            model: require('./index').Usuario,
-            as: 'updatedByUser',
-            attributes: ['id_usuario', 'correo']
-          },
-
-        ]
       }
     }
   });
@@ -125,19 +130,21 @@ module.exports = (sequelize, DataTypes) => {
     return this.deleted_at !== null;
   };
 
-  UsuarioRol.prototype.softDelete = function() {
+  UsuarioRol.prototype.softDelete = function(deletedBy = null) {
     return this.update({
-      deleted_at: new Date()
+      deleted_at: new Date(),
+      deleted_by: deletedBy
     });
   };
 
   UsuarioRol.prototype.restore = function() {
     return this.update({
-      deleted_at: null
+      deleted_at: null,
+      deleted_by: null
     });
   };
 
-  // Asociaciones
+  // ✅ Asociaciones consistentes
   UsuarioRol.associate = function(models) {
     // Relación con Usuario
     UsuarioRol.belongsTo(models.Usuario, {
@@ -151,18 +158,21 @@ module.exports = (sequelize, DataTypes) => {
       as: 'rol'
     });
 
-    // Asociaciones de auditoría
+    // ✅ Asociaciones de auditoría con nombres consistentes
     UsuarioRol.belongsTo(models.Usuario, {
-      foreignKey: 'created_by_usuario',
+      foreignKey: 'created_by',
       as: 'createdByUser'
     });
 
     UsuarioRol.belongsTo(models.Usuario, {
-      foreignKey: 'updated_by_usuario',
+      foreignKey: 'updated_by',
       as: 'updatedByUser'
     });
 
-
+    UsuarioRol.belongsTo(models.Usuario, {
+      foreignKey: 'deleted_by',
+      as: 'deletedByUser'
+    });
   };
 
   return UsuarioRol;

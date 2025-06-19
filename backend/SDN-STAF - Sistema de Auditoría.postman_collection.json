@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "b7b970e2-d3f4-4515-a529-9b4c41def328",
+		"_postman_id": "e4bb116b-0e07-465f-837a-7f3b47c9e46f",
 		"name": "SDN-STAF - Sistema de Auditoría",
 		"description": "Colección actualizada con funcionalidades de auditoría y gestión de roles",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "37068501",
-		"_collection_link": "https://martian-shadow-16460.postman.co/workspace/My-Workspace~0cf008d4-b014-4f79-8183-9e14ade1c76a/collection/37068501-b7b970e2-d3f4-4515-a529-9b4c41def328?action=share&source=collection_link&creator=37068501"
+		"_exporter_id": "46019058",
+		"_collection_link": "https://johan-622186.postman.co/workspace/johan-'s-Workspace~ab1bb43a-d09a-4471-86df-57a5c1731724/collection/46019058-e4bb116b-0e07-465f-837a-7f3b47c9e46f?action=share&source=collection_link&creator=46019058"
 	},
 	"item": [
 		{
@@ -58,7 +58,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{   \r\n    \"correo\":\"nuevo@correo.com\",\r\n    \"password\":\"josafat\"\r\n}"
+							"raw": "{   \r\n    \"correo\":\"admin@example.com\",\r\n    \"password\":\"admin123\"\r\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -72,375 +72,301 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/verify",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"currentPassword\": \"josafat\",\r\n    \"newPassword\": \"contraseña_segura\",\r\n    \"confirmPassword\": \"contraseña_segura\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/change-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/token-info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"token-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Public Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/public",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"public"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"nuevo@correo.com\",\r\n    \"password\": \"josafat\",\r\n    \"estado\": \"activo\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"usuario@example.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"usuario@example.com\",\r\n    \"code\": \"123456\",\r\n    \"newPassword\": \"nueva_contraseña\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "👥 Gestión de Roles",
+			"name": "👥 Usuarios",
 			"item": [
 				{
-					"name": "📋 Obtener todos los roles",
+					"name": "Listar Usuarios",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/roles?include_usuarios=true&include_audit=true",
+							"raw": "{{base_url}}/usuarios?page=1&limit=10",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"roles"
-							],
-							"query": [
-								{
-									"key": "include_usuarios",
-									"value": "true"
-								},
-								{
-									"key": "include_audit",
-									"value": "true"
-								},
-								{
-									"key": "include_deleted",
-									"value": "false",
-									"description": "Incluir roles eliminados",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "🔍 Obtener rol por ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/roles/1?include_usuarios=true&include_audit=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1"
-							],
-							"query": [
-								{
-									"key": "include_usuarios",
-									"value": "true"
-								},
-								{
-									"key": "include_audit",
-									"value": "true"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "➕ Crear nuevo rol",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"try {",
-									"    var jsonData = pm.response.json();",
-									"    if (jsonData.success && jsonData.data) {",
-									"        pm.environment.set(\"newRolId\", jsonData.data.id_rol);",
-									"        console.log(\"Nuevo rol creado con ID:\", jsonData.data.id_rol);",
-									"    }",
-									"} catch (error) {",
-									"    console.error(\"Error:\", error);",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"nombre_rol\":\"Tester\",\r\n    \"descripcion\":\"Rol de prueba con auditoría completa\"\r\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/roles",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "✏️ Actualizar rol",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{    \r\n    \"descripcion\":\"Descripción actualizada con auditoría\"\r\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/roles/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "🗑️ Eliminar rol (lógico)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/roles/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "♻️ Restaurar rol eliminado",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/roles/{{newRolId}}/restore",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"{{newRolId}}",
-								"restore"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "👤 Gestión de Usuarios-Roles",
-			"item": [
-				{
-					"name": "➕ Asignar rol a usuario",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"usuario_id\": 1\r\n}\r\n"
-						},
-						"url": {
-							"raw": "{{base_url}}/roles/1/asignar",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1",
-								"asignar"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "🚀 Asignar múltiples roles a usuario",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"roles_ids\": [1, 2, 3]\r\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/roles/usuarios/3/asignar-multiples",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"usuarios",
-								"3",
-								"asignar-multiples"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "➖ Remover rol de usuario",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\\n    \\\"usuario_id\\\": 1\\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/roles/1/remover",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1",
-								"remover"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "👤 Obtener roles de usuario",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/roles/usuarios/1/roles?include_deleted=false",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"usuarios",
-								"1",
-								"roles"
-							],
-							"query": [
-								{
-									"key": "include_deleted",
-									"value": "false"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "📊 Obtener usuarios de un rol",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/roles/1/usuarios?page=1&limit=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"roles",
-								"1",
 								"usuarios"
 							],
 							"query": [
@@ -456,20 +382,325 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "📈 Reportes y Estadísticas",
-			"item": [
+				},
 				{
-					"name": "📊 Estadísticas de roles",
+					"name": "Obtener Usuario por ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por Correo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/correo/{{userEmail}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"correo",
+								"{{userEmail}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"nuevo_usuario@example.com\",\r\n    \"password\": \"contraseña_segura\",\r\n    \"estado\": \"activo\",\r\n    \"roles\": [\"visitante\"]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"correo\": \"usuario_actualizado@example.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado de Usuario",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"inactivo\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"estado"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Roles a Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles\": [\"administrador\"]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Rol de Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{userId}}/rol?rol=administrador",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"rol"
+							],
+							"query": [
+								{
+									"key": "rol",
+									"value": "administrador"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Perfil del Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🛡️ Roles",
+			"item": [
+				{
+					"name": "Listar Todos los Roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
 							}
 						],
 						"url": {
@@ -486,13 +717,14 @@
 					"response": []
 				},
 				{
-					"name": "🔍 Roles sin usuarios",
+					"name": "Obtener Roles Sin Usuarios",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
 							}
 						],
 						"url": {
@@ -509,13 +741,14 @@
 					"response": []
 				},
 				{
-					"name": "🗑️ Roles eliminados",
+					"name": "Obtener Roles Eliminados",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
 							}
 						],
 						"url": {
@@ -530,56 +763,3048 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "🧪 Tests de Auditoría",
-			"item": [
+				},
 				{
-					"name": "🔄 Test completo de auditoría",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Verificar estructura de auditoría\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    if (jsonData.success && jsonData.data) {",
-									"        // Verificar campos de auditoría",
-									"        pm.expect(jsonData.data).to.have.property('created_at');",
-									"        pm.expect(jsonData.data).to.have.property('updated_at');",
-									"        pm.expect(jsonData.data).to.have.property('created_by');",
-									"        console.log('✅ Campos de auditoría presentes');",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
+					"name": "Restaurar Rol Eliminado",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/roles/1?include_audit=true",
+							"raw": "{{base_url}}/roles/{{roleId}}/restore",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"roles",
-								"1"
+								"{{roleId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Rol por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Rol por Nombre",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/nombre/administrador",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"nombre",
+								"administrador"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Rol",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_rol\": \"nuevo_rol\",\r\n    \"descripcion\": \"Descripción del nuevo rol\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Rol",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_rol\": \"nombre_actualizado\",\r\n    \"descripcion\": \"Descripción actualizada\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Rol",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Rol a Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usuario_id\": \"{{userId}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}/asignar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}",
+								"asignar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remover Rol de Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usuario_id\": \"{{userId}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}/remover",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}",
+								"remover"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Múltiples Roles a Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles_ids\": [\"{{roleId1}}\", \"{{roleId2}}\"]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/usuarios/{{userId}}/asignar-multiples",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"usuarios",
+								"{{userId}}",
+								"asignar-multiples"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Roles de un Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/usuarios/{{userId}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"usuarios",
+								"{{userId}}",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuarios por Rol",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/roles/{{roleId}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"{{roleId}}",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📅 Eventos",
+			"item": [
+				{
+					"name": "Obtener Evento por URL Amigable (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/eventos/public/url/ejemplo-evento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"public",
+								"url",
+								"ejemplo-evento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Disponibilidad de URL Amigable",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/check-url/ejemplo-evento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"check-url",
+								"ejemplo-evento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos los Eventos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos"
 							],
 							"query": [
 								{
-									"key": "include_audit",
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Eventos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Eventos Próximos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/proximos?limit=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"proximos"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Eventos Activos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/activos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"activos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vista Previa del Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}/preview",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}",
+								"preview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicar Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_evento\": \"Evento Duplicado\",\r\n    \"url_amigable\": \"evento-duplicado\",\r\n    \"fecha_inicio\": \"2025-01-01T09:00:00Z\",\r\n    \"fecha_fin\": \"2025-01-02T18:00:00Z\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}/duplicate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}",
+								"duplicate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Evento Eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Evento por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_evento\": \"Evento de Ejemplo\",\r\n    \"descripcion\": \"Este es un evento de ejemplo\",\r\n    \"fecha_inicio\": \"2025-01-01T09:00:00Z\",\r\n    \"fecha_fin\": \"2025-01-02T18:00:00Z\",\r\n    \"ubicacion\": \"Centro de Convenciones\",\r\n    \"id_tipo_evento\": \"1\",\r\n    \"url_virtual\": \"https://example.com/evento\",\r\n     \"capacidad_maxima\": 500,\r\n    \"precio_entrada\": 20.5\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Evento",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_evento\": \"Evento Actualizado\",\r\n    \"descripcion\": \"Descripción actualizada\",\r\n    \"fecha_inicio\": \"2025-01-05T09:00:00Z\",\r\n    \"fecha_fin\": \"2025-01-06T18:00:00Z\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado del Evento",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"activo\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}",
+								"estado"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Evento",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/eventos/{{eventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventos",
+								"{{eventoId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📁 Tipos de Evento",
+			"item": [
+				{
+					"name": "Listar Todos los Tipos de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Tipos de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos Sin Eventos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/sin-eventos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"sin-eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos Eliminados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/eliminados",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"eliminados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Tipo Eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/{{tipoEventoId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"{{tipoEventoId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipo de Evento por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/{{tipoEventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"{{tipoEventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipo de Evento por Nombre",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/nombre/presencial",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"nombre",
+								"presencial"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Eventos por Tipo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/{{tipoEventoId}}/eventos?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"{{tipoEventoId}}",
+								"eventos"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Tipo de Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_tipo\": \"presencial\",\r\n    \"descripcion\": \"Evento presencial en sitio\",\r\n    \"configuracion_especifica\": {\"sala\": \"A1\", \"aforo\": 200}\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tiposEvento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Tipo de Evento",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_tipo\": \"virtual\",\r\n    \"descripcion\": \"Evento virtual online\",\r\n    \"configuracion_especifica\": {\"plataforma\": \"Zoom\", \"enlace\": \"zoom.example.com/meeting\"}\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/{{tipoEventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"{{tipoEventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Tipo de Evento",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposEvento/{{tipoEventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposEvento",
+								"{{tipoEventoId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏢 Empresas Expositoras",
+			"item": [
+				{
+					"name": "Registro Público de Empresa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_empresa\": \"Empresa Ejemplo\",\r\n    \"razon_social\": \"Empresa S.A.C.\",\r\n    \"email_contacto\": \"contacto@empresa.com\",\r\n    \"ruc\": \"12345678901\",\r\n    \"sector\": \"Tecnología\",\r\n    \"descripcion\": \"Empresa de tecnología especializada en software\",\r\n    \"sitio_web\": \"https://empresa.com\",\r\n     \"tamaño_empresa\": \"mediana\",\r\n    \"direccion\": \"Av. Principal 123\",\r\n    \"ciudad\": \"Lima\",\r\n    \"pais\": \"Perú\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/registro-publico",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"registro-publico"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Disponibilidad de RUC",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/check-ruc/12345678901",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"check-ruc",
+								"12345678901"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todas las Empresas Expositoras",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Empresas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empresas Pendientes de Aprobación",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/pendientes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"pendientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empresas con Documentos Próximos a Vencer",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/documentos-vencer?dias=30",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"documentos-vencer"
+							],
+							"query": [
+								{
+									"key": "dias",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Carga Masiva desde CSV",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": [\r\n        {\r\n            \"nombre_empresa\": \"Empresa 1\",\r\n            \"email_contacto\": \"contacto1@empresa.com\",\r\n            \"ruc\": \"12345678901\",\r\n            \"sector\": \"Tecnología\",\r\n            \"descripcion\": \"Empresa de desarrollo de software\",\r\n            \"sitio_web\": \"https://empresa1.com\",\r\n             \"tamaño_empresa\": \"mediana\",\r\n            \"direccion\": \"Av. Principal 123\",\r\n            \"ciudad\": \"Lima\",\r\n            \"pais\": \"Perú\"\r\n        },\r\n        {\r\n            \"nombre_empresa\": \"Empresa 2\",\r\n            \"email_contacto\": \"contacto2@empresa.com\",\r\n            \"ruc\": \"12345678902\",\r\n            \"sector\": \"Salud\",\r\n            \"descripcion\": \"Proveedor de servicios médicos\",\r\n            \"sitio_web\": \"https://empresa2.com\",\r\n             \"tamaño_empresa\": \"grande\",\r\n            \"direccion\": \"Jr. Secundaria 456\",\r\n            \"ciudad\": \"Arequipa\",\r\n            \"pais\": \"Perú\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/carga-masiva",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"carga-masiva"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Aprobar Empresa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comentarios\": \"Empresa aprobada por cumplir todos los requisitos\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/aprobar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"aprobar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rechazar Empresa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"motivo\": \"Documentación incompleta o incorrecta\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/rechazar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"rechazar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Suspender Empresa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"motivo\": \"Incumplimiento de normativas\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/suspender",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"suspender"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Empresa en Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"evento_id\": \"1\",\r\n    \"email_contacto_evento\": \"contacto-evento@empresa.com\",\r\n    \"notas\": \"Solicita espacio para 10 expositores\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/eventos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Participación en Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/eventos/{{eventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"eventos",
+								"{{eventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Empresa Eliminada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empresa por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empresa por RUC",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/ruc/12345678901",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"ruc",
+								"12345678901"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empresa por Email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/email/contacto@empresa.com",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"email",
+								"contacto@empresa.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nueva Empresa (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_empresa\": \"Empresa Admin\",\r\n    \"razon_social\": \"Empresa Admin S.A.C.\",\r\n    \"email_contacto\": \"admin@empresa.com\",\r\n    \"ruc\": \"12345678902\",\r\n    \"sector\": \"Finanzas\",\r\n    \"descripcion\": \"Empresa administrativa\",\r\n    \"sitio_web\": \"https://empresaadmin.com\",\r\n     \"tamaño_empresa\": \"grande\",\r\n    \"direccion\": \"Av. Principal 456\",\r\n    \"ciudad\": \"Lima\",\r\n    \"pais\": \"Perú\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Empresa",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_empresa\": \"Empresa Actualizada\",\r\n    \"descripcion\": \"Descripción actualizada de la empresa\",\r\n    \"email_contacto\": \"contacto_actualizado@empresa.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Empresa",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/empresasExpositoras/{{empresaId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"empresasExpositoras",
+								"{{empresaId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📐 Tipos de Stand",
+			"item": [
+				{
+					"name": "Listar Todos los Tipos de Stand (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Tipos de Stand (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos Sin Stands (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/sin-stands",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"sin-stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos Compatibles para un Área Específica",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/para-area?area=10.5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"para-area"
+							],
+							"query": [
+								{
+									"key": "area",
+									"value": "10.5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipo de Stand por ID (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipo de Stand por Nombre (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/nombre/ejemplo-stand",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"nombre",
+								"ejemplo-stand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Stands por Tipo (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}/stands?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}",
+								"stands"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Área para Tipo de Stand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}/validar-area?area=10.5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}",
+								"validar-area"
+							],
+							"query": [
+								{
+									"key": "area",
+									"value": "10.5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calcular Precio para Área Específica",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}/calcular-precio?area=10.5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}",
+								"calcular-precio"
+							],
+							"query": [
+								{
+									"key": "area",
+									"value": "10.5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Tipo de Stand",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_tipo\": \"Económico\",\r\n    \"descripcion\": \"Stand económico para pequeñas empresas\",\r\n    \"area_minima\": 5,\r\n    \"area_maxima\": 20,\r\n    \"precio_base\": 100\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tiposStand",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Tipo de Stand",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_tipo\": \"Premium\",\r\n    \"descripcion\": \"Stand premium para grandes empresas\",\r\n    \"area_minima\": 30,\r\n    \"area_maxima\": 100,\r\n    \"precio_base\": 500\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Tipo de Stand",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos Eliminados (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/admin/eliminados",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"admin",
+								"eliminados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Tipo de Stand Eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tiposStand/{{tipoStandId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tiposStand",
+								"{{tipoStandId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🧱 Stands",
+			"item": [
+				{
+					"name": "Listar Todos los Stands (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Stands (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Stands en Mantenimiento (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/mantenimiento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"mantenimiento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Stand por ID (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Stand por Número (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/numero/ejemplo-stand",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"numero",
+								"ejemplo-stand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Disponibilidad de Número de Stand (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/numero/ejemplo-stand/disponible",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"numero",
+								"ejemplo-stand",
+								"disponible"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Stands Disponibles para Evento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/evento/{{eventoId}}/disponibles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"evento",
+								"{{eventoId}}",
+								"disponibles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Asignación de Stand en Evento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}/evento/{{eventoId}}/asignacion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}",
+								"evento",
+								"{{eventoId}}",
+								"asignacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Stand",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_stand\": \"Stand Principal\",\r\n    \"numero_stand\": \"STND-001\",\r\n    \"id_tipo_stand\": \"1\",\r\n    \"area\": 25,\r\n    \"ubicacion\": \"Pabellón A\",\r\n    \"estado_fisico\": \"disponible\",\r\n    \"precio_personalizado\": 500\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stands",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Stand",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_stand\": \"Stand Actualizado\",\r\n    \"numero_stand\": \"STND-001-UPD\",\r\n    \"estado_fisico\": \"ocupado\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Stand",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado Físico del Stand",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado_fisico\": \"mantenimiento\",\r\n    \"observaciones\": \"Requiere mantenimiento preventivo\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}/estado-fisico",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}",
+								"estado-fisico"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Stand a un Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_evento\": \"1\",\r\n    \"configuracion\": {\r\n        \"precio_evento\": 600,\r\n        \"descuento_porcentaje\": 10\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}/asignar-evento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}",
+								"asignar-evento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Carga Masiva desde CSV",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": [\r\n        {\r\n            \"nombre_stand\": \"Stand 1\",\r\n            \"numero_stand\": \"STND-001\",\r\n            \"id_tipo_stand\": \"1\",\r\n            \"area\": 20,\r\n            \"ubicacion\": \"Zona A\",\r\n            \"estado_fisico\": \"disponible\"\r\n        },\r\n        {\r\n            \"nombre_stand\": \"Stand 2\",\r\n            \"numero_stand\": \"STND-002\",\r\n            \"id_tipo_stand\": \"2\",\r\n            \"area\": 30,\r\n            \"ubicacion\": \"Zona B\",\r\n            \"estado_fisico\": \"fuera_de_servicio\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stands/carga-masiva",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"carga-masiva"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Stand Eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/stands/{{standId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stands",
+								"{{standId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🔧 Servicios Adicionales",
+			"item": [
+				{
+					"name": "Listar Todos los Servicios (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales?search=&categoria=&estado=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "categoria",
+									"value": ""
+								},
+								{
+									"key": "estado",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Servicios (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Servicios Populares (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/populares?limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"populares"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Servicios por Categoría (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/categoria/electricidad",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"categoria",
+								"electricidad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Servicios Compatibles con Tipo de Stand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/compatibles/presencial",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"compatibles",
+								"presencial"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Servicio por ID (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calcular Precio del Servicio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}/calcular-precio?cantidad=2&area=10&dias=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}",
+								"calcular-precio"
+							],
+							"query": [
+								{
+									"key": "cantidad",
+									"value": "2"
+								},
+								{
+									"key": "area",
+									"value": "10"
+								},
+								{
+									"key": "dias",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Contratación de Servicio",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/contratacion/{{contratacionId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"contratacion",
+								"{{contratacionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Servicios Contratados para Stand en Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/stand/{{standId}}/evento/{{eventoId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"stand",
+								"{{standId}}",
+								"evento",
+								"{{eventoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Contratar Servicio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_stand\": \"1\",\r\n    \"id_evento\": \"1\",\r\n    \"id_empresa\": \"1\",\r\n    \"cantidad\": 2,\r\n    \"especificaciones_adicionales\": \"2 sillas adicionales\",\r\n    \"fecha_instalacion_programada\": \"2025-01-01T10:00:00Z\",\r\n    \"es_urgente\": false\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}/contratar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}",
+								"contratar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Estado de Contratación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado_servicio\": \"confirmado\",\r\n    \"observaciones\": \"Pago confirmado\",\r\n    \"fecha_instalacion_real\": \"2025-01-01T11:00:00Z\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/contratacion/{{contratacionId}}/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"contratacion",
+								"{{contratacionId}}",
+								"estado"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Nuevo Servicio Adicional",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_servicio\": \"Mobiliario Básico\",\r\n    \"descripcion\": \"Sillas y mesas básicas\",\r\n    \"categoria\": \"mobiliario\",\r\n    \"tipo_precio\": \"fijo\",\r\n    \"precio\": 50.0,\r\n    \"cantidad_minima\": 1,\r\n    \"cantidad_maxima\": 10,\r\n    \"tiempo_instalacion_horas\": 1,\r\n    \"proveedor_externo\": \"Suministros S.A.C.\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Servicio Adicional",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_servicio\": \"Mobiliario Premium\",\r\n    \"descripcion\": \"Muebles de lujo\",\r\n    \"categoria\": \"mobiliario\",\r\n    \"tipo_precio\": \"por_unidad\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Servicio Adicional",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Servicio Eliminado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/serviciosAdicionales/{{servicioId}}/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"serviciosAdicionales",
+								"{{servicioId}}",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🧩 Clasificación Tipos de Evento",
+			"item": [
+				{
+					"name": "Obtener Configuraciones por Modalidad",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/modalidad/presencial?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"modalidad",
+								"presencial"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Configuraciones por Tipo de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Información Completa del Tipo de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/completo?include_validaciones=true&include_plantillas=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"completo"
+							],
+							"query": [
+								{
+									"key": "include_validaciones",
+									"value": "true"
+								},
+								{
+									"key": "include_plantillas",
 									"value": "true"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Configuración de Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"modalidad\": \"presencial\",\r\n    \"capacidad_maxima\": 500,\r\n    \"precio_entrada\": 20.5\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/validar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"validar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Configuraciones por Tipo de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/configuraciones?include_validaciones=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"configuraciones"
+							],
+							"query": [
+								{
+									"key": "include_validaciones",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Configuración Específica por Modalidad",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/configuraciones/virtual?include_validaciones=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"configuraciones",
+								"virtual"
+							],
+							"query": [
+								{
+									"key": "include_validaciones",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Configuración Completa para un Tipo de Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"modalidad\": \"hibrido\",\r\n    \"descripcion\": \"Configuración híbrida para conferencias\",\r\n    \"capacidad_minima\": 50,\r\n    \"capacidad_maxima\": 500,\r\n    \"precio_base_entrada\": 30.5,\r\n    \"configuracion_especifica\": {\r\n        \"plataforma_virtual\": \"Zoom\",\r\n        \"requiere_registro_presencial\": true\r\n    },\r\n    \"requisitos\": [\r\n        \"Cuenta de Zoom empresarial\",\r\n        \"Equipo de streaming\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/configuraciones",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"configuraciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicar Configuración Existente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nueva_modalidad\": \"virtual\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/configuraciones/{{configuracionId}}/duplicar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"configuraciones",
+								"{{configuracionId}}",
+								"duplicar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Configuración Específica",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"capacidad_maxima\": 600,\r\n    \"precio_base_entrada\": 35.0\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/configuraciones/{{configuracionId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"configuraciones",
+								"{{configuracionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Configuración Específica",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/configuraciones/{{configuracionId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"configuraciones",
+								"{{configuracionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Plantillas Disponibles para un Tipo de Evento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/tipos/{{tipoEventoId}}/plantillas?modalidad=presencial&nivel_complejidad=intermedio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"tipos",
+								"{{tipoEventoId}}",
+								"plantillas"
+							],
+							"query": [
+								{
+									"key": "modalidad",
+									"value": "presencial"
+								},
+								{
+									"key": "nivel_complejidad",
+									"value": "intermedio"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Aplicar Plantilla a Nuevo Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre_evento\": \"Evento Aplicado desde Plantilla\",\r\n    \"descripcion\": \"Este evento fue creado aplicando una plantilla predefinida\",\r\n    \"fecha_inicio\": \"2025-01-01T09:00:00Z\",\r\n    \"fecha_fin\": \"2025-01-02T18:00:00Z\",\r\n    \"capacidad_maxima\": 400,\r\n    \"precio_entrada\": 25.5\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clasificacionTiposEvento/plantillas/{{plantillaId}}/aplicar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clasificacionTiposEvento",
+								"plantillas",
+								"{{plantillaId}}",
+								"aplicar"
 							]
 						}
 					},
@@ -596,6 +3821,26 @@
 		},
 		{
 			"key": "newRolId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userEmail",
 			"value": "",
 			"type": "string"
 		}

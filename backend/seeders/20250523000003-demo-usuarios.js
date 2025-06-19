@@ -14,7 +14,7 @@ module.exports = {
     await queryInterface.bulkInsert('usuario', [
       {
         id_usuario: 1,
-        correo: 'admin@admin.com',
+        correo: 'admin@sdn.com',
         password_hash: adminHash,
         estado: 'activo',
         fecha_creacion: new Date(),
@@ -22,7 +22,7 @@ module.exports = {
       },
       {
         id_usuario: 2,
-        correo: 'admin@admin.com',
+        correo: 'editor@sdn.com',
         password_hash: user1Hash,
         estado: 'activo',
         fecha_creacion: new Date(),
@@ -30,7 +30,7 @@ module.exports = {
       },
       {
         id_usuario: 3,
-        correo: 'admin@admin.com',
+        correo: 'usuario@sdn.com',
         password_hash: user2Hash,
         estado: 'activo',
         fecha_creacion: new Date(),

@@ -435,6 +435,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'participaciones'
     });
 
+    // Relación con StandServicio (servicios contratados por la empresa)
+    EmpresaExpositora.hasMany(models.StandServicio, {
+      foreignKey: 'id_empresa',
+      as: 'serviciosContratados'
+    });
+
     // Asociaciones de auditoría
     EmpresaExpositora.belongsTo(models.Usuario, {
       foreignKey: 'created_by',
