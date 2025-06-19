@@ -113,6 +113,7 @@ const initializeApp = async () => {
     console.log('✅ Conexión a la base de datos establecida correctamente.');
     
     // Sincronizar modelos (solo en desarrollo)
+
     if (process.env.NODE_ENV === 'development') {
       try {
         // Primero, actualizar registros NULL para evitar conflictos
