@@ -40,6 +40,18 @@ class EmpresaExpositoraService {
         }
       }
 
+      // Validar campos numéricos si se proporcionan
+      if (empresaData.numero_participaciones !== undefined && empresaData.numero_participaciones < 0) {
+        throw new Error('El número de participaciones no puede ser negativo');
+      }
+
+      if (empresaData.calificacion_promedio !== undefined) {
+        const calificacion = parseFloat(empresaData.calificacion_promedio);
+        if (calificacion < 0 || calificacion > 5) {
+          throw new Error('La calificación debe estar entre 0 y 5');
+        }
+      }
+
       const dataToCreate = {
         nombre_empresa: empresaData.nombre_empresa,
         razon_social: empresaData.razon_social || null,
@@ -62,7 +74,10 @@ class EmpresaExpositoraService {
         redes_sociales: empresaData.redes_sociales || null,
         productos_servicios: empresaData.productos_servicios || null,
         experiencia_ferias: empresaData.experiencia_ferias || null,
-        configuracion_especifica: empresaData.configuracion_especifica || null
+        configuracion_especifica: empresaData.configuracion_especifica || null,
+        // Campos numéricos con valores por defecto explícitos
+        numero_participaciones: empresaData.numero_participaciones || 0,
+        calificacion_promedio: empresaData.calificacion_promedio || null
       };
       
       const empresa = await AuditService.createWithAudit(EmpresaExpositora, dataToCreate, userId);
@@ -263,6 +278,18 @@ class EmpresaExpositoraService {
         const existingRuc = await this.getEmpresaByRuc(updateData.ruc);
         if (existingRuc && existingRuc.id_empresa !== id) {
           throw new Error('El RUC ya está registrado');
+        }
+      }
+
+      // Validar campos numéricos si se están actualizando
+      if (updateData.numero_participaciones !== undefined && updateData.numero_participaciones < 0) {
+        throw new Error('El número de participaciones no puede ser negativo');
+      }
+
+      if (updateData.calificacion_promedio !== undefined) {
+        const calificacion = parseFloat(updateData.calificacion_promedio);
+        if (calificacion < 0 || calificacion > 5) {
+          throw new Error('La calificación debe estar entre 0 y 5');
         }
       }
 

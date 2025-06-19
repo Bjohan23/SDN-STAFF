@@ -239,12 +239,7 @@ module.exports = (sequelize, DataTypes) => {
     numero_participaciones: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      validate: {
-        min: {
-          args: 0,
-          msg: 'El número de participaciones no puede ser negativo'
-        }
-      }
+      allowNull: false
     },
     calificacion_promedio: {
       type: DataTypes.DECIMAL(3, 2),
