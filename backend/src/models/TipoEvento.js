@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         len: {
           args: [2, 50],
           msg: 'El nombre del tipo debe tener entre 2 y 50 caracteres'
-        },
-        isIn: {
-          args: [['presencial', 'virtual', 'hibrido']],
-          msg: 'El tipo debe ser: presencial, virtual o hibrido'
         }
       }
     },
@@ -137,6 +133,24 @@ module.exports = (sequelize, DataTypes) => {
     TipoEvento.hasMany(models.Evento, {
       foreignKey: 'id_tipo_evento',
       as: 'eventos'
+    });
+
+    // Relación con ConfiguracionTipoEvento
+    TipoEvento.hasMany(models.ConfiguracionTipoEvento, {
+      foreignKey: 'id_tipo_evento',
+      as: 'configuraciones'
+    });
+
+    // Relación con PlantillaEvento
+    TipoEvento.hasMany(models.PlantillaEvento, {
+      foreignKey: 'id_tipo_evento',
+      as: 'plantillas'
+    });
+
+    // Relación con ValidacionTipoEvento
+    TipoEvento.hasMany(models.ValidacionTipoEvento, {
+      foreignKey: 'id_tipo_evento',
+      as: 'validaciones'
     });
 
     // Asociaciones de auditoría

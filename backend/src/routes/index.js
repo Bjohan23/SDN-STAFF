@@ -8,14 +8,22 @@ const rolRoutes = require('./rolRoutes');
 const eventoRoutes = require('./eventoRoutes');
 const tipoEventoRoutes = require('./tipoEventoRoutes');
 const empresaExpositoraRoutes = require('./empresaExpositoraRoutes');
+const tipoStandRoutes = require('./tipoStandRoutes');
+const standRoutes = require('./standRoutes');
+const servicioAdicionalRoutes = require('./servicioAdicionalRoutes');
+const clasificacionTipoEventoRoutes = require('./clasificacionTipoEventoRoutes');
 
 // Configurar rutas
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
 router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
 router.use('/eventos', eventoRoutes); // Eventos (protegido)
-router.use('/tipos-evento', tipoEventoRoutes); // Tipos de evento (protegido)
-router.use('/empresas-expositoras', empresaExpositoraRoutes); // Empresas expositoras (protegido/público)
+router.use('/tiposEvento', tipoEventoRoutes); // Tipos de evento (protegido)
+router.use('/empresasExpositoras', empresaExpositoraRoutes); // Empresas expositoras (protegido/público)
+router.use('/tiposStand', tipoStandRoutes); // Tipos de stand (protegido/público)
+router.use('/stands', standRoutes); // Stands (protegido)
+router.use('/serviciosAdicionales', servicioAdicionalRoutes); // Servicios adicionales (protegido/público)
+router.use('/clasificacionTiposEvento', clasificacionTipoEventoRoutes); // Clasificación por tipo de evento (protegido)
 
 // Ruta de prueba
 router.get('/', (req, res) => {
@@ -53,7 +61,11 @@ router.get('/', (req, res) => {
       roles: '/api/roles',
       eventos: '/api/eventos',
       tipos_evento: '/api/tipos-evento',
-      empresas_expositoras: '/api/empresas-expositoras'
+      empresas_expositoras: '/api/empresas-expositoras',
+      tipos_stand: '/api/tipos-stand',
+      stands: '/api/stands',
+      servicios_adicionales: '/api/servicios-adicionales',
+      clasificacion_tipos_evento: '/api/clasificacion-tipos-evento'
     },
     protected_endpoints: {
       note: 'Todos los endpoints excepto los públicos requieren Bearer token',
@@ -118,6 +130,59 @@ router.get('/', (req, res) => {
         registroPublico: 'POST /api/empresas-expositoras/registro-publico (Público)',
         registrarEvento: 'POST /api/empresas-expositoras/:id/eventos (Admin/Manager)',
         cargaMasiva: 'POST /api/empresas-expositoras/carga-masiva (Admin)'
+      },
+      tipos_stand_endpoints: {
+        lista: 'GET /api/tipos-stand (Público)',
+        crear: 'POST /api/tipos-stand (Admin/Organizador)',
+        obtener: 'GET /api/tipos-stand/:id (Público)',
+        actualizar: 'PUT /api/tipos-stand/:id (Admin/Organizador)',
+        eliminar: 'DELETE /api/tipos-stand/:id (Admin)',
+        stats: 'GET /api/tipos-stand/stats (Público)',
+        stands: 'GET /api/tipos-stand/:id/stands (Público)',
+        validarArea: 'GET /api/tipos-stand/:id/validar-area (Público)',
+        calcularPrecio: 'GET /api/tipos-stand/:id/calcular-precio (Público)',
+        paraArea: 'GET /api/tipos-stand/para-area (Público)'
+      },
+      stands_endpoints: {
+        lista: 'GET /api/stands (Público)',
+        crear: 'POST /api/stands (Admin/Organizador)',
+        obtener: 'GET /api/stands/:id (Público)',
+        actualizar: 'PUT /api/stands/:id (Admin/Organizador)',
+        eliminar: 'DELETE /api/stands/:id (Admin)',
+        cambiarEstado: 'PATCH /api/stands/:id/estado-fisico (Admin/Organizador)',
+        asignarEvento: 'POST /api/stands/:id/asignar-evento (Admin/Organizador)',
+        disponiblesEvento: 'GET /api/stands/evento/:evento_id/disponibles (Público)',
+        stats: 'GET /api/stands/stats (Público)',
+        mantenimiento: 'GET /api/stands/mantenimiento (Admin/Organizador)',
+        cargaMasiva: 'POST /api/stands/carga-masiva (Admin)'
+      },
+      servicios_adicionales_endpoints: {
+        lista: 'GET /api/servicios-adicionales (Público)',
+        crear: 'POST /api/servicios-adicionales (Admin/Organizador)',
+        obtener: 'GET /api/servicios-adicionales/:id (Público)',
+        actualizar: 'PUT /api/servicios-adicionales/:id (Admin/Organizador)',
+        eliminar: 'DELETE /api/servicios-adicionales/:id (Admin)',
+        contratar: 'POST /api/servicios-adicionales/:id/contratar (Admin/Organizador/Empresa)',
+        categoria: 'GET /api/servicios-adicionales/categoria/:categoria (Público)',
+        populares: 'GET /api/servicios-adicionales/populares (Público)',
+        compatibles: 'GET /api/servicios-adicionales/compatibles/:tipo_stand (Público)',
+        stats: 'GET /api/servicios-adicionales/stats (Público)',
+        contratacion: 'GET /api/servicios-adicionales/contratacion/:id (Admin/Organizador)',
+        actualizarEstado: 'PUT /api/servicios-adicionales/contratacion/:id/estado (Admin/Organizador)'
+      },
+      clasificacion_tipos_evento_endpoints: {
+        configuracionesPorModalidad: 'GET /api/clasificacion-tipos-evento/modalidad/:modalidad (Admin/Manager)',
+        estadisticasConfiguraciones: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/stats (Admin/Manager)',
+        informacionCompleta: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/completo (Admin/Manager)',
+        validarConfiguracion: 'POST /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/validar (Admin/Manager)',
+        configuracionesPorTipo: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/configuraciones (Admin/Manager)',
+        configuracionPorModalidad: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/configuraciones/:modalidad (Admin/Manager)',
+        crearConfiguracion: 'POST /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/configuraciones (Admin/Manager)',
+        duplicarConfiguracion: 'POST /api/clasificacion-tipos-evento/configuraciones/:configuracion_id/duplicar (Admin/Manager)',
+        actualizarConfiguracion: 'PUT /api/clasificacion-tipos-evento/configuraciones/:configuracion_id (Admin/Manager)',
+        eliminarConfiguracion: 'DELETE /api/clasificacion-tipos-evento/configuraciones/:configuracion_id (Admin)',
+        plantillasDisponibles: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/plantillas (Admin/Manager)',
+        aplicarPlantilla: 'POST /api/clasificacion-tipos-evento/plantillas/:plantilla_id/aplicar (Admin/Manager)'
       }
     },
     howToUse: {

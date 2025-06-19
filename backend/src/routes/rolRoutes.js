@@ -4,58 +4,8 @@ const RolController = require('../controllers/RolController');
 const { authenticate, authorize } = require('../middlewares/auth');
 const { auditCreate, auditUpdate, auditDelete } = require('../middlewares/audit');
 
-/**
- * @swagger
- * /api/roles:
- *   get:
- *     summary: Obtener todos los roles
- *     tags: [Roles]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: include_usuarios
- *         in: query
- *         description: Incluir usuarios asignados
- *         schema:
- *           type: boolean
- *           default: false
- *     responses:
- *       200:
- *         description: Lista de roles obtenida exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/ApiResponse'
- *                 - type: object
- *                   properties:
- *                     data:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/Rol'
- *       401:
- *         $ref: '#/components/responses/Unauthorized'
- */
 router.get('/', authenticate, authorize(['administrador', 'manager']), RolController.getAllRoles);
 
-/**
- * @swagger
- * /api/roles/stats:
- *   get:
- *     summary: Obtener estadísticas de roles
- *     tags: [Roles]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Estadísticas obtenidas exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ApiResponse'
- *       401:
- *         $ref: '#/components/responses/Unauthorized'
- */
 router.get('/stats', authenticate, authorize(['administrador']), RolController.getRolStats);
 
 router.get('/sin-usuarios', authenticate, authorize(['administrador']), RolController.getRolesSinUsuarios);
@@ -64,86 +14,11 @@ router.get('/sin-usuarios', authenticate, authorize(['administrador']), RolContr
 router.get('/eliminados', authenticate, authorize(['administrador']), RolController.getRolesEliminados);
 router.post('/:id/restore', authenticate, authorize(['administrador']), RolController.restoreRol);
 
-/**
- * @swagger
- * /api/roles/{id}:
- *   get:
- *     summary: Obtener rol por ID
- *     tags: [Roles]
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: ID del rol
- *         schema:
- *           type: integer
- *           example: 1
- *       - name: include_usuarios
- *         in: query
- *         description: Incluir usuarios asignados
- *         schema:
- *           type: boolean
- *           default: false
- *     responses:
- *       200:
- *         description: Rol obtenido exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/ApiResponse'
- *                 - type: object
- *                   properties:
- *                     data:
- *                       $ref: '#/components/schemas/Rol'
- *       404:
- *         $ref: '#/components/responses/NotFound'
- */
 router.get('/:id', authenticate, authorize(['administrador', 'manager']), RolController.getRolById);
 
 router.get('/nombre/:nombre', authenticate, authorize(['administrador']), RolController.getRolByNombre);
 router.get('/:id/usuarios', authenticate, authorize(['administrador']), RolController.getUsuariosByRol);
 
-/**
- * @swagger
- * /api/roles:
- *   post:
- *     summary: Crear nuevo rol
- *     tags: [Roles]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - nombre_rol
- *             properties:
- *               nombre_rol:
- *                 type: string
- *                 minLength: 2
- *                 maxLength: 50
- *                 example: Desarrollador
- *               descripcion:
- *                 type: string
- *                 example: Desarrollador de software con acceso completo
- *     responses:
- *       201:
- *         description: Rol creado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/ApiResponse'
- *                 - type: object
- *                   properties:
- *                     data:
- *                       $ref: '#/components/schemas/Rol'
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- *       409:
- *         description: El nombre del rol ya existe
- */
 router.post('/', authenticate, authorize(['administrador']), auditCreate, RolController.createRol);
 
 router.put('/:id', authenticate, authorize(['administrador']), auditUpdate, RolController.updateRol);

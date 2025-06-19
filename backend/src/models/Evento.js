@@ -327,6 +327,26 @@ module.exports = (sequelize, DataTypes) => {
       as: 'participaciones'
     });
 
+    // Relación many-to-many con Stand a través de StandEvento
+    Evento.belongsToMany(models.Stand, {
+      through: 'StandEvento',
+      foreignKey: 'id_evento',
+      otherKey: 'id_stand',
+      as: 'stands'
+    });
+
+    // Relación directa con StandEvento
+    Evento.hasMany(models.StandEvento, {
+      foreignKey: 'id_evento',
+      as: 'standEventos'
+    });
+
+    // Relación con StandServicio (servicios contratados en el evento)
+    Evento.hasMany(models.StandServicio, {
+      foreignKey: 'id_evento',
+      as: 'serviciosContratados'
+    });
+
     // Asociaciones de auditoría
     Evento.belongsTo(models.Usuario, {
       foreignKey: 'created_by',

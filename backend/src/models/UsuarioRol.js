@@ -114,7 +114,6 @@ module.exports = (sequelize, DataTypes) => {
           deleted_at: { [Op.ne]: null }
         }
       }
-      // ✅ Removemos withAuditInfo para evitar dependencias circulares
     }
   });
 

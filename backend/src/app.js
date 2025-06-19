@@ -19,7 +19,7 @@ const app = express();
 // Middlewares globales
 app.use(cors({
   origin: ['http://localhost:5173', 'http://127.0.0.1:5173',
-    'http://161.132.41.106', 'http://161.132.41.106:80'],
+    'http://161.132.41.106', 'http://161.132.41.106:80', "*"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -93,8 +93,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Middleware de manejo de errores (debe ir al final)
-app.use(errorHandler);
+
 
 // Manejo de rutas no encontradas
 app.use('*', (req, res) => {
@@ -208,6 +207,8 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+// Middleware de manejo de errores (debe ir al final)
+app.use(errorHandler);
 // Inicializar la aplicación siempre que se importe el módulo
 initializeApp();
 

@@ -127,11 +127,26 @@ module.exports = {
       }
     });
 
-    // Índices
-    await queryInterface.addIndex('tipo_stand', ['nombre_tipo']);
-    await queryInterface.addIndex('tipo_stand', ['estado']);
-    await queryInterface.addIndex('tipo_stand', ['precio_base']);
-    await queryInterface.addIndex('tipo_stand', ['deleted_at']);
+    // Agregar índices de forma segura
+    try {
+      await queryInterface.addIndex('tipo_stand', ['estado']);
+    } catch (e) {
+      console.log('Índice estado ya existe en tipo_stand');
+    }
+
+    try {
+      await queryInterface.addIndex('tipo_stand', ['precio_base']);
+    } catch (e) {
+      console.log('Índice precio_base ya existe en tipo_stand');
+    }
+
+    try {
+      await queryInterface.addIndex('tipo_stand', ['deleted_at']);
+    } catch (e) {
+      console.log('Índice deleted_at ya existe en tipo_stand');
+    }
+
+    console.log('✅ Tabla tipo_stand creada exitosamente');
   },
 
   down: async (queryInterface, Sequelize) => {
