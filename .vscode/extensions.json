@@ -1,0 +1,53 @@
+{
+  "recommendations": [
+    // Esenciales para Node.js y JavaScript
+    "ms-vscode.vscode-node-debug2",
+    "christian-kohler.npm-intellisense",
+    "eg2.vscode-npm-script",
+    
+    // JavaScript/TypeScript
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    
+    // Base de datos
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-mysql",
+    "mtxr.sqltools-driver-pg",
+    
+    // Frontend (React/Vue)
+    "formulahendry.auto-rename-tag",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-json",
+    
+    // Desarrollo web
+    "redhat.vscode-yaml",
+    "humao.rest-client",
+    "rangav.vscode-thunder-client",
+    
+    // Git y control de versiones
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    
+    // Productividad
+    "streetsidesoftware.code-spell-checker",
+    "gruntfuggly.todo-tree",
+    "aaron-bond.better-comments",
+    
+    // Documentación
+    "yzane.markdown-pdf",
+    "bierner.markdown-mermaid",
+    
+    // Docker (si usas contenedores)
+    "ms-azuretools.vscode-docker",
+    
+    // Monorepo tools
+    "ms-vscode.mono-debug",
+    
+    // Utilidades adicionales
+    "ms-vscode.hexeditor",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vs-keybindings"
+  ]
+}

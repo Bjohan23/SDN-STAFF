@@ -1,0 +1,168 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Backend: Start Dev",
+      "type": "npm",
+      "script": "dev",
+      "path": "backend",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [
+        "$node-sass"
+      ]
+    },
+    {
+      "label": "🌐 Frontend: Start Dev",
+      "type": "npm",
+      "script": "dev",
+      "path": "frontend",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔧 Backend: Install Dependencies",
+      "type": "npm",
+      "script": "install",
+      "path": "backend",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "📦 Frontend: Install Dependencies",
+      "type": "npm",
+      "script": "install",
+      "path": "frontend", 
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🧪 Backend: Run Tests",
+      "type": "npm",
+      "script": "test",
+      "path": "backend",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔍 Backend: Lint",
+      "type": "npm",
+      "script": "lint",
+      "path": "backend",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-stylish"
+      ]
+    },
+    {
+      "label": "🧹 Backend: Clean node_modules",
+      "type": "shell",
+      "command": "rmdir",
+      "args": ["/s", "/q", "backend\\node_modules"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🧹 Frontend: Clean node_modules",
+      "type": "shell",
+      "command": "rmdir",
+      "args": ["/s", "/q", "frontend\\node_modules"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔄 Full Project: Clean & Install",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "🧹 Backend: Clean node_modules",
+        "🧹 Frontend: Clean node_modules",
+        "🔧 Backend: Install Dependencies",
+        "📦 Frontend: Install Dependencies"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🚀 Full Stack: Start Dev Servers",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "🚀 Backend: Start Dev",
+        "🌐 Frontend: Start Dev"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔧 Backend: Debug Mode",
+      "type": "shell",
+      "command": "node",
+      "args": ["--inspect-brk=9229", "index.js"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

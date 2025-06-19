@@ -1,0 +1,149 @@
+{
+  "Console Log": {
+    "prefix": "clog",
+    "body": [
+      "console.log('$1:', $1);"
+    ],
+    "description": "Console log with variable name"
+  },
+  "Console Error": {
+    "prefix": "cerr",
+    "body": [
+      "console.error('❌ Error:', $1);"
+    ],
+    "description": "Console error with emoji"
+  },
+  "Console Info": {
+    "prefix": "cinfo",
+    "body": [
+      "console.info('ℹ️ Info:', $1);"
+    ],
+    "description": "Console info with emoji"
+  },
+  "Console Warn": {
+    "prefix": "cwarn",
+    "body": [
+      "console.warn('⚠️ Warning:', $1);"
+    ],
+    "description": "Console warning with emoji"
+  },
+  "Try Catch Block": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "\t$1",
+      "} catch (error) {",
+      "\tconsole.error('❌ Error:', error);",
+      "\t$2",
+      "}"
+    ],
+    "description": "Try catch block with error logging"
+  },
+  "Async Function": {
+    "prefix": "afn",
+    "body": [
+      "const $1 = async ($2) => {",
+      "\ttry {",
+      "\t\t$3",
+      "\t} catch (error) {",
+      "\t\tconsole.error('❌ Error in $1:', error);",
+      "\t\tthrow error;",
+      "\t}",
+      "};"
+    ],
+    "description": "Async function with try-catch"
+  },
+  "Express Route": {
+    "prefix": "route",
+    "body": [
+      "router.$1('$2', async (req, res) => {",
+      "\ttry {",
+      "\t\t$3",
+      "\t\tres.status(200).json({",
+      "\t\t\tsuccess: true,",
+      "\t\t\tdata: $4",
+      "\t\t});",
+      "\t} catch (error) {",
+      "\t\tconsole.error('❌ Error:', error);",
+      "\t\tres.status(500).json({",
+      "\t\t\tsuccess: false,",
+      "\t\t\tmessage: error.message",
+      "\t\t});",
+      "\t}",
+      "});"
+    ],
+    "description": "Express route with error handling"
+  },
+  "Sequelize Model": {
+    "prefix": "model",
+    "body": [
+      "module.exports = (sequelize, DataTypes) => {",
+      "\tconst $1 = sequelize.define('$1', {",
+      "\t\t$2",
+      "\t}, {",
+      "\t\ttableName: '$3',",
+      "\t\ttimestamps: true,",
+      "\t\tunderscored: true",
+      "\t});",
+      "",
+      "\t$1.associate = function(models) {",
+      "\t\t// Definir asociaciones aquí",
+      "\t\t$4",
+      "\t};",
+      "",
+      "\treturn $1;",
+      "};"
+    ],
+    "description": "Sequelize model template"
+  },
+  "API Documentation": {
+    "prefix": "swagger",
+    "body": [
+      "/**",
+      " * @swagger",
+      " * $1:",
+      " *   $2:",
+      " *     summary: $3",
+      " *     tags: [$4]",
+      " *     responses:",
+      " *       200:",
+      " *         description: $5",
+      " *         content:",
+      " *           application/json:",
+      " *             schema:",
+      " *               type: object",
+      " */"
+    ],
+    "description": "Swagger documentation template"
+  },
+  "Import Statement": {
+    "prefix": "imp",
+    "body": [
+      "const $1 = require('$2');"
+    ],
+    "description": "CommonJS require statement"
+  },
+  "Import Destructured": {
+    "prefix": "impd",
+    "body": [
+      "const { $1 } = require('$2');"
+    ],
+    "description": "Destructured require statement"
+  },
+  "Module Exports": {
+    "prefix": "module",
+    "body": [
+      "module.exports = {",
+      "\t$1",
+      "};"
+    ],
+    "description": "Module exports object"
+  },
+  "Debug Breakpoint": {
+    "prefix": "debug",
+    "body": [
+      "debugger; // 🔍 Debug point: $1"
+    ],
+    "description": "Debugger statement with comment"
+  }
+}

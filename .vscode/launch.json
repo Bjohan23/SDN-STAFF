@@ -1,0 +1,97 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Debug Backend (F5)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/index.js",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "envFile": "${workspaceFolder}/backend/.env",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/backend/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "name": "🔄 Debug Backend con Nodemon",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/node_modules/nodemon/bin/nodemon.js",
+      "args": ["index.js"],
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "envFile": "${workspaceFolder}/backend/.env",
+      "restart": false,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "name": "🧪 Debug Backend Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/node_modules/.bin/jest",
+      "args": ["--runInBand", "--detectOpenHandles"],
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "envFile": "${workspaceFolder}/backend/.env.test",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "name": "🌐 Debug Frontend (Vite)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"]
+    },
+    {
+      "name": "🔗 Attach to Backend Process",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "name": "🐳 Debug Backend con Docker",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}/backend",
+      "remoteRoot": "/app",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    }
+  ]
+}

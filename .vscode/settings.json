@@ -1,0 +1,87 @@
+{
+  // Configuraciones específicas para este proyecto
+  "javascript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  
+  // Configuración de Node.js
+  "node-debug.avoidStoppingOnStubCode": true,
+  
+  // Archivos que se excluyen de la búsqueda
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/logs": true,
+    "**/dist": true,
+    "**/build": true,
+    "backend/node_modules": true,
+    "frontend/node_modules": true,
+    "frontend/dist": true
+  },
+  
+  // Archivos que se excluyen del explorador
+  "files.exclude": {
+    "**/node_modules": false,
+    "**/bower_components": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/logs": true
+  },
+  
+  // Configuración de formato
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  // Configuración de terminal
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  
+  // Configuración de depuración
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.showInlineBreakpointCandidates": true,
+  
+  // Configuración específica para archivos JavaScript
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  // Configuración específica para archivos JSON
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  // Configuración específica para archivos Vue/React
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  // Emmet para archivos JavaScript
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "vue-html": "html"
+  },
+  
+  // Configuración para trabajar con monorepo
+  "typescript.preferences.includeProjectReferenceRedirects": "auto",
+  "typescript.workspaceSymbols.scope": "allOpenProjects",
+  
+  // Configuración para Tailwind CSS
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "html": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "class:\\\\s*?[\"'`]([^\"'`]*.*?)[\"'`]",
+    "(?:enter|leave)(?:From|To)?=\\\\s*(?:\"|')([^\"']*)",
+    "(?:enter|leave)(?:From|To)?=\\\\s*(?:\"|'|{`)([^\"'`}]*)"
+  ]
+}
