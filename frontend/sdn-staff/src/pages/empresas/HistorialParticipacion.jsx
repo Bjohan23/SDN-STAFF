@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from '../../config/axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "../../config/axios";
 
 const HistorialParticipacion = () => {
   const { id } = useParams();
   const [historial, setHistorial] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchHistorial = async () => {
       try {
-        const res = await axios.get(`/api/empresa-expositora/${id}`);
+        const res = await axios.get(`/api/empresasExpositoras/${id}`);
         setHistorial(res.data.data?.participaciones || []);
       } catch {
-        setError('No se pudo obtener el historial');
+        setError("No se pudo obtener el historial");
       }
     };
     fetchHistorial();
@@ -41,7 +41,9 @@ const HistorialParticipacion = () => {
               <td>{h.fecha_registro}</td>
               <td>{h.estado_participacion}</td>
               <td>
-                <a href={`/empresas/${id}/eventos/${h.id_evento}`}>Ver detalle</a>
+                <a href={`/empresas/${id}/eventos/${h.id_evento}`}>
+                  Ver detalle
+                </a>
               </td>
             </tr>
           ))}

@@ -46,7 +46,7 @@ function App() {
           <div className="flex-1 flex flex-col overflow-hidden">
             <Navbar setSidebarOpen={setSidebarOpen} />
             
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto bg-gray-100">
               <Routes>
                 <Route path="/dashboard" element={
                   <PrivateRoute>
