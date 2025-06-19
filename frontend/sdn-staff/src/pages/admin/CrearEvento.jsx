@@ -147,7 +147,7 @@ const CrearEvento = () => {
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-10">
-      <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8">
+      <div className="w-full max-w-6xl flex flex-col gap-8">
         <div className="flex-1 bg-white shadow-xl rounded-2xl p-6 border border-gray-100 flex flex-col items-center justify-center min-h-[260px]">
           <h2 className="text-xl font-semibold text-indigo-800 mb-4 text-center">
             ¿Quieres crear un nuevo evento?
@@ -181,12 +181,21 @@ const CrearEvento = () => {
                       Nombre
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200">
+                      Tipo
+                    </th>
+                    <th className="py-2 px-4 border-b border-gray-200">
                       Estado
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200">
                       Inicio
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200">Fin</th>
+                    <th className="py-2 px-4 border-b border-gray-200">
+                      Capacidad
+                    </th>
+                    <th className="py-2 px-4 border-b border-gray-200">
+                      Precio
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -199,6 +208,9 @@ const CrearEvento = () => {
                         {ev.nombre_evento}
                       </td>
                       <td className="py-2 px-4 border-b border-gray-100">
+                        {ev.tipoEvento?.nombre_tipo || "-"}
+                      </td>
+                      <td className="py-2 px-4 border-b border-gray-100">
                         {ev.estado}
                       </td>
                       <td className="py-2 px-4 border-b border-gray-100">
@@ -206,6 +218,14 @@ const CrearEvento = () => {
                       </td>
                       <td className="py-2 px-4 border-b border-gray-100">
                         {ev.fecha_fin?.slice(0, 10)}
+                      </td>
+                      <td className="py-2 px-4 border-b border-gray-100">
+                        {ev.capacidad_maxima ?? "-"}
+                      </td>
+                      <td className="py-2 px-4 border-b border-gray-100">
+                        {ev.precio_entrada
+                          ? `${ev.precio_entrada} ${ev.moneda}`
+                          : "-"}
                       </td>
                     </tr>
                   ))}
@@ -217,7 +237,7 @@ const CrearEvento = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl relative animate-fadeIn max-h-[90vh] flex flex-col">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold"
@@ -233,8 +253,6 @@ const CrearEvento = () => {
               className="overflow-y-auto flex-1 px-6 pb-6"
               style={{ maxHeight: "70vh" }}
             >
-              // ... Todo el código anterior permanece igual hasta llegar al
-              formulario del modal
               <form
                 onSubmit={(e) => handleSubmit(e, "publicado")}
                 className="space-y-6"
@@ -509,7 +527,7 @@ const CrearEvento = () => {
         </div>
       )}
       {showRegistrarTipo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="relative w-full max-w-md">
             <button
               className="absolute -top-3 -right-3 bg-white rounded-full shadow p-1 text-gray-600 hover:text-gray-800"
