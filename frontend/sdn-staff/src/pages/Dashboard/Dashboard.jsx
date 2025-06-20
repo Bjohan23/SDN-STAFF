@@ -5,6 +5,8 @@ import ExcelJS from "exceljs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "jspdf-autotable";
+import eventosService from '../../services/eventosService';
+import { useEffect, useState } from 'react';
 
 Chart.register(...registerables);
 

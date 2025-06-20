@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../config/axios";
 import { useAuth } from "../../auth/AuthContext";
 import RegistrarTipoEvento from "./RegistrarTipoEvento";
+import eventosService from '../../services/eventosService';
 
 const initialState = {
   nombre_evento: "",
@@ -30,7 +31,9 @@ const estados = [
 const CrearEvento = () => {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(initialState);
-  const [eventos, setEventos] = useState([]);
+  const [eventosRecientes, setEventosRecientes] = useState([]);
+  const [eventosFiltrados, setEventosFiltrados] = useState([]);
+  const [loadingFiltrados, setLoadingFiltrados] = useState(false);
   const [tiposEvento, setTiposEvento] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -38,20 +41,46 @@ const CrearEvento = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [showRegistrarTipo, setShowRegistrarTipo] = useState(false);
   const { user } = useAuth();
+  const [tipoFiltro, setTipoFiltro] = useState('');
 
-  const fetchEventos = async () => {
+  const fetchEventosRecientes = async () => {
     try {
-      const res = await axios.get("/api/eventos?limit=10");
-      setEventos(res.data.data || []);
+      const res = await axios.get('/api/eventos?limit=10');
+      setEventosRecientes(res.data.data || []);
     } catch (e) {
-      console.error(e);
+      setEventosRecientes([]);
+    }
+  };
+
+  const fetchEventosFiltrados = async (tipoId = '') => {
+    setLoadingFiltrados(true);
+    try {
+      if (tipoId) {
+        const res = await eventosService.getEventosPorTipo(tipoId, 1, 10);
+        setEventosFiltrados(res.data || []);
+      } else {
+        setEventosFiltrados(eventosRecientes);
+      }
+    } catch (e) {
+      setEventosFiltrados([]);
+    } finally {
+      setLoadingFiltrados(false);
     }
   };
 
   useEffect(() => {
-    fetchEventos();
+    fetchEventosRecientes();
     fetchTiposEvento();
   }, []);
+
+  useEffect(() => {
+    if (tipoFiltro) {
+      fetchEventosFiltrados(tipoFiltro);
+    } else {
+      setEventosFiltrados(eventosRecientes);
+    }
+    // eslint-disable-next-line
+  }, [tipoFiltro, eventosRecientes]);
 
   const fetchTiposEvento = async () => {
     try {
@@ -159,7 +188,7 @@ const CrearEvento = () => {
       setSuccess("Evento creado exitosamente");
       setForm(initialState);
       setFieldErrors({});
-      fetchEventos();
+      fetchEventosRecientes();
       setShowModal(false);
     } catch (err) {
       setError(err.response?.data?.message || "Error al crear evento");
@@ -200,7 +229,7 @@ const CrearEvento = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-400">Total Eventos</p>
-              <p className="text-2xl font-semibold text-white">{eventos.length}</p>
+              <p className="text-2xl font-semibold text-white">{eventosRecientes.length + eventosFiltrados.length}</p>
             </div>
           </div>
         </div>
@@ -215,7 +244,7 @@ const CrearEvento = () => {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-400">Eventos Activos</p>
               <p className="text-2xl font-semibold text-green-300">
-                {eventos.filter(e => e.estado === 'activo').length}
+                {eventosRecientes.filter(e => e.estado === 'activo').length + eventosFiltrados.filter(e => e.estado === 'activo').length}
               </p>
             </div>
           </div>
@@ -264,118 +293,124 @@ const CrearEvento = () => {
 
       {/* Lista de eventos */}
       <div className="bg-gray-700 rounded-lg shadow-lg border border-gray-600 overflow-hidden">
-        {/* Header de la tabla */}
         <div className="bg-gray-600 px-6 py-4 border-b border-gray-500">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white flex items-center">
-              <svg className="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4m-4 12h0m-8 0h16a2 2 0 002-2V9a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              Eventos Recientes
-            </h3>
-            <button
-              onClick={fetchEventos}
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 transition-colors"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Recargar
-            </button>
+          <h3 className="text-lg font-semibold text-white flex items-center">
+            <svg className="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4m-4 12h0m-8 0h16a2 2 0 002-2V9a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            Gestión de Eventos
+          </h3>
+        </div>
+        <div className="flex flex-col md:flex-row gap-6 p-6 bg-gray-700">
+          {/* Tabla de todos los eventos recientes */}
+          <div className="flex-1 bg-gray-800 rounded-lg shadow p-4 border border-gray-600">
+            <h4 className="text-md font-bold text-white mb-3 text-center">Todos los eventos recientes</h4>
+            {eventosRecientes.length === 0 ? (
+              <div className="p-8 text-center text-gray-400">No hay eventos recientes</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-600">
+                  <thead className="bg-gray-700">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fechas</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-gray-800 divide-y divide-gray-700">
+                    {eventosRecientes.map(ev => (
+                      <tr key={ev.id_evento} className="hover:bg-gray-600 transition-colors duration-200">
+                        <td className="px-4 py-2 whitespace-nowrap text-white">{ev.nombre_evento}</td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900 text-purple-200">
+                            {ev.tipoEvento?.nombre_tipo || "No especificado"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span className={getEstadoBadge(ev.estado)}>{ev.estado}</span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-white">
+                          {formatFecha(ev.fecha_inicio)}<br />
+                          <span className="text-gray-400">hasta {formatFecha(ev.fecha_fin)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+          {/* Tabla de eventos filtrados */}
+          <div className="flex-1 bg-gray-800 rounded-lg shadow p-4 border border-gray-600">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 gap-2">
+              <h4 className="text-md font-bold text-white text-center md:text-left">Filtrar por tipo de evento</h4>
+              <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+                <button
+                  className={`px-3 py-1 rounded font-semibold border transition shadow-sm ${tipoFiltro === '' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-800 text-gray-200 border-gray-500 hover:bg-indigo-700 hover:text-white'}`}
+                  onClick={() => setTipoFiltro('')}
+                >
+                  Todos
+                </button>
+                {tiposEvento.map(tipo => (
+                  <button
+                    key={tipo.id_tipo_evento}
+                    className={`px-3 py-1 rounded font-semibold border transition shadow-sm ${tipoFiltro === String(tipo.id_tipo_evento) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-800 text-gray-200 border-gray-500 hover:bg-indigo-700 hover:text-white'}`}
+                    onClick={() => setTipoFiltro(String(tipo.id_tipo_evento))}
+                  >
+                    {tipo.nombre_tipo}
+                  </button>
+                ))}
+                <button
+                  onClick={() => fetchEventosFiltrados(tipoFiltro)}
+                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 transition-colors ml-2"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Recargar
+                </button>
+              </div>
+            </div>
+            {loadingFiltrados ? (
+              <div className="p-8 text-center text-white">Cargando eventos...</div>
+            ) : eventosFiltrados.length === 0 ? (
+              <div className="p-8 text-center text-gray-400">No hay eventos para este filtro</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-600">
+                  <thead className="bg-gray-700">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fechas</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-gray-800 divide-y divide-gray-700">
+                    {eventosFiltrados.map(ev => (
+                      <tr key={ev.id_evento} className="hover:bg-gray-600 transition-colors duration-200">
+                        <td className="px-4 py-2 whitespace-nowrap text-white">{ev.nombre_evento}</td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900 text-purple-200">
+                            {ev.tipoEvento?.nombre_tipo || "No especificado"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span className={getEstadoBadge(ev.estado)}>{ev.estado}</span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-white">
+                          {formatFecha(ev.fecha_inicio)}<br />
+                          <span className="text-gray-400">hasta {formatFecha(ev.fecha_fin)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
-
-        {eventos.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 text-gray-400">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3a4 4 0 118 0v4m-4 12h0m-8 0h16a2 2 0 002-2V9a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-white mb-2">No hay eventos recientes</h3>
-            <p className="text-gray-400">Crea tu primer evento para comenzar</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-600">
-              <thead className="bg-gray-600">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Evento
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Fechas
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Detalles
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-gray-700 divide-y divide-gray-600">
-                {eventos.map((ev) => (
-                  <tr key={ev.id_evento} className="hover:bg-gray-600 transition-colors duration-200">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-white">
-                          {ev.nombre_evento}
-                        </div>
-                        {ev.descripcion && (
-                          <div className="text-sm text-gray-400 truncate max-w-xs">
-                            {ev.descripcion}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900 text-purple-200">
-                        {ev.tipoEvento?.nombre_tipo || "No especificado"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={getEstadoBadge(ev.estado)}>
-                        {ev.estado}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white">
-                        {formatFecha(ev.fecha_inicio)}
-                      </div>
-                      <div className="text-sm text-gray-400">
-                        hasta {formatFecha(ev.fecha_fin)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      <div className="space-y-1">
-                        {ev.capacidad_maxima && (
-                          <div className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            {ev.capacidad_maxima} personas
-                          </div>
-                        )}
-                        {ev.precio_entrada && (
-                          <div className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                            </svg>
-                            {ev.precio_entrada} {ev.moneda}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
       </div>
 
       {/* Modal de crear evento */}
