@@ -229,7 +229,7 @@ const CrearEvento = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-400">Total Eventos</p>
-              <p className="text-2xl font-semibold text-white">{eventosRecientes.length + eventosFiltrados.length}</p>
+              <p className="text-2xl font-semibold text-white">{eventosRecientes.length}</p>
             </div>
           </div>
         </div>
@@ -243,9 +243,7 @@ const CrearEvento = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-400">Eventos Activos</p>
-              <p className="text-2xl font-semibold text-green-300">
-                {eventosRecientes.filter(e => e.estado === 'activo').length + eventosFiltrados.filter(e => e.estado === 'activo').length}
-              </p>
+              <p className="text-2xl font-semibold text-green-300">{eventosRecientes.filter(e => e.estado === 'activo').length}</p>
             </div>
           </div>
         </div>
