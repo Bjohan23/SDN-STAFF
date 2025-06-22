@@ -31,21 +31,25 @@ const ListadoStands = () => {
   useEffect(() => {
     fetchStands();
     fetchTiposStand();
-  }, [currentPage, filtroTipo, filtroEstado]);
+  }, [currentPage, filtroTipo, filtroEstado, searchTerm]);
 
   const fetchStands = async () => {
     setLoading(true);
     try {
-      let response;
+      // Construir filtros
+      const filters = {};
       if (filtroTipo) {
-        response = await standsService.getStandsByType(filtroTipo, currentPage, 10);
-      } else if (filtroEstado === 'disponible') {
-        response = await standsService.getAvailableStands(currentPage, 10);
-      } else if (filtroEstado === 'ocupado') {
-        response = await standsService.getOccupiedStands(currentPage, 10);
-      } else {
-        response = await standsService.getAllStands(currentPage, 10);
+        filters.id_tipo_stand = filtroTipo;
       }
+      if (filtroEstado) {
+        filters.estado_fisico = filtroEstado;
+      }
+      if (searchTerm) {
+        filters.search = searchTerm;
+      }
+
+      // Usar el endpoint principal con filtros
+      const response = await standsService.getAllStands(currentPage, 10, filters);
       
       setStands(response.data || []);
       setTotalPages(response.totalPages || 1);
@@ -122,26 +126,9 @@ const ListadoStands = () => {
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-8 bg-gray-900 min-h-screen">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Listado de Stands</h1>
-          <p className="text-gray-400">Gestiona todos los stands del sistema</p>
-        </div>
-        <button
-          onClick={() => window.location.href = '/stands/agregar'}
-          className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Agregar Stand
-        </button>
-      </div>
-
+    <div className="space-y-6">
       {/* Filtros */}
-      <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Búsqueda */}
           <div>
@@ -151,7 +138,7 @@ const ListadoStands = () => {
               placeholder="Buscar por nombre, descripción o ubicación..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -161,7 +148,7 @@ const ListadoStands = () => {
             <select
               value={filtroTipo}
               onChange={(e) => setFiltroTipo(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Todos los tipos</option>
               {tiposStand.map((tipo) => (
@@ -178,7 +165,7 @@ const ListadoStands = () => {
             <select
               value={filtroEstado}
               onChange={(e) => setFiltroEstado(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {estados.map((estado) => (
                 <option key={estado.value} value={estado.value}>
@@ -197,7 +184,7 @@ const ListadoStands = () => {
                 setSearchTerm('');
                 setCurrentPage(1);
               }}
-              className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors"
+              className="w-full px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-colors"
             >
               Limpiar Filtros
             </button>
@@ -206,7 +193,7 @@ const ListadoStands = () => {
       </div>
 
       {/* Tabla de stands */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+      <div className="bg-gray-700 rounded-lg border border-gray-600 overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
@@ -222,8 +209,8 @@ const ListadoStands = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-gray-700">
+            <table className="min-w-full divide-y divide-gray-600">
+              <thead className="bg-gray-600">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Stand
@@ -248,17 +235,17 @@ const ListadoStands = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-gray-800 divide-y divide-gray-700">
+              <tbody className="bg-gray-700 divide-y divide-gray-600">
                 {filteredStands.map((stand) => (
-                  <tr key={stand.id_stand} className="hover:bg-gray-700 transition-colors">
+                  <tr key={stand.id_stand} className="hover:bg-gray-600 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-white">
                           {stand.nombre_stand}
                         </div>
-                        {stand.descripcion && (
-                          <div className="text-sm text-gray-400 truncate max-w-xs">
-                            {stand.descripcion}
+                        {stand.numero_stand && (
+                          <div className="text-sm text-gray-400">
+                            {stand.numero_stand}
                           </div>
                         )}
                       </div>
@@ -269,8 +256,8 @@ const ListadoStands = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEstadoBadge(stand.estado)}`}>
-                        {stand.estado}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEstadoBadge(stand.estado_fisico)}`}>
+                        {stand.estado_fisico}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">

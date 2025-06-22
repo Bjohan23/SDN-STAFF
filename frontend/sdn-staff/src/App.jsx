@@ -89,22 +89,12 @@ function App() {
                 } />
                 {/* Rutas de Stands */}
                 <Route path="/stands" element={
-                  <RoleRoute allowedRoles={['administrador', 'manager', 'staff']}>
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
                     <DashboardStands />
                   </RoleRoute>
                 } />
-                <Route path="/stands/listado" element={
-                  <RoleRoute allowedRoles={['administrador', 'manager', 'staff']}>
-                    <ListadoStands />
-                  </RoleRoute>
-                } />
-                <Route path="/stands/agregar" element={
-                  <RoleRoute allowedRoles={['administrador', 'manager']}>
-                    <AgregarStand />
-                  </RoleRoute>
-                } />
                 <Route path="/stands/*" element={
-                  <RoleRoute allowedRoles={['administrador', 'manager', 'staff']}>
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
                     <DashboardStands />
                   </RoleRoute>
                 } />

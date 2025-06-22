@@ -2,9 +2,25 @@ import axios from '../config/axios';
 
 const standsService = {
   // Obtener todos los stands
-  getAllStands: async (page = 1, limit = 10) => {
+  getAllStands: async (page = 1, limit = 10, filters = {}) => {
     try {
-      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}`);
+      const params = new URLSearchParams({
+        page: page,
+        limit: limit
+      });
+
+      // Agregar filtros si se proporcionan
+      if (filters.estado_fisico) {
+        params.append('estado_fisico', filters.estado_fisico);
+      }
+      if (filters.id_tipo_stand) {
+        params.append('id_tipo_stand', filters.id_tipo_stand);
+      }
+      if (filters.search) {
+        params.append('search', filters.search);
+      }
+
+      const response = await axios.get(`/api/stands?${params.toString()}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -54,7 +70,17 @@ const standsService = {
   // Obtener stands por tipo
   getStandsByType: async (tipoId, page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands/tipo/${tipoId}?page=${page}&limit=${limit}`);
+      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&id_tipo_stand=${tipoId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Obtener stands por estado
+  getStandsByStatus: async (estado, page = 1, limit = 10) => {
+    try {
+      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=${estado}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -64,7 +90,7 @@ const standsService = {
   // Obtener stands disponibles
   getAvailableStands: async (page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands/disponibles?page=${page}&limit=${limit}`);
+      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=disponible`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -74,7 +100,7 @@ const standsService = {
   // Obtener stands ocupados
   getOccupiedStands: async (page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands/ocupados?page=${page}&limit=${limit}`);
+      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=ocupado`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -84,7 +110,7 @@ const standsService = {
   // Obtener estadísticas de stands
   getStandStats: async () => {
     try {
-      const response = await axios.get('/api/stands/estadisticas');
+      const response = await axios.get('/api/stands/stats');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -95,6 +121,16 @@ const standsService = {
   getTiposStand: async () => {
     try {
       const response = await axios.get('/api/tiposStand');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Restaurar stand eliminado
+  restoreStand: async (id) => {
+    try {
+      const response = await axios.post(`/api/stands/${id}/restore`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

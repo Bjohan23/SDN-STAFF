@@ -259,7 +259,17 @@ class StandService {
         }
       }
 
-      await AuditService.updateWithAudit(stand, updateData, userId);
+      const dataToUpdate = { ...updateData };
+      delete dataToUpdate.id; // No se debe actualizar el ID
+
+      // Manejo simplificado del precio_personalizado
+      if (updateData.precio_personalizado !== undefined) {
+        dataToUpdate.precio_personalizado = updateData.precio_personalizado;
+      }
+
+      const updatedStand = await AuditService.updateWithAudit(Stand, dataToUpdate, {
+        where: { id_stand: id }
+      }, userId);
       
       return await this.getStandById(id, true);
     } catch (error) {

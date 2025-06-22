@@ -228,10 +228,14 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   TipoStand.prototype.esAreaValida = function(area) {
-    if (!area || area <= 0) return false;
+    const numericArea = parseFloat(area);
+    if (isNaN(numericArea) || numericArea <= 0) return false;
     
-    if (this.area_minima && area < this.area_minima) return false;
-    if (this.area_maxima && area > this.area_maxima) return false;
+    const minArea = this.area_minima !== null ? parseFloat(this.area_minima) : null;
+    const maxArea = this.area_maxima !== null ? parseFloat(this.area_maxima) : null;
+
+    if (minArea !== null && numericArea < minArea) return false;
+    if (maxArea !== null && numericArea > maxArea) return false;
     
     return true;
   };
