@@ -25,6 +25,10 @@ import HistorialParticipacion from './pages/empresas/HistorialParticipacion'
 import DetalleParticipacionEvento from './pages/empresas/DetalleParticipacionEvento'
 import DocumentosPorVencer from './pages/empresas/DocumentosPorVencer'
 import DashboardEmpresas from './pages/empresas/DashboardEmpresas'
+// Stands
+import ListadoStands from './pages/stands/ListadoStands'
+import AgregarStand from './pages/stands/AgregarStand'
+import DashboardStands from './pages/stands/DashboardStands'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -35,7 +39,8 @@ function App() {
                     location.pathname.startsWith('/profile') || 
                     location.pathname.startsWith('/admin/roles') ||
                     location.pathname.startsWith('/admin/crear-evento') ||
-                    location.pathname.startsWith('/empresas');
+                    location.pathname.startsWith('/empresas') ||
+                    location.pathname.startsWith('/stands');
 
   return (
     <AuthProvider>
@@ -80,6 +85,17 @@ function App() {
                 <Route path="/empresas/*" element={
                   <RoleRoute allowedRoles={['administrador', 'manager']}>
                     <ListadoEmpresas />
+                  </RoleRoute>
+                } />
+                {/* Rutas de Stands */}
+                <Route path="/stands" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <DashboardStands />
+                  </RoleRoute>
+                } />
+                <Route path="/stands/*" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <DashboardStands />
                   </RoleRoute>
                 } />
               </Routes> 

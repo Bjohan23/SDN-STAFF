@@ -6,6 +6,8 @@
  */
 
 const axios = require('axios');
+const { Stand, TipoStand } = require('./src/models');
+const StandService = require('./src/services/StandService');
 
 // Configuración
 const BASE_URL = 'http://localhost:3000/api';
@@ -442,6 +444,164 @@ async function testFiltrosAvanzados() {
   }
 }
 
+async function testStandCreation() {
+  try {
+    console.log('🔍 Iniciando diagnóstico del módulo de stands...\n');
+
+    // 1. Verificar tipos de stand disponibles
+    console.log('1. Verificando tipos de stand disponibles...');
+    const tiposStand = await TipoStand.findAll({
+      where: { estado: 'activo' }
+    });
+    console.log(`✅ Encontrados ${tiposStand.length} tipos de stand activos`);
+    tiposStand.forEach(tipo => {
+      console.log(`   - ${tipo.nombre_tipo} (ID: ${tipo.id_tipo_stand})`);
+    });
+
+    if (tiposStand.length === 0) {
+      console.log('❌ No hay tipos de stand disponibles. Creando uno de prueba...');
+      const tipoPrueba = await TipoStand.create({
+        nombre_tipo: 'Stand Básico',
+        descripcion: 'Stand básico para pruebas',
+        area_minima: 10.00,
+        area_maxima: 50.00,
+        precio_base: 100.00,
+        moneda: 'PEN',
+        estado: 'activo',
+        created_by: 1
+      });
+      console.log(`✅ Creado tipo de stand: ${tipoPrueba.nombre_tipo}`);
+    }
+
+    // 2. Probar creación con datos válidos
+    console.log('\n2. Probando creación con datos válidos...');
+    const standDataValido = {
+      numero_stand: 'TEST-001',
+      nombre_stand: 'Stand de Prueba',
+      id_tipo_stand: tiposStand[0]?.id_tipo_stand || 1,
+      area: 25.5,
+      ubicacion: 'Pabellón A',
+      estado_fisico: 'disponible',
+      precio_personalizado: 150.00
+    };
+
+    console.log('📤 Datos a enviar:', JSON.stringify(standDataValido, null, 2));
+
+    try {
+      const standCreado = await StandService.createStand(standDataValido, 1);
+      console.log('✅ Stand creado exitosamente:', standCreado.numero_stand);
+      
+      // Limpiar después de la prueba
+      await standCreado.destroy();
+      console.log('🧹 Stand de prueba eliminado');
+    } catch (error) {
+      console.log('❌ Error al crear stand válido:', error.message);
+    }
+
+    // 3. Probar con precio negativo
+    console.log('\n3. Probando con precio negativo...');
+    const standDataPrecioNegativo = {
+      ...standDataValido,
+      numero_stand: 'TEST-002',
+      precio_personalizado: -50.00
+    };
+
+    try {
+      const standNegativo = await StandService.createStand(standDataPrecioNegativo, 1);
+      console.log('❌ ERROR: Se creó un stand con precio negativo');
+      await standNegativo.destroy();
+    } catch (error) {
+      console.log('✅ Correcto: Error capturado para precio negativo:', error.message);
+    }
+
+    // 4. Probar con precio undefined
+    console.log('\n4. Probando con precio undefined...');
+    const standDataPrecioUndefined = {
+      ...standDataValido,
+      numero_stand: 'TEST-003',
+      precio_personalizado: undefined
+    };
+
+    try {
+      const standUndefined = await StandService.createStand(standDataPrecioUndefined, 1);
+      console.log('✅ Stand creado con precio undefined:', standUndefined.numero_stand);
+      await standUndefined.destroy();
+    } catch (error) {
+      console.log('❌ Error con precio undefined:', error.message);
+    }
+
+    // 5. Probar con precio null
+    console.log('\n5. Probando con precio null...');
+    const standDataPrecioNull = {
+      ...standDataValido,
+      numero_stand: 'TEST-004',
+      precio_personalizado: null
+    };
+
+    try {
+      const standNull = await StandService.createStand(standDataPrecioNull, 1);
+      console.log('✅ Stand creado con precio null:', standNull.numero_stand);
+      await standNull.destroy();
+    } catch (error) {
+      console.log('❌ Error con precio null:', error.message);
+    }
+
+    // 6. Probar con precio 0
+    console.log('\n6. Probando con precio 0...');
+    const standDataPrecioCero = {
+      ...standDataValido,
+      numero_stand: 'TEST-005',
+      precio_personalizado: 0
+    };
+
+    try {
+      const standCero = await StandService.createStand(standDataPrecioCero, 1);
+      console.log('✅ Stand creado con precio 0:', standCero.numero_stand);
+      await standCero.destroy();
+    } catch (error) {
+      console.log('❌ Error con precio 0:', error.message);
+    }
+
+    // 7. Probar con precio como string
+    console.log('\n7. Probando con precio como string...');
+    const standDataPrecioString = {
+      ...standDataValido,
+      numero_stand: 'TEST-006',
+      precio_personalizado: '200.50'
+    };
+
+    try {
+      const standString = await StandService.createStand(standDataPrecioString, 1);
+      console.log('✅ Stand creado con precio string:', standString.numero_stand);
+      await standString.destroy();
+    } catch (error) {
+      console.log('❌ Error con precio string:', error.message);
+    }
+
+    // 8. Verificar validaciones del modelo
+    console.log('\n8. Verificando validaciones del modelo...');
+    try {
+      const standDirecto = await Stand.create({
+        numero_stand: 'TEST-007',
+        id_tipo_stand: tiposStand[0]?.id_tipo_stand || 1,
+        area: 25.5,
+        precio_personalizado: -100.00
+      });
+      console.log('❌ ERROR: El modelo permitió crear con precio negativo');
+      await standDirecto.destroy();
+    } catch (error) {
+      console.log('✅ Correcto: Validación del modelo funcionando:', error.message);
+    }
+
+    console.log('\n🎯 Diagnóstico completado. Revisa los resultados arriba.');
+
+  } catch (error) {
+    console.error('❌ Error en el diagnóstico:', error);
+  } finally {
+    process.exit(0);
+  }
+}
+
 // Función principal
 async function runTests() {
   log('🚀 INICIANDO PRUEBAS DEL MÓDULO DE INVENTARIO DE STANDS', 'cyan');
@@ -461,6 +621,7 @@ async function runTests() {
     await testServiciosAdicionales();
     await testContrataciones();
     await testFiltrosAvanzados();
+    await testStandCreation();
 
     log('\n🎉 === RESUMEN DE PRUEBAS ===', 'cyan');
     log('✅ Todas las pruebas del módulo de stands completadas', 'green');

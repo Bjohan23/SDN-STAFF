@@ -106,9 +106,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
       validate: {
-        min: {
-          args: 0,
-          msg: 'El precio personalizado no puede ser negativo'
+        isPositiveOrNull(value) {
+          // Solo validar si el valor no es null, undefined o string vacío
+          if (value !== null && value !== undefined && value !== '') {
+            const precio = parseFloat(value);
+            if (isNaN(precio) || precio < 0) {
+              throw new Error('El precio personalizado no puede ser negativo');
+            }
+          }
         }
       }
     },

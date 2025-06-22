@@ -15,6 +15,71 @@ class StandController {
       const userId = req.user ? req.user.id_usuario : null;
       const standData = req.body;
 
+      // --- CAPA DE COMPATIBILIDAD Y LIMPIEZA DEFINITIVA ---
+      if (standData.precio_base !== undefined && standData.precio_base !== null && standData.precio_base !== '') {
+        standData.precio_personalizado = standData.precio_base;
+        delete standData.precio_base;
+      }
+
+      // Manejo mejorado del precio_personalizado
+      if (standData.precio_personalizado !== undefined && standData.precio_personalizado !== null && standData.precio_personalizado !== '') {
+        const precio = parseFloat(standData.precio_personalizado);
+        if (isNaN(precio)) {
+          delete standData.precio_personalizado; // Eliminar si no es un número válido
+        } else if (precio < 0) {
+          return ApiResponse.validation(res, [{ field: 'precio_personalizado', message: 'El precio personalizado no puede ser negativo' }]);
+        } else {
+          standData.precio_personalizado = precio; // Asegurar que sea número
+        }
+      } else {
+        // Si el precio está vacío, undefined o null, establecerlo como null explícitamente
+        standData.precio_personalizado = null;
+      }
+
+      // Convertir campos numéricos que pueden venir como strings
+      if (standData.area !== undefined && standData.area !== null && standData.area !== '') {
+        const area = parseFloat(standData.area);
+        if (isNaN(area) || area <= 0) {
+          return ApiResponse.validation(res, [{ field: 'area', message: 'El área del stand es requerida y debe ser mayor a 0' }]);
+        }
+        standData.area = area;
+      }
+
+      if (standData.coordenadas_x !== undefined && standData.coordenadas_x !== null && standData.coordenadas_x !== '') {
+        const coordX = parseFloat(standData.coordenadas_x);
+        if (!isNaN(coordX)) {
+          standData.coordenadas_x = coordX;
+        } else {
+          delete standData.coordenadas_x;
+        }
+      }
+
+      if (standData.coordenadas_y !== undefined && standData.coordenadas_y !== null && standData.coordenadas_y !== '') {
+        const coordY = parseFloat(standData.coordenadas_y);
+        if (!isNaN(coordY)) {
+          standData.coordenadas_y = coordY;
+        } else {
+          delete standData.coordenadas_y;
+        }
+      }
+
+      if (standData.capacidad_maxima_personas !== undefined && standData.capacidad_maxima_personas !== null && standData.capacidad_maxima_personas !== '') {
+        const capacidad = parseInt(standData.capacidad_maxima_personas);
+        if (!isNaN(capacidad) && capacidad > 0) {
+          standData.capacidad_maxima_personas = capacidad;
+        } else {
+          delete standData.capacidad_maxima_personas;
+        }
+      }
+
+      // Mapea campos de un formulario antiguo a los campos del modelo nuevo
+      if (standData.nombre_stand && !standData.numero_stand) {
+        standData.numero_stand = standData.nombre_stand;
+      }
+      if (standData.estado && !standData.estado_fisico) {
+        standData.estado_fisico = standData.estado === 'reservado' ? 'ocupado' : standData.estado;
+      }
+      
       // Validaciones básicas
       if (!ValidationUtils.isNotEmpty(standData.numero_stand)) {
         return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand es requerido' }]);
@@ -38,18 +103,16 @@ class StandController {
         return ApiResponse.validation(res, [{ field: 'estado_fisico', message: 'Estado físico inválido' }]);
       }
 
-      // Validar precio personalizado
-      if (standData.precio_personalizado && standData.precio_personalizado < 0) {
-        return ApiResponse.validation(res, [{ field: 'precio_personalizado', message: 'El precio personalizado no puede ser negativo' }]);
-      }
-
-      // Sanitizar datos
+      // Sanitizar datos de texto
       standData.numero_stand = ValidationUtils.sanitizeString(standData.numero_stand);
       if (standData.nombre_stand) {
         standData.nombre_stand = ValidationUtils.sanitizeString(standData.nombre_stand);
       }
       if (standData.ubicacion) {
         standData.ubicacion = ValidationUtils.sanitizeString(standData.ubicacion);
+      }
+      if (standData.observaciones) {
+        standData.observaciones = ValidationUtils.sanitizeString(standData.observaciones);
       }
 
       // Crear stand
@@ -158,6 +221,71 @@ class StandController {
       const updateData = req.body;
       const userId = req.user ? req.user.id_usuario : null;
 
+      // --- CAPA DE COMPATIBILIDAD Y LIMPIEZA DEFINITIVA ---
+      if (updateData.precio_base !== undefined && updateData.precio_base !== null && updateData.precio_base !== '') {
+        updateData.precio_personalizado = updateData.precio_base;
+        delete updateData.precio_base;
+      }
+      
+      // Manejo mejorado del precio_personalizado
+      if (updateData.precio_personalizado !== undefined && updateData.precio_personalizado !== null && updateData.precio_personalizado !== '') {
+        const precio = parseFloat(updateData.precio_personalizado);
+        if (isNaN(precio)) {
+          delete updateData.precio_personalizado; // Eliminar si no es un número válido
+        } else if (precio < 0) {
+          return ApiResponse.validation(res, [{ field: 'precio_personalizado', message: 'El precio personalizado no puede ser negativo' }]);
+        } else {
+          updateData.precio_personalizado = precio; // Asegurar que sea número
+        }
+      } else {
+        // Si el precio está vacío, undefined o null, establecerlo como null explícitamente
+        updateData.precio_personalizado = null;
+      }
+
+      // Convertir campos numéricos que pueden venir como strings
+      if (updateData.area !== undefined && updateData.area !== null && updateData.area !== '') {
+        const area = parseFloat(updateData.area);
+        if (isNaN(area) || area <= 0) {
+          return ApiResponse.validation(res, [{ field: 'area', message: 'El área debe ser mayor a 0' }]);
+        }
+        updateData.area = area;
+      }
+
+      if (updateData.coordenadas_x !== undefined && updateData.coordenadas_x !== null && updateData.coordenadas_x !== '') {
+        const coordX = parseFloat(updateData.coordenadas_x);
+        if (!isNaN(coordX)) {
+          updateData.coordenadas_x = coordX;
+        } else {
+          delete updateData.coordenadas_x;
+        }
+      }
+
+      if (updateData.coordenadas_y !== undefined && updateData.coordenadas_y !== null && updateData.coordenadas_y !== '') {
+        const coordY = parseFloat(updateData.coordenadas_y);
+        if (!isNaN(coordY)) {
+          updateData.coordenadas_y = coordY;
+        } else {
+          delete updateData.coordenadas_y;
+        }
+      }
+
+      if (updateData.capacidad_maxima_personas !== undefined && updateData.capacidad_maxima_personas !== null && updateData.capacidad_maxima_personas !== '') {
+        const capacidad = parseInt(updateData.capacidad_maxima_personas);
+        if (!isNaN(capacidad) && capacidad > 0) {
+          updateData.capacidad_maxima_personas = capacidad;
+        } else {
+          delete updateData.capacidad_maxima_personas;
+        }
+      }
+
+      // Mapea campos de un formulario antiguo a los campos del modelo nuevo
+      if (updateData.nombre_stand && !updateData.numero_stand) {
+        updateData.numero_stand = updateData.nombre_stand;
+      }
+      if (updateData.estado && !updateData.estado_fisico) {
+        updateData.estado_fisico = updateData.estado === 'reservado' ? 'ocupado' : updateData.estado;
+      }
+
       if (!ValidationUtils.isValidId(id)) {
         return ApiResponse.validation(res, [{ field: 'id', message: 'ID inválido' }]);
       }
@@ -167,20 +295,12 @@ class StandController {
         return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand debe tener entre 1 y 20 caracteres' }]);
       }
 
-      if (updateData.area && (isNaN(updateData.area) || updateData.area <= 0)) {
-        return ApiResponse.validation(res, [{ field: 'area', message: 'El área debe ser mayor a 0' }]);
-      }
-
-      if (updateData.precio_personalizado && updateData.precio_personalizado < 0) {
-        return ApiResponse.validation(res, [{ field: 'precio_personalizado', message: 'El precio personalizado no puede ser negativo' }]);
-      }
-
       const estadosFisicosValidos = ['disponible', 'ocupado', 'mantenimiento', 'fuera_de_servicio'];
       if (updateData.estado_fisico && !estadosFisicosValidos.includes(updateData.estado_fisico)) {
         return ApiResponse.validation(res, [{ field: 'estado_fisico', message: 'Estado físico inválido' }]);
       }
 
-      // Sanitizar datos
+      // Sanitizar datos de texto
       if (updateData.numero_stand) {
         updateData.numero_stand = ValidationUtils.sanitizeString(updateData.numero_stand);
       }
@@ -189,6 +309,9 @@ class StandController {
       }
       if (updateData.ubicacion) {
         updateData.ubicacion = ValidationUtils.sanitizeString(updateData.ubicacion);
+      }
+      if (updateData.observaciones) {
+        updateData.observaciones = ValidationUtils.sanitizeString(updateData.observaciones);
       }
 
       const standActualizado = await StandService.updateStand(id, updateData, userId);

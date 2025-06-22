@@ -65,7 +65,24 @@ export const AuthProvider = ({ children }) => {
   }
 
   const hasRole = (requiredRole) => {
-    return user?.roles?.some(role => role.nombre_rol === requiredRole)
+    console.log('hasRole called with:', requiredRole);
+    console.log('Current user:', user);
+    console.log('User roles:', user?.roles);
+    
+    if (!user || !user.roles) {
+      console.log('No user or roles found');
+      return false;
+    }
+    
+    const hasRequiredRole = user.roles.some(role => {
+      console.log('Checking role:', role);
+      console.log('Role nombre_rol:', role.nombre_rol);
+      console.log('Required role:', requiredRole);
+      return role.nombre_rol === requiredRole;
+    });
+    
+    console.log('Has required role:', hasRequiredRole);
+    return hasRequiredRole;
   }
 
   return (

@@ -60,6 +60,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     },
   ];
 
+  const standsMenu = [
+    { 
+      path: '/stands', 
+      name: 'Stands', 
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      )
+    },
+  ];
+
   return (
     <>
       {/* Overlay para móvil */}
@@ -157,6 +169,35 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         `flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                           isActive 
                             ? 'bg-green-600 text-white shadow-lg' 
+                            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                        }`
+                      }
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <span className="mr-3">{item.icon}</span>
+                      {item.name}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Menú de Stands */}
+          {(hasRole('administrador') || hasRole('manager') || hasRole('staff')) && (
+            <div>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                Gestión de Stands
+              </h3>
+              <ul className="space-y-1">
+                {standsMenu.map((item) => (
+                  <li key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isActive 
+                            ? 'bg-purple-600 text-white shadow-lg' 
                             : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                         }`
                       }
