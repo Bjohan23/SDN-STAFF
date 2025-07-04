@@ -297,21 +297,31 @@ class UsuarioController {
       console.log('foto_url type:', typeof updateData.foto_url);
       console.log('===========================');
 
-      // Validar campos personalizables
-      if (updateData.nombre && !ValidationUtils.isValidLength(updateData.nombre, 0, 100)) {
-        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre debe tener máximo 100 caracteres' }]);
+      // Validar campos personalizables obligatorios
+      if (!updateData.nombre || !ValidationUtils.isNotEmpty(updateData.nombre)) {
+        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre es requerido' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.nombre, 1, 100)) {
+        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre debe tener entre 1 y 100 caracteres' }]);
       }
 
-      if (updateData.bio && !ValidationUtils.isValidLength(updateData.bio, 0, 1000)) {
-        return ApiResponse.validation(res, [{ field: 'bio', message: 'La bio debe tener máximo 1000 caracteres' }]);
+      if (!updateData.bio || !ValidationUtils.isNotEmpty(updateData.bio)) {
+        return ApiResponse.validation(res, [{ field: 'bio', message: 'La biografía es requerida' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.bio, 1, 1000)) {
+        return ApiResponse.validation(res, [{ field: 'bio', message: 'La bio debe tener entre 1 y 1000 caracteres' }]);
       }
 
-      // Validar URL de foto solo si no está vacía
-      if (updateData.foto_url && updateData.foto_url.trim() !== '') {
-        // Validación más permisiva para URLs
-        if (!updateData.foto_url.startsWith('http://') && !updateData.foto_url.startsWith('https://')) {
-          return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe comenzar con http:// o https://' }]);
-        }
+      // Validar URL de foto obligatoria
+      if (!updateData.foto_url || !ValidationUtils.isNotEmpty(updateData.foto_url)) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto es requerida' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.foto_url, 1, 2000)) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe tener entre 1 y 2000 caracteres' }]);
+      }
+      // Validación de formato de URL
+      if (!updateData.foto_url.startsWith('http://') && !updateData.foto_url.startsWith('https://')) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe comenzar con http:// o https://' }]);
       }
 
       // Validar cambio de contraseña si se está actualizando

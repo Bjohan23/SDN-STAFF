@@ -79,6 +79,21 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Validar campos obligatorios
+    if (!formData.nombre || formData.nombre.trim() === '') {
+      setMessage({ type: 'error', text: 'El nombre es requerido' })
+      return
+    }
+    if (!formData.foto_url || formData.foto_url.trim() === '') {
+      setMessage({ type: 'error', text: 'La URL de la foto es requerida' })
+      return
+    }
+    if (!formData.bio || formData.bio.trim() === '') {
+      setMessage({ type: 'error', text: 'La biografía es requerida' })
+      return
+    }
+    
     // Validar cambio de contraseña si se llenan los campos
     if (formData.newPassword || formData.confirmPassword) {
       if (!formData.password) {
@@ -185,7 +200,7 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
-                  Nombre completo
+                  Nombre completo <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -215,7 +230,7 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="foto_url" className="block text-sm font-medium text-gray-700">
-                  URL de foto de perfil
+                  URL de foto de perfil <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="url"
@@ -226,11 +241,11 @@ const Profile = () => {
                   placeholder="https://ejemplo.com/foto.jpg"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
-                <p className="mt-1 text-sm text-gray-500">Ingrese la URL de su foto de perfil</p>
+                                  <p className="mt-1 text-sm text-gray-500">Ingrese la URL de su foto de perfil (requerido)</p>
               </div>
               <div>
                 <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-                  Biografía
+                  Biografía <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="bio"
@@ -241,7 +256,7 @@ const Profile = () => {
                   placeholder="Cuéntenos algo sobre usted..."
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
-                <p className="mt-1 text-sm text-gray-500">Máximo 1000 caracteres</p>
+                                  <p className="mt-1 text-sm text-gray-500">Máximo 1000 caracteres (requerido)</p>
               </div>
             </div>
             <div className="border-t border-gray-200 pt-6">
