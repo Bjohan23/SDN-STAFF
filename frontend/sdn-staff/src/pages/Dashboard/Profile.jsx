@@ -15,7 +15,10 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     bio: '',
-    foto_url: ''
+    foto_url: '',
+    password: '',
+    newPassword: '',
+    confirmPassword: ''
   })
   const [editMode, setEditMode] = useState(false)
 
@@ -35,7 +38,10 @@ const Profile = () => {
         setFormData({
           nombre: profileData.nombre || '',
           bio: profileData.bio || '',
-          foto_url: profileData.foto_url || ''
+          foto_url: profileData.foto_url || '',
+          password: '',
+          newPassword: '',
+          confirmPassword: ''
         })
       } catch (error) {
         setMessage({ type: 'error', text: 'Error al cargar el perfil' })
@@ -57,7 +63,10 @@ const Profile = () => {
     setFormData({
       nombre: profile.nombre,
       bio: profile.bio,
-      foto_url: profile.foto_url
+      foto_url: profile.foto_url,
+      password: '',
+      newPassword: '',
+      confirmPassword: ''
     })
     setEditMode(true)
     setMessage({ type: '', text: '' })
@@ -70,6 +79,21 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // Validar cambio de contraseña si se llenan los campos
+    if (formData.newPassword || formData.confirmPassword) {
+      if (!formData.password) {
+        setMessage({ type: 'error', text: 'Debe ingresar la contraseña actual' })
+        return
+      }
+      if (formData.newPassword !== formData.confirmPassword) {
+        setMessage({ type: 'error', text: 'Las contraseñas no coinciden' })
+        return
+      }
+      if (formData.newPassword.length < 6) {
+        setMessage({ type: 'error', text: 'La nueva contraseña debe tener al menos 6 caracteres' })
+        return
+      }
+    }
     try {
       setLoading(true)
       setMessage({ type: '', text: '' })
@@ -78,10 +102,15 @@ const Profile = () => {
         bio: formData.bio,
         foto_url: formData.foto_url
       }
+      if (formData.newPassword) {
+        updateData.password = formData.newPassword
+        updateData.currentPassword = formData.password
+      }
       await usuariosService.updateProfile(updateData)
       setProfile({
         ...profile,
-        ...updateData
+        ...updateData,
+        correo: profile.correo // aseguramos que el correo no cambie
       })
       setEditMode(false)
       setMessage({ type: 'success', text: 'Perfil actualizado exitosamente' })
@@ -97,7 +126,7 @@ const Profile = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Perfil de Usuario</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">Perfil de Usuario</h1>
       {message.text && (
         <div className={`mb-4 p-4 rounded-md ${
           message.type === 'success'
@@ -107,32 +136,30 @@ const Profile = () => {
           {message.text}
         </div>
       )}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-6 max-w-xl mx-auto">
         {!editMode ? (
           // Modo vista
           <div>
-            <div className="flex items-center mb-6">
+            <div className="flex flex-col items-center mb-6">
               {profile.foto_url ? (
                 <img
                   src={profile.foto_url}
                   alt="Foto de perfil"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-indigo-200 mb-2"
                   onError={(e) => {
                     e.target.style.display = 'none'
                     e.target.nextSibling.style.display = 'flex'
                   }}
                 />
               ) : null}
-              <div className={`w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl font-bold ${
+              <div className={`w-32 h-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-4xl font-bold mb-2 ${
                 profile.foto_url ? 'hidden' : ''
               }`}>
                 {profile.nombre ? profile.nombre.charAt(0).toUpperCase() : profile.correo?.charAt(0).toUpperCase()}
               </div>
-              <div className="ml-4">
-                <h2 className="text-xl font-semibold">{profile.nombre || profile.correo}</h2>
-                <p className="text-gray-600">{profile.correo}</p>
-                {user?.role && <p className="text-gray-400 text-sm">{user.role}</p>}
-              </div>
+              <h2 className="text-2xl font-semibold mt-2">{profile.nombre || profile.correo}</h2>
+              <p className="text-gray-600">{profile.correo}</p>
+              {user?.role && <p className="text-gray-400 text-sm">{user.role}</p>}
             </div>
             {profile.bio && (
               <div className="mb-4">
@@ -215,6 +242,50 @@ const Profile = () => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
                 <p className="mt-1 text-sm text-gray-500">Máximo 1000 caracteres</p>
+              </div>
+            </div>
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Cambiar contraseña</h3>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Contraseña actual
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                    Nueva contraseña
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    value={formData.newPassword}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                    Confirmar nueva contraseña
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex justify-end space-x-3">

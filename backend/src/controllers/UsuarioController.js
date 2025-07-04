@@ -288,6 +288,14 @@ class UsuarioController {
     try {
       const userId = req.user.id_usuario;
       const updateData = req.body;
+      
+      // Debug: Log de los datos recibidos
+      console.log('=== DEBUG UPDATE PROFILE ===');
+      console.log('User ID:', userId);
+      console.log('Update Data:', updateData);
+      console.log('foto_url value:', updateData.foto_url);
+      console.log('foto_url type:', typeof updateData.foto_url);
+      console.log('===========================');
 
       // Validar campos personalizables
       if (updateData.nombre && !ValidationUtils.isValidLength(updateData.nombre, 0, 100)) {
@@ -298,8 +306,26 @@ class UsuarioController {
         return ApiResponse.validation(res, [{ field: 'bio', message: 'La bio debe tener máximo 1000 caracteres' }]);
       }
 
-      if (updateData.foto_url && !ValidationUtils.isValidUrl(updateData.foto_url)) {
-        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe ser válida' }]);
+      // Validar URL de foto solo si no está vacía
+      if (updateData.foto_url && updateData.foto_url.trim() !== '') {
+        // Validación más permisiva para URLs
+        if (!updateData.foto_url.startsWith('http://') && !updateData.foto_url.startsWith('https://')) {
+          return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe comenzar con http:// o https://' }]);
+        }
+      }
+
+      // Validar cambio de contraseña si se está actualizando
+      if (updateData.password && !ValidationUtils.isValidLength(updateData.password, 6)) {
+        return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña debe tener al menos 6 caracteres' }]);
+      }
+
+      // Si se está cambiando la contraseña, verificar la contraseña actual
+      if (updateData.password && updateData.currentPassword) {
+        const usuario = await UsuarioService.getUsuarioById(userId);
+        const passwordValid = await UsuarioService.validatePassword(updateData.currentPassword, usuario.password_hash);
+        if (!passwordValid) {
+          return ApiResponse.validation(res, [{ field: 'currentPassword', message: 'La contraseña actual es incorrecta' }]);
+        }
       }
 
       // Sanitizar strings
@@ -309,6 +335,9 @@ class UsuarioController {
       if (updateData.bio) {
         updateData.bio = ValidationUtils.sanitizeString(updateData.bio);
       }
+
+      // Remover currentPassword del updateData ya que no es un campo de la base de datos
+      delete updateData.currentPassword;
 
       const usuarioActualizado = await UsuarioService.updateUsuario(userId, updateData, userId);
       return ApiResponse.success(res, usuarioActualizado, 'Perfil actualizado exitosamente');

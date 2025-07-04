@@ -68,15 +68,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     foto_url: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.TEXT,
       allowNull: true,
       validate: {
-        isUrl: {
-          msg: "La URL de la foto debe ser válida",
-        },
         len: {
-          args: [0, 500],
-          msg: "La URL de la foto debe tener máximo 500 caracteres",
+          args: [0, 2000],
+          msg: "La URL de la foto debe tener máximo 2000 caracteres",
         },
       },
     },
