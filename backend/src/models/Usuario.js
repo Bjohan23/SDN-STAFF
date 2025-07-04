@@ -56,6 +56,40 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    // Campos personalizables del perfil
+    nombre: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      validate: {
+        len: {
+          args: [0, 100],
+          msg: "El nombre debe tener máximo 100 caracteres",
+        },
+      },
+    },
+    foto_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      validate: {
+        isUrl: {
+          msg: "La URL de la foto debe ser válida",
+        },
+        len: {
+          args: [0, 500],
+          msg: "La URL de la foto debe tener máximo 500 caracteres",
+        },
+      },
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      validate: {
+        len: {
+          args: [0, 1000],
+          msg: "La bio debe tener máximo 1000 caracteres",
+        },
+      },
+    },
     // ✅ Campos de auditoría consistentes (sin _usuario)
     created_by: {
       type: DataTypes.INTEGER,

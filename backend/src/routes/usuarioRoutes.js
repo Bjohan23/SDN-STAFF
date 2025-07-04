@@ -9,6 +9,8 @@ router.get('/stats', authenticate, authorize(['administrador']), UsuarioControll
 
 router.get('/profile', authenticate, UsuarioController.getProfile);
 
+router.put('/profile', authenticate, UsuarioController.updateProfile);
+
 router.get('/:id', authenticate, verifySelfOrAdmin, UsuarioController.getUsuarioById);
 
 router.get('/correo/:correo', authenticate, authorize(['administrador']), UsuarioController.getUsuarioBycorreo);

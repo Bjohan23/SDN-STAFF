@@ -280,6 +280,45 @@ class UsuarioController {
       next(error);
     }
   }
+
+  /**
+   * Actualizar perfil del usuario autenticado
+   */
+  static async updateProfile(req, res, next) {
+    try {
+      const userId = req.user.id_usuario;
+      const updateData = req.body;
+
+      // Validar campos personalizables
+      if (updateData.nombre && !ValidationUtils.isValidLength(updateData.nombre, 0, 100)) {
+        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre debe tener máximo 100 caracteres' }]);
+      }
+
+      if (updateData.bio && !ValidationUtils.isValidLength(updateData.bio, 0, 1000)) {
+        return ApiResponse.validation(res, [{ field: 'bio', message: 'La bio debe tener máximo 1000 caracteres' }]);
+      }
+
+      if (updateData.foto_url && !ValidationUtils.isValidUrl(updateData.foto_url)) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe ser válida' }]);
+      }
+
+      // Sanitizar strings
+      if (updateData.nombre) {
+        updateData.nombre = ValidationUtils.sanitizeString(updateData.nombre);
+      }
+      if (updateData.bio) {
+        updateData.bio = ValidationUtils.sanitizeString(updateData.bio);
+      }
+
+      const usuarioActualizado = await UsuarioService.updateUsuario(userId, updateData, userId);
+      return ApiResponse.success(res, usuarioActualizado, 'Perfil actualizado exitosamente');
+    } catch (error) {
+      if (error.message === 'Usuario no encontrado') {
+        return ApiResponse.notFound(res, error.message);
+      }
+      next(error);
+    }
+  }
 }
 
 module.exports = UsuarioController;
