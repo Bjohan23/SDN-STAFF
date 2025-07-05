@@ -66,6 +66,19 @@ class ValidationUtils {
     const length = str.trim().length;
     return length >= min && length <= max;
   }
+
+  /**
+   * Valida si una URL es válida
+   */
+  static isValidUrl(url) {
+    if (typeof url !== 'string') return false;
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 module.exports = ValidationUtils;

@@ -4,6 +4,18 @@ const usuarios = {
     getUsuario: async () => {
         const res = await axiosInstance.get('/api/usuarios')
         return res.data
+    },
+    
+    // Obtener perfil del usuario autenticado
+    getProfile: async () => {
+        const res = await axiosInstance.get('/api/usuarios/profile')
+        return res.data
+    },
+    
+    // Actualizar perfil del usuario autenticado
+    updateProfile: async (profileData) => {
+        const res = await axiosInstance.put('/api/usuarios/profile', profileData)
+        return res.data
     }
 }
 
