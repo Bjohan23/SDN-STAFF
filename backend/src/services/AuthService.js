@@ -333,10 +333,15 @@ class AuthService {
         fecha_creacion: new Date()
       });
 
-      // Asignar rol de visitante (ID 4)
-      const rolVisitante = await Rol.findByPk(12);
+      // Buscar rol de visitante dinámicamente por nombre
+      const rolVisitante = await Rol.findOne({
+        where: {
+          nombre_rol: 'visitante'
+        }
+      });
+
       if (!rolVisitante) {
-        throw new Error('Error al asignar rol de visitante');
+        throw new Error('Error: No se encontró el rol de visitante en el sistema');
       }
 
       await usuario.setRoles([rolVisitante]);
