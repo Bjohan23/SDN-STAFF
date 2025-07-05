@@ -2,6 +2,8 @@
 
 import axios from "../config/axios";
 const API = "/api/empresasExpositoras";
+const CLASIFICACION_API = "/api/clasificacion";
+const CATEGORIAS_API = "/api/categorias";
 
 export async function registrarEmpresaPublica(data) {
   // POST /api/empresasExpositoras/registro-publico
@@ -98,5 +100,54 @@ export async function empresasEnEvento(idEmpresa, idEvento) {
   const res = await axios.post(`${API}/${idEmpresa}/eventos`, {
     id_evento: idEvento,
   });
+  return res.data;
+}
+
+// ==================== SERVICIOS DE CATEGORÍAS ====================
+
+// Obtener categorías de una empresa
+export async function obtenerCategoriasEmpresa(empresaId) {
+  const res = await axios.get(`/api/clasificacion/empresas/${empresaId}/categorias`);
+  return res.data;
+}
+
+// Asignar categorías a una empresa
+export async function asignarCategoriasEmpresa(empresaId, categorias) {
+  const res = await axios.post(`${CLASIFICACION_API}/empresas/${empresaId}/categorias`, {
+    categorias,
+    mantenerExistentes: false
+  });
+  return res.data;
+}
+
+// Establecer categoría principal
+export async function establecerCategoriaPrincipal(empresaId, categoriaId) {
+  const res = await axios.post(`${CLASIFICACION_API}/empresas/${empresaId}/categorias/${categoriaId}/principal`);
+  return res.data;
+}
+
+// Remover categoría de una empresa
+export async function removerCategoriaEmpresa(empresaId, categoriaId) {
+  const res = await axios.delete(`${CLASIFICACION_API}/empresas/${empresaId}/categorias/${categoriaId}`);
+  return res.data;
+}
+
+// Obtener todas las categorías disponibles
+export async function obtenerCategoriasDisponibles() {
+  const res = await axios.get('/api/categoriasComerciales');
+  return res.data;
+}
+
+// Buscar empresas por categorías
+export async function buscarEmpresasPorCategorias(categorias = []) {
+  const res = await axios.get(`${CLASIFICACION_API}/buscar/categorias`, {
+    params: { categorias }
+  });
+  return res.data;
+}
+
+// Generar directorio temático por categoría
+export async function generarDirectorioTematico(categoriaId) {
+  const res = await axios.get(`${CLASIFICACION_API}/directorio/categoria/${categoriaId}`);
   return res.data;
 }

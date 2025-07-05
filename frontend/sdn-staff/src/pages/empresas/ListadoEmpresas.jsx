@@ -3,6 +3,7 @@ import DashboardEmpresas from "./DashboardEmpresas";
 import DocumentosPorVencer from "./DocumentosPorVencer";
 import AprobacionEmpresas from "./AprobacionEmpresas";
 import AgregarEmpresa from "./AgregarEmpresa";
+import ResumenCategorias from "../../components/ResumenCategorias";
 import axios from "../../config/axios";
 
 const TABS = [
@@ -240,6 +241,9 @@ const ListadoEmpresas = () => {
                           Sector & Tamaño
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                          Categorías
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Contacto
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -296,6 +300,9 @@ const ListadoEmpresas = () => {
                                 )}
                               </div>
                             </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <ResumenCategorias empresaId={emp.id_empresa} maxCategorias={2} />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-white">{emp.email_contacto}</div>
