@@ -239,41 +239,6 @@ const CrearEvento = () => {
     }
   };
 
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    const errors = validate();
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-
-    setLoading(true);
-    try {
-      const payload = {
-        ...form,
-        estado: estadoFinal,
-        capacidad_maxima: form.capacidad_maxima
-          ? parseInt(form.capacidad_maxima)
-          : null,
-        precio_entrada: form.precio_entrada
-          ? parseFloat(parseFloat(form.precio_entrada).toFixed(2))
-          : null,
-        configuracion_especifica: form.configuracion_especifica
-          ? JSON.parse(form.configuracion_especifica)
-          : null,
-      };
-      await axios.post("/api/eventos", payload);
-      setSuccess("Evento creado exitosamente");
-      setForm(initialState);
-      setFieldErrors({});
-      fetchEventosRecientes();
-      setShowModal(false);
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al crear evento");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getEstadoBadge = (estado) => {
     const estadoConfig = estados.find(e => e.value === estado) || estados[0];
     return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${estadoConfig.color}`;
