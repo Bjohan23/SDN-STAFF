@@ -28,9 +28,15 @@ const estados = [
   { value: "archivado", label: "Archivado", color: "bg-red-900 text-red-200" }
 ];
 
+import { useParams } from 'react-router-dom';
+
 const CrearEvento = () => {
+  const { id_evento } = useParams(); // Si existe, es edición
+  // ... (resto igual)
+
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(initialState);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [eventosRecientes, setEventosRecientes] = useState([]);
   const [eventosFiltrados, setEventosFiltrados] = useState([]);
   const [loadingFiltrados, setLoadingFiltrados] = useState(false);
@@ -71,7 +77,27 @@ const CrearEvento = () => {
   useEffect(() => {
     fetchEventosRecientes();
     fetchTiposEvento();
-  }, []);
+    // Si es edición, cargar datos del evento
+    if (id_evento) {
+      setIsEditMode(true);
+      setLoading(true);
+      import('../../services/eventosService').then(({ default: eventosService }) => {
+        eventosService.getEventoById(id_evento)
+          .then(res => {
+            const data = res.data;
+            setForm({
+              ...initialState,
+              ...data,
+              fecha_inicio: data.fecha_inicio ? data.fecha_inicio.slice(0, 10) : '',
+              fecha_fin: data.fecha_fin ? data.fecha_fin.slice(0, 10) : '',
+              configuracion_especifica: data.configuracion_especifica ? JSON.stringify(data.configuracion_especifica, null, 2) : '',
+            });
+          })
+          .catch(() => setError('No se pudo cargar el evento'))
+          .finally(() => setLoading(false));
+      });
+    }
+  }, [id_evento]);
 
   useEffect(() => {
     if (tipoFiltro) {
@@ -162,6 +188,57 @@ const CrearEvento = () => {
   };
 
   const handleSubmit = async (e, estadoFinal = "borrador") => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+    setLoading(true);
+    try {
+      const payload = {
+        ...form,
+        estado: estadoFinal,
+        capacidad_maxima: form.capacidad_maxima
+          ? parseInt(form.capacidad_maxima)
+          : null,
+        precio_entrada: form.precio_entrada
+          ? parseFloat(parseFloat(form.precio_entrada).toFixed(2))
+          : null,
+        configuracion_especifica: form.configuracion_especifica
+          ? JSON.parse(form.configuracion_especifica)
+          : null,
+      };
+      if (isEditMode && id_evento) {
+        // EDITAR
+        import('../../services/eventosService').then(({ default: eventosService }) => {
+          eventosService.updateEvento(id_evento, payload)
+            .then(() => {
+              setSuccess('Evento actualizado exitosamente');
+              fetchEventosRecientes();
+              setShowModal(false);
+            })
+            .catch(err => {
+              setError(err.response?.data?.message || 'Error al actualizar evento');
+            })
+            .finally(() => setLoading(false));
+        });
+      } else {
+        // CREAR
+        await axios.post("/api/eventos", payload);
+        setSuccess("Evento creado exitosamente");
+        setForm(initialState);
+        setFieldErrors({});
+        fetchEventosRecientes();
+        setShowModal(false);
+        setLoading(false);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Error al crear evento");
+      setLoading(false);
+    }
+  };
+
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -423,7 +500,7 @@ const CrearEvento = () => {
               <div className="bg-gray-800 px-6 pt-6 pb-4">
                 <div className="flex items-start justify-between">
                   <h3 className="text-xl leading-6 font-bold text-white">
-                    Crear Nuevo Evento
+                    {isEditMode ? 'Editar Evento' : 'Crear Nuevo Evento'}
                   </h3>
                   <button
                     type="button"
