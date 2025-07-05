@@ -56,6 +56,43 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    // Campos personalizables del perfil (conservados de la rama 'main')
+    nombre: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El nombre es requerido",
+        },
+        len: {
+          args: [1, 100],
+          msg: "El nombre debe tener entre 1 y 100 caracteres",
+        },
+      },
+    },
+    foto_url: {
+      type: DataTypes.TEXT,
+      allowNull: false, // Considera cambiar a 'true' si la foto es opcional
+      validate: {
+        notEmpty: {
+          msg: "La URL de la foto es requerida",
+        },
+        isUrl: { // Una validación más específica para URLs
+          msg: "Debe ser una URL válida"
+        }
+      },
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true, // La biografía suele ser opcional
+      validate: {
+        len: {
+          args: [0, 1000],
+          msg: "La bio no debe exceder los 1000 caracteres",
+        },
+      },
+    },
+    // Campos de auditoría consistentes
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -95,7 +132,11 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true, // ✅ Usar timestamps automáticos
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-    underscored: false, // ✅ Cambiado a false para consistencia
+    // ¡Ojo con esto! La mayoría de tus columnas son snake_case, por lo que 'true' sería más consistente.
+    underscored: true, 
+    paranoid: true, // Activa el soft-delete nativo de Sequelize
+    deletedAt: 'deleted_at', // Mapea el campo para soft-delete
+    
     indexes: [
       {
         unique: true,
@@ -105,21 +146,13 @@ module.exports = (sequelize, DataTypes) => {
         fields: ["estado"],
       },
       {
-        fields: ["fecha_creacion"],
-      },
-      {
         fields: ["created_by"]
-      },
-      {
-        fields: ["deleted_at"]
       }
     ],
     scopes: {
-      // ✅ Scopes sin dependencias circulares
       activo: {
         where: {
           estado: "activo",
-          deleted_at: null
         },
       },
       withoutPassword: {
@@ -127,51 +160,30 @@ module.exports = (sequelize, DataTypes) => {
           exclude: ["password_hash"],
         },
       },
-      active: {
-        where: {
-          deleted_at: null
-        }
-      },
-      deleted: {
-        where: {
-          deleted_at: { [Op.ne]: null }
-        }
-      }
+      // 'active' y 'deleted' son manejados por `paranoid: true` por defecto.
+      // Puedes eliminarlos si usas `paranoid` o mantenerlos si necesitas lógica personalizada.
     },
   });
 
   // Métodos de instancia
   Usuario.prototype.toJSON = function () {
     const values = { ...this.get() };
-    delete values.password_hash; // No incluir password_hash en respuestas JSON
+    delete values.password_hash;
     return values;
   };
 
   Usuario.prototype.isActive = function () {
-    return this.estado === "activo" && !this.deleted_at;
+    // Con 'paranoid: true', Sequelize ya sabe que un registro con 'deleted_at' no está "vivo".
+    return this.estado === "activo";
   };
 
-  Usuario.prototype.isDeleted = function () {
-    return this.deleted_at !== null;
-  };
+  // Los métodos softDelete y restore ya no son necesarios si usas `paranoid: true`.
+  // Sequelize provee `instance.destroy()` y `instance.restore()` automáticamente.
+  // Ejemplo: await usuario.destroy({ where: { id: 1 } });
+  // Para registrar quién borró, usarías un hook 'beforeDestroy'.
 
-  Usuario.prototype.softDelete = function (deletedBy = null) {
-    return this.update({
-      deleted_at: new Date(),
-      deleted_by: deletedBy
-    });
-  };
-
-  Usuario.prototype.restore = function () {
-    return this.update({
-      deleted_at: null,
-      deleted_by: null
-    });
-  };
-
-  // ✅ Asociaciones consistentes
+  // Asociaciones
   Usuario.associate = function (models) {
-    // Relación many-to-many con Rol a través de UsuarioRol
     Usuario.belongsToMany(models.Rol, {
       through: models.UsuarioRol,
       foreignKey: "id_usuario",
@@ -179,13 +191,11 @@ module.exports = (sequelize, DataTypes) => {
       as: "roles",
     });
 
-    // Relación directa con UsuarioRol
     Usuario.hasMany(models.UsuarioRol, {
       foreignKey: "id_usuario",
       as: "usuarioRoles",
     });
 
-    // ✅ Asociaciones de auditoría con nombres consistentes
     Usuario.belongsTo(models.Usuario, {
       foreignKey: 'created_by',
       as: 'createdByUser'
@@ -201,7 +211,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'deletedByUser'
     });
 
-    // Relaciones inversas para auditoría
+    // Relaciones inversas
     Usuario.hasMany(models.Usuario, {
       foreignKey: 'created_by',
       as: 'createdUsers'
