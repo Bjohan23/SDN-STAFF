@@ -12,8 +12,12 @@ const tipoStandRoutes = require('./tipoStandRoutes');
 const standRoutes = require('./standRoutes');
 const servicioAdicionalRoutes = require('./servicioAdicionalRoutes');
 const clasificacionTipoEventoRoutes = require('./clasificacionTipoEventoRoutes');
+// Nuevas rutas para sistema de asignación de stands
+const solicitudAsignacionRoutes = require('./solicitudAsignacionRoutes');
+const conflictoAsignacionRoutes = require('./conflictoAsignacionRoutes');
+const asignacionAutomaticaRoutes = require('./asignacionAutomaticaRoutes');
 
-// Configurar rutas
+// Configurar rutas existentes
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
 router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
@@ -24,6 +28,11 @@ router.use('/tiposStand', tipoStandRoutes); // Tipos de stand (protegido/públic
 router.use('/stands', standRoutes); // Stands (protegido)
 router.use('/serviciosAdicionales', servicioAdicionalRoutes); // Servicios adicionales (protegido/público)
 router.use('/clasificacionTiposEvento', clasificacionTipoEventoRoutes); // Clasificación por tipo de evento (protegido)
+
+// Configurar nuevas rutas para sistema de asignación
+router.use('/asignaciones', solicitudAsignacionRoutes); // Solicitudes de asignación
+router.use('/asignaciones', conflictoAsignacionRoutes); // Conflictos de asignación
+router.use('/asignaciones', asignacionAutomaticaRoutes); // Asignación automática
 
 // Ruta de prueba
 router.get('/', (req, res) => {
@@ -65,7 +74,9 @@ router.get('/', (req, res) => {
       tipos_stand: '/api/tipos-stand',
       stands: '/api/stands',
       servicios_adicionales: '/api/servicios-adicionales',
-      clasificacion_tipos_evento: '/api/clasificacion-tipos-evento'
+      clasificacion_tipos_evento: '/api/clasificacion-tipos-evento',
+      // Nuevos endpoints para sistema de asignación de stands
+      asignaciones: '/api/asignaciones'
     },
     protected_endpoints: {
       note: 'Todos los endpoints excepto los públicos requieren Bearer token',
@@ -183,13 +194,61 @@ router.get('/', (req, res) => {
         eliminarConfiguracion: 'DELETE /api/clasificacion-tipos-evento/configuraciones/:configuracion_id (Admin)',
         plantillasDisponibles: 'GET /api/clasificacion-tipos-evento/tipos/:tipo_evento_id/plantillas (Admin/Manager)',
         aplicarPlantilla: 'POST /api/clasificacion-tipos-evento/plantillas/:plantilla_id/aplicar (Admin/Manager)'
+      },
+      // NUEVOS ENDPOINTS PARA SISTEMA DE ASIGNACIÓN DE STANDS
+      asignaciones_solicitudes_endpoints: {
+        crearSolicitud: 'POST /api/asignaciones/solicitudes (Authenticated)',
+        listarSolicitudes: 'GET /api/asignaciones/solicitudes (Admin/Manager/Editor)',
+        obtenerSolicitud: 'GET /api/asignaciones/solicitudes/:id (Admin/Manager/Editor)',
+        aprobarSolicitud: 'POST /api/asignaciones/solicitudes/:id/aprobar (Admin/Manager)',
+        rechazarSolicitud: 'POST /api/asignaciones/solicitudes/:id/rechazar (Admin/Manager)',
+        asignarStand: 'POST /api/asignaciones/solicitudes/:id/asignar-stand (Admin/Manager)',
+        cancelarSolicitud: 'POST /api/asignaciones/solicitudes/:id/cancelar (Admin/Manager)',
+        actualizarSolicitud: 'PUT /api/asignaciones/solicitudes/:id (Admin/Manager/Editor)',
+        eliminarSolicitud: 'DELETE /api/asignaciones/solicitudes/:id (Admin)',
+        restaurarSolicitud: 'POST /api/asignaciones/solicitudes/:id/restore (Admin)',
+        solicitudesPendientesEvento: 'GET /api/asignaciones/solicitudes/evento/:evento_id/pendientes (Admin/Manager/Editor)',
+        estadisticasSolicitudes: 'GET /api/asignaciones/solicitudes/stats (Admin/Manager)',
+        historialSolicitud: 'GET /api/asignaciones/solicitudes/:id/historial (Admin/Manager/Editor)'
+      },
+      asignaciones_conflictos_endpoints: {
+        listarConflictos: 'GET /api/asignaciones/conflictos (Admin/Manager/Editor)',
+        obtenerConflicto: 'GET /api/asignaciones/conflictos/:id (Admin/Manager/Editor)',
+        crearConflicto: 'POST /api/asignaciones/conflictos (Admin/Manager)',
+        detectarConflictos: 'POST /api/asignaciones/conflictos/evento/:evento_id/detectar (Admin/Manager)',
+        asignarConflicto: 'POST /api/asignaciones/conflictos/:id/asignar (Admin/Manager)',
+        resolverConflicto: 'POST /api/asignaciones/conflictos/:id/resolver (Admin/Manager)',
+        escalarConflicto: 'POST /api/asignaciones/conflictos/:id/escalar (Admin/Manager)',
+        cancelarConflicto: 'POST /api/asignaciones/conflictos/:id/cancelar (Admin/Manager)',
+        addComunicacion: 'POST /api/asignaciones/conflictos/:id/comunicacion (Admin/Manager/Editor)',
+        eliminarConflicto: 'DELETE /api/asignaciones/conflictos/:id (Admin)',
+        conflictosVencidos: 'GET /api/asignaciones/conflictos/vencidos (Admin/Manager)',
+        estadisticasConflictos: 'GET /api/asignaciones/conflictos/stats (Admin/Manager)',
+        conflictosUsuario: 'GET /api/asignaciones/conflictos/usuario/:usuario_id (Admin/Manager/Editor)',
+        resumenDashboard: 'GET /api/asignaciones/conflictos/dashboard/resumen (Admin/Manager)'
+      },
+      asignaciones_automatica_endpoints: {
+        ejecutarAsignacion: 'POST /api/asignaciones/automatica/evento/:evento_id/ejecutar (Admin)',
+        simularAsignacion: 'POST /api/asignaciones/automatica/evento/:evento_id/simular (Admin/Manager)',
+        validarCompatibilidad: 'POST /api/asignaciones/automatica/compatibilidad/:empresa_id/:stand_id (Admin/Manager/Editor)',
+        reporteCapacidad: 'GET /api/asignaciones/automatica/evento/:evento_id/capacidad (Admin/Manager/Editor)',
+        mejoresCandidatos: 'POST /api/asignaciones/automatica/candidatos/:empresa_id/:evento_id (Admin/Manager/Editor)',
+        algoritmosDisponibles: 'GET /api/asignaciones/automatica/algoritmos (Admin/Manager/Editor)',
+        metricasRendimiento: 'GET /api/asignaciones/automatica/metricas (Admin/Manager)'
       }
     },
     howToUse: {
-      step1: 'POST /api/auth/login con correoassword',
+      step1: 'POST /api/auth/login con email y password',
       step2: 'Usar el accessToken en header: Authorization: Bearer <token>',
       step3: 'Acceder a endpoints protegidos con el token',
-      step4: 'Renovar token con POST /api/auth/refresh cuando expire'
+      step4: 'Renovar token con POST /api/auth/refresh cuando expire',
+      newFeatures: {
+        sistemaAsignacion: 'Nuevo sistema completo de asignación de stands',
+        solicitudes: 'Gestión de solicitudes de asignación con estados y prioridades',
+        conflictos: 'Detección y resolución automática de conflictos',
+        asignacionAutomatica: 'Algoritmos inteligentes para asignación automática',
+        historial: 'Seguimiento completo de cambios y auditoría'
+      }
     }
   });
 });

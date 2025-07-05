@@ -329,6 +329,24 @@ module.exports = (sequelize, DataTypes) => {
       as: 'serviciosContratados'
     });
 
+    // Relación con SolicitudAsignacion (como stand solicitado)
+    Stand.hasMany(models.SolicitudAsignacion, {
+      foreignKey: 'id_stand_solicitado',
+      as: 'solicitudesComoSolicitado'
+    });
+
+    // Relación con SolicitudAsignacion (como stand asignado)
+    Stand.hasMany(models.SolicitudAsignacion, {
+      foreignKey: 'id_stand_asignado',
+      as: 'solicitudesComoAsignado'
+    });
+
+    // Relación con ConflictoAsignacion
+    Stand.hasMany(models.ConflictoAsignacion, {
+      foreignKey: 'id_stand',
+      as: 'conflictosAsignacion'
+    });
+
     // Asociaciones de auditoría
     Stand.belongsTo(models.Usuario, {
       foreignKey: 'created_by',
