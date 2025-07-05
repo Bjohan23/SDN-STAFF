@@ -310,7 +310,6 @@ class AuthService {
     try {
       const { correo, password, estado = 'activo' } = userData;
 
-      // Verificar si el correo ya existe
       const existingUser = await Usuario.findOne({
         where: {
           correo: correo.toLowerCase().trim()
@@ -321,16 +320,14 @@ class AuthService {
         throw new Error('El correo ya está en uso');
       }
 
-      // Encriptar password
       const salt = await bcrypt.genSalt(10);
       const password_hash = await bcrypt.hash(password, salt);
 
-      // Crear usuario
       const usuario = await Usuario.create({
         correo: correo.toLowerCase().trim(),
         password_hash,
         estado,
-        fecha_creacion: new Date()
+        fecha_creacion: new Date() // ✅ Esto ahora funcionará
       });
 
       // Buscar rol de visitante dinámicamente por nombre
@@ -346,7 +343,6 @@ class AuthService {
 
       await usuario.setRoles([rolVisitante]);
 
-      // Obtener usuario con roles
       const usuarioConRoles = await Usuario.findByPk(usuario.id_usuario, {
         include: [{
           model: Rol,
@@ -356,7 +352,6 @@ class AuthService {
         }]
       });
 
-      // Preparar respuesta (sin password)
       const usuarioResponse = usuarioConRoles.toJSON();
       delete usuarioResponse.password_hash;
 

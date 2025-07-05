@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     // --- Campos de Perfil ---
     nombre: {
       type: DataTypes.STRING(100),
-      allowNull: false,
+      allowNull: true,
       validate: {
         notEmpty: {
           msg: "El nombre es requerido",
@@ -51,19 +51,19 @@ module.exports = (sequelize, DataTypes) => {
     },
     foto_url: {
       type: DataTypes.TEXT,
-      allowNull: true, // La foto de perfil suele ser opcional
+      allowNull: true,
       validate: {
-        isUrl: { // Usar 'isUrl' es mucho mejor para validar URLs
+        isUrl: {
           msg: "Debe proporcionar una URL válida para la foto"
         }
       },
     },
     bio: {
       type: DataTypes.TEXT,
-      allowNull: true, // La biografía también suele ser opcional
+      allowNull: true,
       validate: {
         len: {
-          args: [0, 1000], // Permitir que esté vacía
+          args: [0, 1000],
           msg: "La biografía no debe exceder los 1000 caracteres",
         },
       },
@@ -84,8 +84,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+
+    // ✅ AGREGAR ESTE CAMPO QUE FALTA
+    fecha_creacion: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    },
     
-    // --- Campos de Auditoría (Creado, Actualizado, Borrado por) ---
+    // --- Campos de Auditoría ---
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -117,14 +124,35 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE'
     },
     
+    // ✅ AGREGAR ESTOS CAMPOS ADICIONALES QUE VEO EN TU BD
+    created_by_usuario: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+    updated_by_usuario: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'usuario',
+        key: 'id_usuario'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    },
+    
   }, {
     // --- Opciones del Modelo ---
     tableName: "usuario",
-    timestamps: true,       // Sequelize gestionará created_at y updated_at
-    paranoid: true,         // Activa el borrado lógico (soft delete)
-    underscored: true,      // Mapea camelCase a snake_case (ej: createdAt -> created_at)
+    timestamps: true,
+    paranoid: true,
+    underscored: true,
     
-    // Nombres de las columnas para timestamps y borrado lógico
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     deletedAt: 'deleted_at',
@@ -132,17 +160,16 @@ module.exports = (sequelize, DataTypes) => {
     indexes: [
       { unique: true, fields: ["correo"] },
       { fields: ["estado"] },
-      { fields: ["created_by"] }
+      { fields: ["created_by"] },
+      { fields: ["fecha_creacion"] }
     ],
     
     scopes: {
-      // Usuarios que no han sido borrados lógicamente
       activo: {
         where: {
           estado: "activo",
         },
       },
-      // Excluir el hash de la contraseña de las consultas
       withoutPassword: {
         attributes: {
           exclude: ["password_hash"],
@@ -151,15 +178,13 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  // --- Métodos de Instancia ---
-  // Sobrescribe el método toJSON para no exponer nunca la contraseña
+  // Resto del código igual...
   Usuario.prototype.toJSON = function () {
     const values = { ...this.get() };
     delete values.password_hash;
     return values;
   };
   
-  // --- Asociaciones ---
   Usuario.associate = function (models) {
     // Relación con Roles (Muchos a Muchos)
     Usuario.belongsToMany(models.Rol, {
@@ -169,18 +194,18 @@ module.exports = (sequelize, DataTypes) => {
       as: "roles",
     });
 
-    // Relación directa con la tabla intermedia
     Usuario.hasMany(models.UsuarioRol, {
       foreignKey: "id_usuario",
       as: "usuarioRoles",
     });
 
-    // Asociaciones de auditoría (quién creó, actualizó, borró)
+    // Asociaciones de auditoría
     Usuario.belongsTo(models.Usuario, { foreignKey: 'created_by', as: 'createdByUser' });
     Usuario.belongsTo(models.Usuario, { foreignKey: 'updated_by', as: 'updatedByUser' });
     Usuario.belongsTo(models.Usuario, { foreignKey: 'deleted_by', as: 'deletedByUser' });
+    Usuario.belongsTo(models.Usuario, { foreignKey: 'created_by_usuario', as: 'createdByUsuario' });
+    Usuario.belongsTo(models.Usuario, { foreignKey: 'updated_by_usuario', as: 'updatedByUsuario' });
 
-    // Relaciones inversas (qué usuarios ha creado, actualizado, borrado este usuario)
     Usuario.hasMany(models.Usuario, { foreignKey: 'created_by', as: 'createdUsers' });
     Usuario.hasMany(models.Usuario, { foreignKey: 'updated_by', as: 'updatedUsers' });
     Usuario.hasMany(models.Usuario, { foreignKey: 'deleted_by', as: 'deletedUsers' });
