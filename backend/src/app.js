@@ -112,35 +112,31 @@ const initializeApp = async () => {
     await db.sequelize.authenticate();
     console.log('✅ Conexión a la base de datos establecida correctamente.');
     
+    // Obtener configuración de sincronización desde .env
+    const forceSync = process.env.SEQUELIZE_FORCE_SYNC === 'true';
+    const alterSync = process.env.SEQUELIZE_ALTER_SYNC === 'true';
+    
     // Sincronizar modelos (solo en desarrollo)
-
     if (process.env.NODE_ENV === 'development') {
       try {
         // Primero, actualizar registros NULL para evitar conflictos
         console.log('🔧 Verificando y corrigiendo datos NULL...');
         
-        // Actualizar registros NULL en updated_at
-        // await db.sequelize.query(`
-        //   UPDATE rol SET updated_at = created_at 
-        //   WHERE updated_at IS NULL AND created_at IS NOT NULL;
-        // `);
-        
-        // await db.sequelize.query(`
-        //   UPDATE usuario SET updated_at = fecha_creacion 
-        //   WHERE updated_at IS NULL AND fecha_creacion IS NOT NULL;
-        // `);
-        
-        // await db.sequelize.query(`
-        //   UPDATE usuariorol SET updated_at = NOW() 
-        //   WHERE updated_at IS NULL;
-        // `);
-        
         console.log('✅ Datos NULL corregidos.');
         
-        // Ahora sincronizar con alter más conservador
-        await db.sequelize.sync({ 
-          force: false // Nunca usar force en desarrollo con datos importantes
+        // Configurar opciones de sincronización
+        const syncOptions = {
+          force: forceSync, // Controlado por .env
+          alter: alterSync  // Opción adicional para alter tables
+        };
+
+        console.log(`🔧 Sincronizando con opciones:`, {
+          force: syncOptions.force,
+          alter: syncOptions.alter
         });
+        
+        // Ahora sincronizar con opciones configurables
+        await db.sequelize.sync(syncOptions);
         console.log('✅ Modelos sincronizados con la base de datos.');
         
       } catch (syncError) {
@@ -150,6 +146,9 @@ const initializeApp = async () => {
         // Intentar solo verificar la conexión sin alterar estructura
         await db.sequelize.authenticate();
       }
+    } else {
+      console.log('🏭 Modo producción: Saltando sincronización automática');
+      console.log('💡 En producción usa migraciones para cambios de esquema');
     }
 
     // Iniciar servidor con manejo de errores
@@ -159,6 +158,11 @@ const initializeApp = async () => {
       console.log(`📊 API Base URL: http://${HOST}:${PORT}/api`);
       console.log(`📚 Documentación Swagger: http://${HOST}:${PORT}/api-docs`);
       console.log(`📋 JSON Schema: http://${HOST}:${PORT}/api-docs.json`);
+      
+      // Mostrar configuración de sync en desarrollo
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔧 Sync config - Force: ${forceSync}, Alter: ${alterSync}`);
+      }
     });
 
     // Manejo de errores del servidor
