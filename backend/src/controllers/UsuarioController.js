@@ -280,6 +280,84 @@ class UsuarioController {
       next(error);
     }
   }
+
+  /**
+   * Actualizar perfil del usuario autenticado
+   */
+  static async updateProfile(req, res, next) {
+    try {
+      const userId = req.user.id_usuario;
+      const updateData = req.body;
+      
+      // Debug: Log de los datos recibidos
+      console.log('=== DEBUG UPDATE PROFILE ===');
+      console.log('User ID:', userId);
+      console.log('Update Data:', updateData);
+      console.log('foto_url value:', updateData.foto_url);
+      console.log('foto_url type:', typeof updateData.foto_url);
+      console.log('===========================');
+
+      // Validar campos personalizables obligatorios
+      if (!updateData.nombre || !ValidationUtils.isNotEmpty(updateData.nombre)) {
+        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre es requerido' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.nombre, 1, 100)) {
+        return ApiResponse.validation(res, [{ field: 'nombre', message: 'El nombre debe tener entre 1 y 100 caracteres' }]);
+      }
+
+      if (!updateData.bio || !ValidationUtils.isNotEmpty(updateData.bio)) {
+        return ApiResponse.validation(res, [{ field: 'bio', message: 'La biografía es requerida' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.bio, 1, 1000)) {
+        return ApiResponse.validation(res, [{ field: 'bio', message: 'La bio debe tener entre 1 y 1000 caracteres' }]);
+      }
+
+      // Validar URL de foto obligatoria
+      if (!updateData.foto_url || !ValidationUtils.isNotEmpty(updateData.foto_url)) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto es requerida' }]);
+      }
+      if (!ValidationUtils.isValidLength(updateData.foto_url, 1, 2000)) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe tener entre 1 y 2000 caracteres' }]);
+      }
+      // Validación de formato de URL
+      if (!updateData.foto_url.startsWith('http://') && !updateData.foto_url.startsWith('https://')) {
+        return ApiResponse.validation(res, [{ field: 'foto_url', message: 'La URL de la foto debe comenzar con http:// o https://' }]);
+      }
+
+      // Validar cambio de contraseña si se está actualizando
+      if (updateData.password && !ValidationUtils.isValidLength(updateData.password, 6)) {
+        return ApiResponse.validation(res, [{ field: 'password', message: 'La contraseña debe tener al menos 6 caracteres' }]);
+      }
+
+      // Si se está cambiando la contraseña, verificar la contraseña actual
+      if (updateData.password && updateData.currentPassword) {
+        const usuario = await UsuarioService.getUsuarioById(userId);
+        const passwordValid = await UsuarioService.validatePassword(updateData.currentPassword, usuario.password_hash);
+        if (!passwordValid) {
+          return ApiResponse.validation(res, [{ field: 'currentPassword', message: 'La contraseña actual es incorrecta' }]);
+        }
+      }
+
+      // Sanitizar strings
+      if (updateData.nombre) {
+        updateData.nombre = ValidationUtils.sanitizeString(updateData.nombre);
+      }
+      if (updateData.bio) {
+        updateData.bio = ValidationUtils.sanitizeString(updateData.bio);
+      }
+
+      // Remover currentPassword del updateData ya que no es un campo de la base de datos
+      delete updateData.currentPassword;
+
+      const usuarioActualizado = await UsuarioService.updateUsuario(userId, updateData, userId);
+      return ApiResponse.success(res, usuarioActualizado, 'Perfil actualizado exitosamente');
+    } catch (error) {
+      if (error.message === 'Usuario no encontrado') {
+        return ApiResponse.notFound(res, error.message);
+      }
+      next(error);
+    }
+  }
 }
 
 module.exports = UsuarioController;

@@ -160,6 +160,13 @@ class UsuarioService {
    */
   static async updateUsuario(id, updateData, userId = null) {
     try {
+      // Debug: Log de los datos en el servicio
+      console.log('=== DEBUG UPDATE USUARIO SERVICE ===');
+      console.log('ID:', id);
+      console.log('Update Data:', updateData);
+      console.log('foto_url in service:', updateData.foto_url);
+      console.log('====================================');
+      
       const usuario = await Usuario.findByPk(id);
       if (!usuario) {
         throw new Error('Usuario no encontrado');
@@ -169,7 +176,7 @@ class UsuarioService {
         updateData.password_hash = await bcrypt.hash(updateData.password, salt);
         delete updateData.password;
       }
-      updateData.updated_by_usuario = userId;
+      updateData.updated_by = userId;
       await usuario.update(updateData);
       // Si se actualizan roles, reasignarlos
       if (updateData.roles && Array.isArray(updateData.roles)) {
