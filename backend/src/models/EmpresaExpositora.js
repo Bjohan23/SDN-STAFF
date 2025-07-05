@@ -408,6 +408,93 @@ module.exports = (sequelize, DataTypes) => {
     return new Date(this.fecha_vencimiento_documentos) <= fechaLimite;
   };
 
+  // ==================== MÉTODOS PARA CLASIFICACIÓN ====================
+
+  // Obtener categoría principal de la empresa
+  EmpresaExpositora.prototype.getCategoriaPrincipal = async function() {
+    const { EmpresaCategoria } = sequelize.models;
+    return await EmpresaCategoria.findOne({
+      where: {
+        id_empresa: this.id_empresa,
+        es_categoria_principal: true,
+        deleted_at: null
+      },
+      include: [{
+        model: sequelize.models.CategoriaComercial,
+        as: 'categoriaComercial'
+      }]
+    });
+  };
+
+  // Verificar si tiene una categoría específica
+  EmpresaExpositora.prototype.tieneCategoria = async function(categoriaId) {
+    const { EmpresaCategoria } = sequelize.models;
+    const count = await EmpresaCategoria.count({
+      where: {
+        id_empresa: this.id_empresa,
+        id_categoria: categoriaId,
+        deleted_at: null,
+        estado: 'activa'
+      }
+    });
+    return count > 0;
+  };
+
+  // Verificar si tiene una etiqueta específica
+  EmpresaExpositora.prototype.tieneEtiqueta = async function(etiquetaId, eventoId = null) {
+    const { EmpresaEtiqueta } = sequelize.models;
+    const whereCondition = {
+      id_empresa: this.id_empresa,
+      id_etiqueta: etiquetaId,
+      deleted_at: null,
+      estado: 'activa'
+    };
+
+    if (eventoId) {
+      whereCondition[Op.or] = [
+        { id_evento_asignacion: eventoId },
+        { es_solo_para_evento: false }
+      ];
+    }
+
+    const count = await EmpresaEtiqueta.count({ where: whereCondition });
+    return count > 0;
+  };
+
+  // Obtener resumen de clasificación
+  EmpresaExpositora.prototype.getResumenClasificacion = async function() {
+    const { EmpresaCategoria, EmpresaEtiqueta } = sequelize.models;
+    
+    const [categorias, etiquetas] = await Promise.all([
+      EmpresaCategoria.count({
+        where: {
+          id_empresa: this.id_empresa,
+          deleted_at: null,
+          estado: 'activa'
+        }
+      }),
+      EmpresaEtiqueta.count({
+        where: {
+          id_empresa: this.id_empresa,
+          deleted_at: null,
+          estado: 'activa'
+        }
+      })
+    ]);
+
+    return {
+      total_categorias: categorias,
+      total_etiquetas: etiquetas,
+      esta_clasificada: categorias > 0 || etiquetas > 0
+    };
+  };
+
+  // Verificar si está completamente clasificada
+  EmpresaExpositora.prototype.estaClasificada = async function() {
+    const resumen = await this.getResumenClasificacion();
+    return resumen.total_categorias > 0; // Al menos debe tener una categoría
+  };
+
   // Asociaciones
   EmpresaExpositora.associate = function(models) {
     // Relación con Usuario que aprobó
@@ -440,6 +527,36 @@ module.exports = (sequelize, DataTypes) => {
     EmpresaExpositora.hasMany(models.SolicitudAsignacion, {
       foreignKey: 'id_empresa',
       as: 'solicitudesAsignacion'
+    });
+
+    // ==================== NUEVAS RELACIONES PARA CLASIFICACIÓN ====================
+
+    // Relación many-to-many con CategoriaComercial a través de EmpresaCategoria
+    EmpresaExpositora.belongsToMany(models.CategoriaComercial, {
+      through: 'EmpresaCategoria',
+      foreignKey: 'id_empresa',
+      otherKey: 'id_categoria',
+      as: 'categoriasComerciales'
+    });
+
+    // Relación directa con EmpresaCategoria
+    EmpresaExpositora.hasMany(models.EmpresaCategoria, {
+      foreignKey: 'id_empresa',
+      as: 'asignacionesCategorias'
+    });
+
+    // Relación many-to-many con EtiquetaLibre a través de EmpresaEtiqueta
+    EmpresaExpositora.belongsToMany(models.EtiquetaLibre, {
+      through: 'EmpresaEtiqueta',
+      foreignKey: 'id_empresa',
+      otherKey: 'id_etiqueta',
+      as: 'etiquetasLibres'
+    });
+
+    // Relación directa con EmpresaEtiqueta
+    EmpresaExpositora.hasMany(models.EmpresaEtiqueta, {
+      foreignKey: 'id_empresa',
+      as: 'asignacionesEtiquetas'
     });
 
     // Asociaciones de auditoría

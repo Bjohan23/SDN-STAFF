@@ -16,6 +16,10 @@ const clasificacionTipoEventoRoutes = require('./clasificacionTipoEventoRoutes')
 const solicitudAsignacionRoutes = require('./solicitudAsignacionRoutes');
 const conflictoAsignacionRoutes = require('./conflictoAsignacionRoutes');
 const asignacionAutomaticaRoutes = require('./asignacionAutomaticaRoutes');
+// Nuevas rutas para sistema de clasificación de expositores
+const categoriaComercialRoutes = require('./categoriaComercialRoutes');
+const etiquetaLibreRoutes = require('./etiquetaLibreRoutes');
+const clasificacionExpositorRoutes = require('./clasificacionExpositorRoutes');
 
 // Configurar rutas existentes
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
@@ -33,6 +37,11 @@ router.use('/clasificacionTiposEvento', clasificacionTipoEventoRoutes); // Clasi
 router.use('/asignaciones', solicitudAsignacionRoutes); // Solicitudes de asignación
 router.use('/asignaciones', conflictoAsignacionRoutes); // Conflictos de asignación
 router.use('/asignaciones', asignacionAutomaticaRoutes); // Asignación automática
+
+// Configurar nuevas rutas para sistema de clasificación de expositores
+router.use('/categorias', categoriaComercialRoutes); // Gestión de categorías comerciales
+router.use('/etiquetas', etiquetaLibreRoutes); // Gestión de etiquetas libres
+router.use('/clasificacion', clasificacionExpositorRoutes); // Clasificación de expositores
 
 // Ruta de prueba
 router.get('/', (req, res) => {
@@ -76,7 +85,11 @@ router.get('/', (req, res) => {
       servicios_adicionales: '/api/servicios-adicionales',
       clasificacion_tipos_evento: '/api/clasificacion-tipos-evento',
       // Nuevos endpoints para sistema de asignación de stands
-      asignaciones: '/api/asignaciones'
+      asignaciones: '/api/asignaciones',
+      // Nuevos endpoints para sistema de clasificación de expositores
+      categorias: '/api/categorias',
+      etiquetas: '/api/etiquetas',
+      clasificacion_expositores: '/api/clasificacion'
     },
     protected_endpoints: {
       note: 'Todos los endpoints excepto los públicos requieren Bearer token',
@@ -235,6 +248,55 @@ router.get('/', (req, res) => {
         mejoresCandidatos: 'POST /api/asignaciones/automatica/candidatos/:empresa_id/:evento_id (Admin/Manager/Editor)',
         algoritmosDisponibles: 'GET /api/asignaciones/automatica/algoritmos (Admin/Manager/Editor)',
         metricasRendimiento: 'GET /api/asignaciones/automatica/metricas (Admin/Manager)'
+      },
+      // NUEVOS ENDPOINTS PARA SISTEMA DE CLASIFICACIÓN DE EXPOSITORES
+      categorias_endpoints: {
+        listaPublica: 'GET /api/categorias/publicas (Público)',
+        arbolJerarquico: 'GET /api/categorias/arbol (Público)',
+        destacadas: 'GET /api/categorias/destacadas (Público)',
+        buscar: 'GET /api/categorias/buscar (Público)',
+        lista: 'GET /api/categorias (Admin/Manager)',
+        crear: 'POST /api/categorias (Admin)',
+        obtener: 'GET /api/categorias/:id (Admin/Manager)',
+        actualizar: 'PUT /api/categorias/:id (Admin)',
+        eliminar: 'DELETE /api/categorias/:id (Admin)',
+        stats: 'GET /api/categorias/stats (Admin/Manager)',
+        actualizarContadores: 'POST /api/categorias/:id/actualizar-contadores (Admin)'
+      },
+      etiquetas_endpoints: {
+        listaPublica: 'GET /api/etiquetas/publicas (Público)',
+        porTipo: 'GET /api/etiquetas/tipo/:tipo (Público)',
+        destacadas: 'GET /api/etiquetas/destacadas (Público)',
+        buscar: 'GET /api/etiquetas/buscar (Público)',
+        tipos: 'GET /api/etiquetas/tipos (Público)',
+        lista: 'GET /api/etiquetas (Admin/Manager)',
+        crear: 'POST /api/etiquetas (Admin)',
+        obtener: 'GET /api/etiquetas/:id (Admin/Manager)',
+        actualizar: 'PUT /api/etiquetas/:id (Admin)',
+        eliminar: 'DELETE /api/etiquetas/:id (Admin)',
+        stats: 'GET /api/etiquetas/stats (Admin/Manager)',
+        sugerencias: 'GET /api/etiquetas/sugerencias/:empresaId (Admin/Manager/Editor)',
+        actualizarContadores: 'POST /api/etiquetas/:id/actualizar-contadores (Admin)'
+      },
+      clasificacion_expositores_endpoints: {
+        // Gestión de categorías de empresas
+        categoriasEmpresa: 'GET /api/clasificacion/empresas/:empresaId/categorias (Admin/Manager/Editor)',
+        asignarCategorias: 'POST /api/clasificacion/empresas/:empresaId/categorias (Admin/Manager)',
+        categoriaPrincipal: 'POST /api/clasificacion/empresas/:empresaId/categorias/:categoriaId/principal (Admin/Manager)',
+        removerCategoria: 'DELETE /api/clasificacion/empresas/:empresaId/categorias/:categoriaId (Admin/Manager)',
+        // Gestión de etiquetas de empresas
+        etiquetasEmpresa: 'GET /api/clasificacion/empresas/:empresaId/etiquetas (Admin/Manager/Editor)',
+        asignarEtiquetas: 'POST /api/clasificacion/empresas/:empresaId/etiquetas (Admin/Manager)',
+        removerEtiqueta: 'DELETE /api/clasificacion/empresas/:empresaId/etiquetas/:etiquetaId (Admin/Manager)',
+        // Búsqueda y filtrado
+        buscarPorCategorias: 'GET /api/clasificacion/buscar/categorias (Admin/Manager/Editor)',
+        buscarPorEtiquetas: 'GET /api/clasificacion/buscar/etiquetas (Admin/Manager/Editor)',
+        buscarPublicoCategorias: 'GET /api/clasificacion/publico/buscar/categorias (Público)',
+        buscarPublicoEtiquetas: 'GET /api/clasificacion/publico/buscar/etiquetas (Público)',
+        // Directorios y reportes
+        directorioTematico: 'GET /api/clasificacion/directorio/categoria/:categoriaId (Admin/Manager/Editor)',
+        directorioPublico: 'GET /api/clasificacion/publico/directorio/categoria/:categoriaId (Público)',
+        stats: 'GET /api/clasificacion/stats (Admin/Manager)'
       }
     },
     howToUse: {
@@ -247,7 +309,15 @@ router.get('/', (req, res) => {
         solicitudes: 'Gestión de solicitudes de asignación con estados y prioridades',
         conflictos: 'Detección y resolución automática de conflictos',
         asignacionAutomatica: 'Algoritmos inteligentes para asignación automática',
-        historial: 'Seguimiento completo de cambios y auditoría'
+        historial: 'Seguimiento completo de cambios y auditoría',
+        // NUEVAS FUNCIONALIDADES DE CLASIFICACIÓN
+        clasificacionExpositores: 'Sistema completo de clasificación de expositores por sectores',
+        categoriasComerciales: 'Categorías jerárquicas con subcategorías y asignación múltiple',
+        etiquetasLibres: 'Sistema de etiquetas flexibles con tipos y vigencia temporal',
+        busquedaAvanzada: 'Búsqueda y filtrado de expositores por categorías y etiquetas',
+        directoriosTematicos: 'Generación automática de directorios por categoría',
+        sugerenciasInteligentes: 'Sugerencias de categorías y etiquetas basadas en IA',
+        clasificacionJerarquica: 'Organización jerárquica con categorías principales y secundarias'
       }
     }
   });
