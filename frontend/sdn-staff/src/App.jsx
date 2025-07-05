@@ -12,6 +12,10 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import Profile from './pages/Dashboard/Profile'
 import RoleManagement from './pages/admin/RoleManagement'
 import CrearEvento from './pages/admin/CrearEvento'
+import AsignacionAutomatica from './pages/admin/AsignacionAutomatica'
+import SeleccionarEventoAsignacion from './pages/admin/SeleccionarEventoAsignacion'
+import GestionCategorias from './pages/admin/GestionCategorias'
+import TestPage from './pages/admin/TestPage'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import './App.css'
@@ -25,6 +29,7 @@ import HistorialParticipacion from './pages/empresas/HistorialParticipacion'
 import DetalleParticipacionEvento from './pages/empresas/DetalleParticipacionEvento'
 import DocumentosPorVencer from './pages/empresas/DocumentosPorVencer'
 import DashboardEmpresas from './pages/empresas/DashboardEmpresas'
+import BuscarPorCategorias from './pages/empresas/BuscarPorCategorias'
 // Stands
 import ListadoStands from './pages/stands/ListadoStands'
 import AgregarStand from './pages/stands/AgregarStand'
@@ -37,8 +42,7 @@ function App() {
   // Determinar si mostrar el sidebar
   const showLayout = location.pathname.startsWith('/dashboard') || 
                     location.pathname.startsWith('/profile') || 
-                    location.pathname.startsWith('/admin/roles') ||
-                    location.pathname.startsWith('/admin/crear-evento') ||
+                    location.pathname.startsWith('/admin') ||
                     location.pathname.startsWith('/empresas') ||
                     location.pathname.startsWith('/stands');
 
@@ -75,18 +79,59 @@ function App() {
                     <CrearEvento />
                   </RoleRoute>
                 } />
-                {/* Gestión integral de empresas expositoras en una sola vista */}
+                <Route path="/admin/asignacion-automatica" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <SeleccionarEventoAsignacion />
+                  </RoleRoute>
+                } />
+                <Route path="/admin/asignacion-automatica/:id_evento" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <AsignacionAutomatica />
+                  </RoleRoute>
+                } />
+                <Route path="/admin/categorias" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <GestionCategorias />
+                  </RoleRoute>
+                } />
+                <Route path="/admin/test" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <TestPage />
+                  </RoleRoute>
+                } />
+                
+                {/* Rutas de Empresas */}
                 <Route path="/empresas" element={
                   <RoleRoute allowedRoles={['administrador', 'manager']}>
                     <ListadoEmpresas />
                   </RoleRoute>
                 } />
-                {/* Redirección de cualquier subruta de empresas a la vista principal */}
-                <Route path="/empresas/*" element={
+                <Route path="/empresas/detalle/:id" element={
                   <RoleRoute allowedRoles={['administrador', 'manager']}>
-                    <ListadoEmpresas />
+                    <DetalleEmpresa />
                   </RoleRoute>
                 } />
+                <Route path="/empresas/aprobacion" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <AprobacionEmpresas />
+                  </RoleRoute>
+                } />
+                <Route path="/empresas/buscar-categorias" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <BuscarPorCategorias />
+                  </RoleRoute>
+                } />
+                <Route path="/empresas/dashboard" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <DashboardEmpresas />
+                  </RoleRoute>
+                } />
+                <Route path="/empresas/documentos-vencer" element={
+                  <RoleRoute allowedRoles={['administrador', 'manager']}>
+                    <DocumentosPorVencer />
+                  </RoleRoute>
+                } />
+                
                 {/* Rutas de Stands */}
                 <Route path="/stands" element={
                   <RoleRoute allowedRoles={['administrador', 'manager']}>

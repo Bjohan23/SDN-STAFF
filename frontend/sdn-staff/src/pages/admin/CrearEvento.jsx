@@ -48,6 +48,7 @@ const CrearEvento = () => {
   const [showRegistrarTipo, setShowRegistrarTipo] = useState(false);
   const { user } = useAuth();
   const [tipoFiltro, setTipoFiltro] = useState('');
+  const [eventoParaEditar, setEventoParaEditar] = useState(null);
 
   const fetchEventosRecientes = async () => {
     try {
@@ -116,12 +117,8 @@ const CrearEvento = () => {
       });
       const lista = res.data.data || [];
       setTiposEvento(lista);
-      if (lista.length === 0) {
-        setShowRegistrarTipo(true);
-      }
     } catch {
       setTiposEvento([]);
-      setShowRegistrarTipo(true);
     }
   };
 
@@ -187,6 +184,19 @@ const CrearEvento = () => {
     return errors;
   };
 
+  const handleEditEvento = async (evento) => {
+    setEventoParaEditar(evento);
+    setForm({
+      ...initialState,
+      ...evento,
+      fecha_inicio: evento.fecha_inicio ? evento.fecha_inicio.slice(0, 10) : '',
+      fecha_fin: evento.fecha_fin ? evento.fecha_fin.slice(0, 10) : '',
+      configuracion_especifica: evento.configuracion_especifica ? JSON.stringify(evento.configuracion_especifica, null, 2) : '',
+    });
+    setIsEditMode(true);
+    setShowModal(true);
+  };
+
   const handleSubmit = async (e, estadoFinal = "borrador") => {
     e.preventDefault();
     setError("");
@@ -209,14 +219,18 @@ const CrearEvento = () => {
           ? JSON.parse(form.configuracion_especifica)
           : null,
       };
-      if (isEditMode && id_evento) {
+      if (isEditMode && (id_evento || eventoParaEditar)) {
         // EDITAR
+        const eventoId = id_evento || eventoParaEditar.id_evento;
         import('../../services/eventosService').then(({ default: eventosService }) => {
-          eventosService.updateEvento(id_evento, payload)
+          eventosService.updateEvento(eventoId, payload)
             .then(() => {
               setSuccess('Evento actualizado exitosamente');
               fetchEventosRecientes();
               setShowModal(false);
+              setEventoParaEditar(null);
+              setIsEditMode(false);
+              setForm(initialState);
             })
             .catch(err => {
               setError(err.response?.data?.message || 'Error al actualizar evento');
@@ -356,6 +370,7 @@ const CrearEvento = () => {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fechas</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                     </tr>
                   </thead>
                   <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -373,6 +388,17 @@ const CrearEvento = () => {
                         <td className="px-4 py-2 whitespace-nowrap text-white">
                           {formatFecha(ev.fecha_inicio)}<br />
                           <span className="text-gray-400">hasta {formatFecha(ev.fecha_fin)}</span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <button
+                            onClick={() => handleEditEvento(ev)}
+                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors"
+                          >
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Editar
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -425,6 +451,7 @@ const CrearEvento = () => {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fechas</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                     </tr>
                   </thead>
                   <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -442,6 +469,17 @@ const CrearEvento = () => {
                         <td className="px-4 py-2 whitespace-nowrap text-white">
                           {formatFecha(ev.fecha_inicio)}<br />
                           <span className="text-gray-400">hasta {formatFecha(ev.fecha_fin)}</span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <button
+                            onClick={() => handleEditEvento(ev)}
+                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors"
+                          >
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Editar
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -750,7 +788,7 @@ const CrearEvento = () => {
                             Guardando...
                           </>
                         ) : (
-                          'Guardar como borrador'
+                          isEditMode ? 'Actualizar como borrador' : 'Guardar como borrador'
                         )}
                       </button>
                       <button
@@ -765,7 +803,7 @@ const CrearEvento = () => {
                             Publicando...
                           </>
                         ) : (
-                          'Publicar evento'
+                          isEditMode ? 'Publicar cambios' : 'Publicar evento'
                         )}
                       </button>
                     </div>

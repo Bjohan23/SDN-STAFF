@@ -3,6 +3,10 @@ import axios from '../config/axios';
 const API_TIPOS = '/api/tiposEvento';
 
 const eventosService = {
+  async getEventos() {
+    const res = await axios.get('/api/eventos');
+    return res.data;
+  },
   async getEventoById(id) {
     const res = await axios.get(`/api/eventos/${id}`);
     return res.data;
