@@ -56,7 +56,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
-    // ✅ Campos de auditoría consistentes (sin _usuario)
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
