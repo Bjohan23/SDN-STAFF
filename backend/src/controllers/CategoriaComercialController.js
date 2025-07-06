@@ -36,7 +36,7 @@ class CategoriaComercialController {
         {
           model: Usuario,
           as: 'createdByUser',
-          attributes: ['id_usuario', 'nombre', 'email']
+          attributes: ['id_usuario', 'nombre', 'correo']
         }
       ];
 

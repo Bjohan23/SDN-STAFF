@@ -12,10 +12,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Profile from "./pages/Dashboard/Profile";
 import RoleManagement from "./pages/admin/RoleManagement";
 import CrearEvento from "./pages/admin/CrearEvento";
-import AsignacionAutomatica from "./pages/admin/AsignacionAutomatica";
-import SeleccionarEventoAsignacion from "./pages/admin/SeleccionarEventoAsignacion";
 import GestionCategorias from "./pages/admin/GestionCategorias";
-import TestPage from "./pages/admin/TestPage";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -93,22 +90,6 @@ function App() {
                   }
                 />
                 <Route
-                  path="/admin/asignacion-automatica"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <SeleccionarEventoAsignacion />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/admin/asignacion-automatica/:id_evento"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <AsignacionAutomatica />
-                    </RoleRoute>
-                  }
-                />
-                <Route
                   path="/admin/categorias"
                   element={
                     <RoleRoute allowedRoles={["administrador", "manager"]}>
@@ -116,15 +97,6 @@ function App() {
                     </RoleRoute>
                   }
                 />
-                <Route
-                  path="/admin/test"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <TestPage />
-                    </RoleRoute>
-                  }
-                />
-
                 {/* Rutas de Empresas */}
                 <Route
                   path="/empresas"
@@ -147,14 +119,6 @@ function App() {
                   element={
                     <RoleRoute allowedRoles={["administrador", "manager"]}>
                       <AprobacionEmpresas />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/empresas/buscar-categorias"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <BuscarPorCategorias />
                     </RoleRoute>
                   }
                 />

@@ -193,7 +193,7 @@ class ClasificacionExpositorController {
         {
           model: Usuario,
           as: 'validadaPorUsuario',
-          attributes: ['id_usuario', 'nombre', 'email']
+          attributes: ['id_usuario', 'nombre', 'correo']
         }
       ];
 
@@ -501,7 +501,7 @@ class ClasificacionExpositorController {
         {
           model: Usuario,
           as: 'validadaPorUsuario',
-          attributes: ['id_usuario', 'nombre', 'email']
+          attributes: ['id_usuario', 'nombre', 'correo']
         }
       ];
 

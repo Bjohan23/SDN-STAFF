@@ -14,7 +14,7 @@ export async function registrarEmpresaPublica(data) {
 export async function listarEmpresas() {
   // GET /api/empresasExpositoras
   const res = await axios.get(API);
-  return res.data;
+  return res.data.data || [];
 }
 
 export async function obtenerEmpresa(id) {
@@ -113,8 +113,12 @@ export async function obtenerCategoriasEmpresa(empresaId) {
 
 // Asignar categorías a una empresa
 export async function asignarCategoriasEmpresa(empresaId, categorias) {
+  // Asegura que el payload sea [{id_categoria: ...}]
+  const categoriasPayload = Array.isArray(categorias)
+    ? categorias.map(id => ({ id_categoria: id }))
+    : [];
   const res = await axios.post(`${CLASIFICACION_API}/empresas/${empresaId}/categorias`, {
-    categorias,
+    categorias: categoriasPayload,
     mantenerExistentes: false
   });
   return res.data;
@@ -134,7 +138,8 @@ export async function removerCategoriaEmpresa(empresaId, categoriaId) {
 
 // Obtener todas las categorías disponibles
 export async function obtenerCategoriasDisponibles() {
-  const res = await axios.get('/api/categoriasComerciales');
+  // Usar el endpoint correcto según el backend
+  const res = await axios.get('/api/categorias');
   return res.data;
 }
 
