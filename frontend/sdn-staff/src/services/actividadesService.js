@@ -1,15 +1,29 @@
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+import axios from "../config/axios";
 
 export const getActividades = async (params = {}) => {
-  const response = await axios.get(`${API_URL}/actividades`, { params });
+  const response = await axios.get(`/api/actividades`, { params });
   return response.data;
 };
 
 export const getActividadById = async (id) => {
-  const response = await axios.get(`${API_URL}/actividades/${id}`);
+  const response = await axios.get(`/api/actividades/${id}`);
   return response.data;
 };
 
-// Puedes agregar más métodos si necesitas (crear, actualizar, etc.)
+// Crear actividad
+export const crearActividad = async (data) => {
+  const response = await axios.post('/api/actividades', data);
+  return response.data;
+};
+
+// Actualizar actividad
+export const actualizarActividad = async (id, data) => {
+  const response = await axios.put(`/api/actividades/${id}`, data);
+  return response.data;
+};
+
+// Eliminar actividad
+export const eliminarActividad = async (id) => {
+  const response = await axios.delete(`/api/actividades/${id}`);
+  return response.data;
+};

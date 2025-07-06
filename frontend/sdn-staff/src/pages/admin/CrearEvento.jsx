@@ -46,6 +46,7 @@ const CrearEvento = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [showModalAgenda, setShowModalAgenda] = useState(false);
+  const [eventoAgendaId, setEventoAgendaId] = useState(null);
   const [form, setForm] = useState(initialState);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventosRecientes, setEventosRecientes] = useState([]);
@@ -464,7 +465,7 @@ const CrearEvento = () => {
             Gestión de Eventos
           </h3>
         </div>
-        <div className="flex flex-col md:flex-row gap-6 p-6 bg-gray-700">
+        <div className="flex flex-col gap-6 p-6 bg-gray-700">
           {/* Tabla de todos los eventos recientes */}
           <div className="flex-1 bg-gray-800 rounded-lg shadow p-4 border border-gray-600">
             <h4 className="text-md font-bold text-white mb-3 text-center">
@@ -525,7 +526,7 @@ const CrearEvento = () => {
                         <td className="px-4 py-2 whitespace-nowrap">
                           <button
                             onClick={() => handleEditEvento(ev)}
-                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors"
+                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors mr-2"
                           >
                             <svg
                               className="w-3 h-3 mr-1"
@@ -541,6 +542,34 @@ const CrearEvento = () => {
                               />
                             </svg>
                             Editar
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEventoAgendaId(ev.id_evento);
+                              setShowModalAgenda(true);
+                            }}
+                            className="inline-flex items-center px-2 py-1 border border-green-600 text-xs font-medium rounded text-green-200 bg-green-900 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800 transition-colors"
+                          >
+                            <svg
+                              className="w-3 h-3 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 17v-6a2 2 0 012-2h6"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 7h6m0 0v6"
+                              />
+                            </svg>
+                            Agente de Evento
                           </button>
                         </td>
                       </tr>
@@ -660,7 +689,7 @@ const CrearEvento = () => {
                         <td className="px-4 py-2 whitespace-nowrap">
                           <button
                             onClick={() => handleEditEvento(ev)}
-                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors"
+                            className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-200 bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 transition-colors mr-2"
                           >
                             <svg
                               className="w-3 h-3 mr-1"
@@ -676,6 +705,34 @@ const CrearEvento = () => {
                               />
                             </svg>
                             Editar
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEventoAgendaId(ev.id_evento);
+                              setShowModalAgenda(true);
+                            }}
+                            className="inline-flex items-center px-2 py-1 border border-green-600 text-xs font-medium rounded text-green-200 bg-green-900 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800 transition-colors"
+                          >
+                            <svg
+                              className="w-3 h-3 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 17v-6a2 2 0 012-2h6"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 7h6m0 0v6"
+                              />
+                            </svg>
+                            Agente de Evento
                           </button>
                         </td>
                       </tr>
@@ -719,8 +776,8 @@ const CrearEvento = () => {
                     <svg
                       className="h-6 w-6"
                       fill="none"
-                      viewBox="0 0 24 24"
                       stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         strokeLinecap="round"
@@ -1132,12 +1189,15 @@ const CrearEvento = () => {
         </div>
       )}
       {/* Modal para AgendaEvento */}
-      {showModalAgenda && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 p-4">
+      {showModalAgenda && eventoAgendaId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="relative w-full max-w-4xl">
             <button
               className="absolute -top-3 -right-3 bg-gray-700 rounded-full shadow-lg p-2 text-gray-400 hover:text-white transition-colors"
-              onClick={() => setShowModalAgenda(false)}
+              onClick={() => {
+                setShowModalAgenda(false);
+                setEventoAgendaId(null);
+              }}
             >
               <svg
                 className="w-5 h-5"
@@ -1153,7 +1213,7 @@ const CrearEvento = () => {
                 />
               </svg>
             </button>
-            <AgendaEvento idEvento={id_evento} />
+            <AgendaEvento idEvento={eventoAgendaId} />
           </div>
         </div>
       )}

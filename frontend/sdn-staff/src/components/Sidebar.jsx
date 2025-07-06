@@ -150,7 +150,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       
       <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:translate-x-0 fixed md:static inset-y-0 left-0 w-64 bg-gray-900 
-        text-white transition-transform duration-300 ease-in-out z-50 flex flex-col`}>
+        text-white transition-transform duration-300 ease-in-out z-50 flex flex-col overflow-y-auto`} style={{ height: '100vh' }}>
         
         {/* Header del sidebar */}
         <div className="p-6 border-b border-gray-700">

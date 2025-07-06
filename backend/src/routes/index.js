@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Importar rutas específicas aquí
 const authRoutes = require('./authRoutes');
+const actividadRoutes = require('./actividadRoutes');
 const usuarioRoutes = require('./usuarioRoutes');
 const rolRoutes = require('./rolRoutes');
 const eventoRoutes = require('./eventoRoutes');
@@ -23,6 +24,7 @@ const clasificacionExpositorRoutes = require('./clasificacionExpositorRoutes');
 
 // Configurar rutas existentes
 router.use('/auth', authRoutes); // Rutas de autenticación (públicas)
+router.use('/actividades', actividadRoutes); // Actividades (protegido)
 router.use('/usuarios', usuarioRoutes); // Nuevo modelo Usuario (protegido)
 router.use('/roles', rolRoutes); // Roles (protegido)
 router.use('/eventos', eventoRoutes); // Eventos (protegido)
