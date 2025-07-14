@@ -1,0 +1,40 @@
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  backend:
+    image: bjohan23/sdn-backend:${IMAGE_TAG:-latest}
+    container_name: sdn-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - /DATA/AppData/sdn-app/backend:/app/data
+    networks:
+      - sdn_network
+    labels:
+      - "casa.enable=true"
+      - "casa.app.name=SDN Backend"
+      - "casa.app.category=Development"
+
+  frontend:
+    image: bjohan23/sdn-frontend:${IMAGE_TAG:-latest}
+    container_name: sdn-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - sdn_network
+    labels:
+      - "casa.enable=true"
+      - "casa.app.name=SDN Frontend"
+      - "casa.app.category=Development"
+
+networks:
+  sdn_network:
+    driver: bridge
