@@ -49,7 +49,7 @@ function App() {
       {showLayout ? (
         <div className="flex h-screen bg-gray-100">
           <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+ 
           <div className="flex-1 flex flex-col overflow-hidden">
             <Navbar setSidebarOpen={setSidebarOpen} />
 

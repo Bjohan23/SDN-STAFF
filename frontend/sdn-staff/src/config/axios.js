@@ -1,7 +1,8 @@
 import axios from 'axios';
 // Crear instancia de axios con configuración base
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'; // Usa la variable de entorno o un valor por defecto
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000', // Ajusta esto según tu puerto de backend
+  baseURL: API_URL, 
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json'

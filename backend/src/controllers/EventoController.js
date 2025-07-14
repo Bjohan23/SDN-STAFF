@@ -45,13 +45,13 @@ class EventoController {
       }
 
       // Validar URL virtual si se proporciona
-      if (eventoData.url_virtual && eventoData.url_virtual.trim() !== '') {
-        try {
-          new URL(eventoData.url_virtual);
-        } catch {
-          return ApiResponse.validation(res, [{ field: 'url_virtual', message: 'La URL virtual debe ser válida' }]);
-        }
-      }
+      // if (eventoData.url_virtual && eventoData.url_virtual.trim() !== '') {
+      //   try {
+      //     new URL(eventoData.url_virtual);
+      //   } catch {
+      //     return ApiResponse.validation(res, [{ field: 'url_virtual', message: 'La URL virtual debe ser válida' }]);
+      //   }
+      // }
 
       // Validar capacidad máxima
       if (eventoData.capacidad_maxima && eventoData.capacidad_maxima <= 0) {
