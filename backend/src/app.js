@@ -15,11 +15,10 @@ const routes = require('../src/routes');
 const errorHandler = require('../src/middlewares/errorHandler');
 
 const app = express();
-
 // Middlewares globales
 app.use(cors({
   origin: ['http://localhost:5173', 'http://127.0.0.1:5173',
-    'http://161.132.41.106', 'http://161.132.41.106:80','https://deborah-riding-operations-advertising.trycloudflare.com', 
+    'http://161.132.41.106', 'http://161.132.41.106:80','https://dominant-compare-unified-filing.trycloudflare.com', 
     /\.trycloudflare\.com$/, "*"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

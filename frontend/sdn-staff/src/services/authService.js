@@ -25,7 +25,7 @@ const authService = {
     return res.data;
   },
   resetPassword: async ({ correo, code, newPassword }) => {
-    const res = await axios.post(`${API_URL}/auth/reset-password`, { correo, code, newPassword });
+    const res = await axios.post(`${API_URL}/api/auth/reset-password`, { correo, code, newPassword });
     return res.data;
   }
 };
