@@ -1,0 +1,91 @@
+# .github/workflows/deploy.yml
+name: Deploy to CasaOS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📂 Checkout código
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+          frontend/sdn-staff/package-lock.json
+
+    - name: 📦 Instalar dependencias Backend
+      working-directory: ./backend
+      run: npm ci
+
+    - name: 📦 Instalar dependencias Frontend
+      working-directory: ./frontend/sdn-staff
+      run: npm ci
+
+    - name: 🧪 Tests Backend (si existen)
+      working-directory: ./backend
+      run: npm test --if-present
+
+    - name: 🏗️ Build Frontend
+      working-directory: ./frontend/sdn-staff
+      run: npm run build
+
+    - name: 🐳 Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 🔐 Login Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: 🚀 Build y Push Backend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: true
+        tags: |
+          bjohan23/sdn-backend:latest
+          bjohan23/sdn-backend:${{ github.sha }}
+
+    - name: 🎨 Build y Push Frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend/sdn-staff
+        push: true
+        tags: |
+          bjohan23/sdn-frontend:latest
+          bjohan23/sdn-frontend:${{ github.sha }}
+
+    - name: 🏠 Deploy a CasaOS
+      run: |
+        # Crear configuración docker-compose con variables
+        envsubst < docker-compose.prod.yml > docker-compose.final.yml
+        
+        # Desplegar usando la API de CasaOS
+        curl -X POST "${{ secrets.CASAOS_URL }}/v1/compose/install" \
+          -H "Authorization: Bearer ${{ secrets.CASAOS_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "name": "sdn-app",
+            "compose_content": "'"$(cat docker-compose.final.yml | base64 -w 0)"'"
+          }'
+      env:
+        DOCKER_USERNAME: bjohan23
+        IMAGE_TAG: ${{ github.sha }}
+
+    - name: ✅ Verificar despliegue
+      run: |
+        echo "🎉 Despliegue completado!"
+        echo "🌐 Frontend: ${{ secrets.CASAOS_URL }}"
+        echo "🔌 Backend API: ${{ secrets.CASAOS_URL }}:3000/api"
+        echo "📚 Swagger: ${{ secrets.CASAOS_URL }}:3000/api-docs"
