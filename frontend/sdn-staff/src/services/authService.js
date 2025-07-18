@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true;
 const authService = {
   register: async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         correo: userData.email,
         password: userData.password
       });
@@ -21,7 +21,7 @@ const authService = {
     }
   },
   forgotPassword: async (email) => {
-    const res = await axios.post(`${API_URL}/auth/forgot-password`, { correo: email });
+    const res = await axios.post(`${API_URL}/api/auth/forgot-password`, { correo: email });
     return res.data;
   },
   resetPassword: async ({ correo, code, newPassword }) => {
