@@ -62,6 +62,12 @@ const InicioSesion = () => {
           Iniciar Sesión
         </h2>
         
+        {/* Mensaje de éxito después de registro */}
+        {location.state?.message && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            {location.state.message}
+          </div>
+        )}
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}

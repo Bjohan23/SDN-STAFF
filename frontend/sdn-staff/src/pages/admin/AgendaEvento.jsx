@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  getActividades,
-  crearActividad,
-  actualizarActividad,
-  eliminarActividad,
-} from "../../services/actividadesService";
+import actividadesService from "../../services/actividadesService";
 
 const initialForm = {
   titulo: "",
@@ -39,7 +34,7 @@ const AgendaEvento = ({ idEvento }) => {
     setError(null);
     try {
       const params = { id_evento: idEvento, ...filtros, limit: 100 };
-      const res = await getActividades(params);
+      const res = await actividadesService.getActividades(params);
       setActividades(res.data || []);
     } catch {
       setError("Error al cargar actividades");
@@ -110,7 +105,7 @@ const AgendaEvento = ({ idEvento }) => {
     setLoading(true);
     setError(null);
     try {
-      await eliminarActividad(id);
+      await actividadesService.eliminarActividad(id);
       fetchActividades();
     } catch {
       setError("Error al eliminar actividad");
@@ -163,9 +158,9 @@ const AgendaEvento = ({ idEvento }) => {
           form.aforo_maximo !== "" ? Number(form.aforo_maximo) : undefined,
       };
       if (editId) {
-        await actualizarActividad(editId, payload);
+        await actividadesService.actualizarActividad(editId, payload);
       } else {
-        await crearActividad(payload);
+        await actividadesService.crearActividad(payload);
       }
       setShowForm(false);
       fetchActividades();

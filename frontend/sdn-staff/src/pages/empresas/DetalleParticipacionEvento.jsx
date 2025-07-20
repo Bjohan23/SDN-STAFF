@@ -11,7 +11,7 @@ const DetalleParticipacionEvento = () => {
     const fetchDetalle = async () => {
       try {
         const res = await axios.get(
-          `/api/empresasExpositoras/${id}/eventos/${evento_id}`
+          `/empresas-expositoras/${id}/eventos/${evento_id}`
         );
         setDetalle(res.data.data);
       } catch {

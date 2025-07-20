@@ -20,7 +20,7 @@ const standsService = {
         params.append('search', filters.search);
       }
 
-      const response = await axios.get(`/api/stands?${params.toString()}`);
+      const response = await axios.get(`/stands?${params.toString()}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -30,7 +30,7 @@ const standsService = {
   // Obtener stand por ID
   getStandById: async (id) => {
     try {
-      const response = await axios.get(`/api/stands/${id}`);
+      const response = await axios.get(`/stands/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -40,7 +40,7 @@ const standsService = {
   // Crear nuevo stand
   createStand: async (standData) => {
     try {
-      const response = await axios.post('/api/stands', standData);
+      const response = await axios.post('/stands', standData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -50,7 +50,7 @@ const standsService = {
   // Actualizar stand
   updateStand: async (id, standData) => {
     try {
-      const response = await axios.put(`/api/stands/${id}`, standData);
+      const response = await axios.put(`/stands/${id}`, standData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -60,7 +60,7 @@ const standsService = {
   // Eliminar stand (soft delete)
   deleteStand: async (id) => {
     try {
-      const response = await axios.delete(`/api/stands/${id}`);
+      const response = await axios.delete(`/stands/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -70,7 +70,7 @@ const standsService = {
   // Obtener stands por tipo
   getStandsByType: async (tipoId, page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&id_tipo_stand=${tipoId}`);
+      const response = await axios.get(`/stands?page=${page}&limit=${limit}&id_tipo_stand=${tipoId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -80,7 +80,7 @@ const standsService = {
   // Obtener stands por estado
   getStandsByStatus: async (estado, page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=${estado}`);
+      const response = await axios.get(`/stands?page=${page}&limit=${limit}&estado_fisico=${estado}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -90,7 +90,7 @@ const standsService = {
   // Obtener stands disponibles
   getAvailableStands: async (page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=disponible`);
+      const response = await axios.get(`/stands?page=${page}&limit=${limit}&estado_fisico=disponible`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -100,7 +100,7 @@ const standsService = {
   // Obtener stands ocupados
   getOccupiedStands: async (page = 1, limit = 10) => {
     try {
-      const response = await axios.get(`/api/stands?page=${page}&limit=${limit}&estado_fisico=ocupado`);
+      const response = await axios.get(`/stands?page=${page}&limit=${limit}&estado_fisico=ocupado`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -110,7 +110,7 @@ const standsService = {
   // Obtener estadísticas de stands
   getStandStats: async () => {
     try {
-      const response = await axios.get('/api/stands/stats');
+      const response = await axios.get('/stands/stats');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -120,7 +120,7 @@ const standsService = {
   // Obtener tipos de stand
   getTiposStand: async () => {
     try {
-      const response = await axios.get('/api/tiposStand');
+      const response = await axios.get('/tiposStand');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -130,7 +130,7 @@ const standsService = {
   // Restaurar stand eliminado
   restoreStand: async (id) => {
     try {
-      const response = await axios.post(`/api/stands/${id}/restore`);
+      const response = await axios.post(`/stands/${id}/restore`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

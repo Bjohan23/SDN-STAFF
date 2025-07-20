@@ -1,18 +1,18 @@
 import axios from '../config/axios';
 
-const API_TIPOS = '/api/tiposEvento';
+const API_TIPOS = '/tiposEvento';
 
 const eventosService = {
   async getEventos() {
-    const res = await axios.get('/api/eventos');
+    const res = await axios.get('/eventos');
     return res.data;
   },
   async getEventoById(id) {
-    const res = await axios.get(`/api/eventos/${id}`);
+    const res = await axios.get(`/eventos/${id}`);
     return res.data;
   },
   async updateEvento(id, data) {
-    const res = await axios.put(`/api/eventos/${id}`, data);
+    const res = await axios.put(`/eventos/${id}`, data);
     return res.data;
   },
   async getTiposEvento() {

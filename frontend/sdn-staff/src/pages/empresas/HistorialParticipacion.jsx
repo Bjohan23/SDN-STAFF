@@ -10,7 +10,7 @@ const HistorialParticipacion = () => {
   useEffect(() => {
     const fetchHistorial = async () => {
       try {
-        const res = await axios.get(`/api/empresasExpositoras/${id}`);
+        const res = await axios.get(`/empresas-expositoras/${id}`);
         setHistorial(res.data.data?.participaciones || []);
       } catch {
         setError("No se pudo obtener el historial");

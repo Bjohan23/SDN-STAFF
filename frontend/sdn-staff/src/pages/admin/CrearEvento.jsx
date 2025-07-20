@@ -64,7 +64,7 @@ const CrearEvento = () => {
 
   const fetchEventosRecientes = async () => {
     try {
-      const res = await axios.get("/api/eventos?limit=10");
+      const res = await axios.get("/eventos?limit=10");
       setEventosRecientes(res.data.data || []);
     } catch {
       setEventosRecientes([]);
@@ -131,7 +131,7 @@ const CrearEvento = () => {
   const fetchTiposEvento = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/api/tiposEvento", {
+      const res = await axios.get("/tiposEvento", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const lista = res.data.data || [];
@@ -230,7 +230,15 @@ const CrearEvento = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e, estadoFinal = "borrador") => {
+  // Nueva función auxiliar para manejar el cambio de estado y submit
+  const handleEstadoAndSubmit = (e, nuevoEstado) => {
+    e.preventDefault();
+    setForm((prev) => ({ ...prev, estado: nuevoEstado }));
+    setTimeout(() => handleSubmit(e), 0); // Espera a que setForm actualice el estado
+  };
+
+  // Modifica handleSubmit para no recibir estadoFinal
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -241,7 +249,8 @@ const CrearEvento = () => {
     try {
       const payload = {
         ...form,
-        estado: estadoFinal,
+        estado: form.estado || "borrador",
+        moneda: form.moneda && form.moneda.length === 3 ? form.moneda : "PEN",
         capacidad_maxima: form.capacidad_maxima
           ? parseInt(form.capacidad_maxima)
           : null,
@@ -277,7 +286,7 @@ const CrearEvento = () => {
         );
       } else {
         // CREAR
-        await axios.post("/api/eventos", payload);
+        await axios.post("/eventos", payload);
         setSuccess("Evento creado exitosamente");
         setForm(initialState);
         setFieldErrors({});
@@ -793,55 +802,14 @@ const CrearEvento = () => {
               <div className="px-6 pb-6 max-h-[70vh] overflow-y-auto">
                 <div className="space-y-6">
                   {/* Mensajes de estado */}
-                  {error && (
-                    <div className="bg-red-900 border border-red-600 rounded-lg p-4">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <svg
-                            className="h-5 w-5 text-red-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-red-200 font-medium">{error}</p>
-                        </div>
-                      </div>
+                  {success && (
+                    <div className="mb-4 p-3 rounded bg-green-900 text-green-200 border border-green-600 text-sm font-semibold">
+                      {success}
                     </div>
                   )}
-
-                  {success && (
-                    <div className="bg-green-900 border border-green-600 rounded-lg p-4">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <svg
-                            className="h-5 w-5 text-green-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-green-200 font-medium">
-                            {success}
-                          </p>
-                        </div>
-                      </div>
+                  {error && (
+                    <div className="mb-4 p-3 rounded bg-red-900 text-red-200 border border-red-600 text-sm font-semibold">
+                      {error}
                     </div>
                   )}
 
@@ -854,7 +822,7 @@ const CrearEvento = () => {
                       </label>
                       <input
                         name="nombre_evento"
-                        value={form.nombre_evento}
+                        value={form.nombre_evento || ""}
                         onChange={handleChange}
                         placeholder="Nombre del evento"
                         className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
@@ -1000,16 +968,17 @@ const CrearEvento = () => {
                       )}
                     </div>
 
-                    {/* Estado del evento */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {/* Campo Estado */}
+                    <div className="mb-4">
+                      <label htmlFor="estado" className="block text-sm font-medium text-gray-300 mb-1">
                         Estado
                       </label>
                       <select
                         name="estado"
-                        value={form.estado}
+                        id="estado"
+                        value={form.estado || "borrador"}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         {estados.map((e) => (
                           <option key={e.value} value={e.value}>
@@ -1028,7 +997,7 @@ const CrearEvento = () => {
                         <input
                           name="capacidad_maxima"
                           type="number"
-                          value={form.capacidad_maxima}
+                          value={form.capacidad_maxima !== null && form.capacidad_maxima !== undefined ? form.capacidad_maxima : ""}
                           onChange={handleChange}
                           placeholder="Capacidad"
                           min={1}
@@ -1085,27 +1054,11 @@ const CrearEvento = () => {
 
                     {/* Botones de acción */}
                     <div className="flex justify-end space-x-3 pt-4 border-t border-gray-600">
+                      {/* Elimina el botón de borrador */}
                       <button
                         type="button"
                         disabled={loading}
-                        onClick={(e) => handleSubmit(e, "borrador")}
-                        className="inline-flex items-center px-4 py-2 border border-gray-500 text-sm font-medium rounded-md text-gray-300 bg-gray-600 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-300 mr-2"></div>
-                            Guardando...
-                          </>
-                        ) : isEditMode ? (
-                          "Actualizar como borrador"
-                        ) : (
-                          "Guardar como borrador"
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        disabled={loading}
-                        onClick={(e) => handleSubmit(e, "publicado")}
+                        onClick={(e) => handleEstadoAndSubmit(e, "publicado")}
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {loading ? (

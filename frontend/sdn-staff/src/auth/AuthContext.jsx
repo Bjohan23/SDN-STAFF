@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (correo, password) => {
     try {
-      const response = await axiosInstance.post('/api/auth/login', { correo, password })
+      const response = await axiosInstance.post('/auth/login', { correo, password })
       console.log('Login response:', response)
 
       const { accessToken, user } = response.data.data
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await axiosInstance.post('/api/auth/register', userData)
+      const response = await axiosInstance.post('/auth/register', userData)
       console.log('Registration response:', response)
       navigate('/login')
     } catch (error) {

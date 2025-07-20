@@ -1,5 +1,5 @@
 const { Stand, TipoStand, Evento, Usuario, StandEvento, EmpresaEvento, StandServicio } = require('../models');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 const AuditService = require('./AuditService');
 
 /**
@@ -12,8 +12,12 @@ class StandService {
    */
   static async createStand(standData, userId = null) {
     try {
+      console.log('🚀 StandService.createStand - Iniciando con datos:', standData);
+      
       // Validar que el tipo de stand existe
       const tipoStand = await TipoStand.findByPk(standData.id_tipo_stand);
+      console.log('✅ Tipo de stand encontrado:', tipoStand?.nombre_tipo);
+      
       if (!tipoStand || !tipoStand.isActive()) {
         throw new Error('Tipo de stand no encontrado o inactivo');
       }
@@ -51,16 +55,24 @@ class StandService {
         observaciones: standData.observaciones || null,
         fecha_ultima_inspeccion: standData.fecha_ultima_inspeccion || null,
         fecha_proximo_mantenimiento: standData.fecha_proximo_mantenimiento || null,
-        estado: standData.estado || 'activo',
+        estado_general: standData.estado_general || 'activo',
         es_premium: standData.es_premium || false,
         permite_subdivision: standData.permite_subdivision || false,
         capacidad_maxima_personas: standData.capacidad_maxima_personas || null
       };
       
-      const stand = await AuditService.createWithAudit(Stand, dataToCreate, userId);
+      console.log('📝 Datos a crear:', dataToCreate);
       
-      return await this.getStandById(stand.id_stand, true);
+      const stand = await AuditService.createWithAudit(Stand, dataToCreate, userId);
+      console.log('✅ Stand creado con ID:', stand.id_stand);
+      
+      // Retornar el stand creado directamente sin detalles adicionales
+      const result = await this.getStandById(stand.id_stand, false);
+      console.log('✅ Stand obtenido para respuesta');
+      
+      return result;
     } catch (error) {
+      console.error('❌ Error en createStand:', error);
       throw error;
     }
   }
@@ -204,25 +216,17 @@ class StandService {
   /**
    * Obtener stand por número
    */
-  static async getStandByNumero(numeroStand, includeDeleted = false) {
+  static async getStandByNumero(numero) {
     try {
-      const whereCondition = {
-        numero_stand: numeroStand
-      };
-
-      if (!includeDeleted) {
-        Object.assign(whereCondition, AuditService.getActiveWhereCondition());
-      }
-
       const stand = await Stand.findOne({
-        where: whereCondition,
-        include: [{
-          model: TipoStand,
-          as: 'tipoStand',
-          attributes: ['nombre_tipo', 'precio_base', 'moneda']
-        }]
+        where: { numero_stand: numero },
+        include: [
+          {
+            model: TipoStand,
+            as: 'tipoStand'
+          }
+        ]
       });
-
       return stand;
     } catch (error) {
       throw error;
@@ -282,35 +286,24 @@ class StandService {
    */
   static async deleteStand(id, userId = null) {
     try {
+      console.log('🚀 StandService.deleteStand - Iniciando eliminación del stand ID:', id);
+      
       const stand = await AuditService.findByPkWithAudit(Stand, id);
       
       if (!stand) {
         throw new Error('Stand no encontrado');
       }
 
-      // Verificar si tiene participaciones activas
-      const participacionesActivas = await EmpresaEvento.count({
-        where: AuditService.combineWhereWithActive({
-          id_stand: id,
-          estado_participacion: ['registrada', 'pendiente_aprobacion', 'aprobada', 'confirmada']
-        })
-      });
+      console.log('✅ Stand encontrado:', stand.numero_stand);
 
-      if (participacionesActivas > 0) {
-        throw new Error(`No se puede eliminar el stand. Tiene ${participacionesActivas} participaciones activas`);
-      }
-
-      // Eliminar las asignaciones en eventos
-      await StandEvento.update(
-        { deleted_at: new Date(), deleted_by: userId },
-        { where: { id_stand: id } }
-      );
-
-      // Eliminación lógica del stand
+      // Eliminación lógica del stand directamente
       await AuditService.softDelete(stand, userId);
+      
+      console.log('✅ Stand eliminado correctamente');
       
       return { message: 'Stand eliminado correctamente' };
     } catch (error) {
+      console.error('❌ Error en deleteStand:', error);
       throw error;
     }
   }
@@ -501,9 +494,10 @@ class StandService {
     try {
       const whereCondition = includeDeleted ? {} : AuditService.getActiveWhereCondition();
       
+      // Conteos básicos con filtros de auditoría
       const [total, activos, disponibles, ocupados, mantenimiento, premium, eliminados] = await Promise.all([
         Stand.count(),
-        Stand.count({ where: { ...whereCondition, estado: 'activo' } }),
+        Stand.count({ where: { ...whereCondition, estado_general: 'activo' } }),
         Stand.count({ where: { ...whereCondition, estado_fisico: 'disponible' } }),
         Stand.count({ where: { ...whereCondition, estado_fisico: 'ocupado' } }),
         Stand.count({ where: { ...whereCondition, estado_fisico: 'mantenimiento' } }),
@@ -511,24 +505,44 @@ class StandService {
         Stand.count({ where: AuditService.getDeletedWhereCondition() })
       ]);
 
-      const standsPorTipo = await Stand.findAll({
-        attributes: [
-          'id_tipo_stand',
-          [require('sequelize').fn('COUNT', 'id_stand'), 'stands_count'],
-          [require('sequelize').fn('AVG', 'area'), 'area_promedio'],
-          [require('sequelize').fn('SUM', 'area'), 'area_total']
-        ],
-        include: [{
-          model: TipoStand,
-          as: 'tipoStand',
-          attributes: ['nombre_tipo', 'precio_base'],
+      // Consulta de stands por tipo (simplificada)
+      let standsPorTipo = [];
+      try {
+        const standsPorTipoRaw = await Stand.findAll({
+          attributes: [
+            'id_tipo_stand',
+            [Sequelize.fn('COUNT', Sequelize.col('id_stand')), 'count']
+          ],
           where: whereCondition,
-          required: true
-        }],
-        where: whereCondition,
-        group: ['id_tipo_stand', 'tipoStand.nombre_tipo', 'tipoStand.precio_base'],
-        raw: false
-      });
+          group: ['id_tipo_stand'],
+          raw: true
+        });
+
+        if (standsPorTipoRaw.length > 0) {
+          const tiposStandIds = standsPorTipoRaw.map(item => item.id_tipo_stand);
+          const tiposStand = await TipoStand.findAll({
+            where: { 
+              id_tipo_stand: tiposStandIds,
+              ...AuditService.getActiveWhereCondition()
+            },
+            attributes: ['id_tipo_stand', 'nombre_tipo', 'precio_base'],
+            raw: true
+          });
+
+          standsPorTipo = standsPorTipoRaw.map(stand => {
+            const tipo = tiposStand.find(t => t.id_tipo_stand === stand.id_tipo_stand);
+            return {
+              id_tipo_stand: stand.id_tipo_stand,
+              count: stand.count,
+              nombre_tipo: tipo ? tipo.nombre_tipo : 'Tipo no encontrado',
+              precio_base: tipo ? tipo.precio_base : 0
+            };
+          });
+        }
+      } catch (tipoError) {
+        console.warn('Error al obtener stands por tipo:', tipoError);
+        // Si falla, continuamos sin esta información
+      }
 
       return {
         total,
@@ -543,6 +557,7 @@ class StandService {
         standsPorTipo
       };
     } catch (error) {
+      console.error('Error en getStandStats:', error);
       throw error;
     }
   }

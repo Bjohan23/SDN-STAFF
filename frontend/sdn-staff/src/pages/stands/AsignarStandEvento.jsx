@@ -24,7 +24,7 @@ const AsignarStandEvento = () => {
 
   const fetchEventos = async () => {
     try {
-      const res = await axios.get('/api/eventos');
+      const res = await axios.get('/eventos');
       console.log('Eventos response:', res.data);
       setEventos(res.data.data || res.data.eventos || []);
     } catch (err) {
@@ -35,7 +35,7 @@ const AsignarStandEvento = () => {
 
   const fetchStandsDisponibles = async (eventoId) => {
     try {
-      const res = await axios.get(`/api/stands/evento/${eventoId}/disponibles`);
+      const res = await axios.get(`/stands/evento/${eventoId}/disponibles`);
       console.log('Stands disponibles response:', res.data);
       setStands(res.data.data || res.data.stands || []);
     } catch (err) {
@@ -61,7 +61,7 @@ const AsignarStandEvento = () => {
         eventoId: eventoSeleccionado
       });
       
-      const response = await axios.post(`/api/stands/${standSeleccionado}/asignar-evento`, {
+      const response = await axios.post(`/stands/${standSeleccionado}/asignar-evento`, {
         id_evento: eventoSeleccionado
       });
       

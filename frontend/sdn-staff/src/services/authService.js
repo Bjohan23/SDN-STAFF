@@ -1,31 +1,33 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-console.log(API_URL);
-// Configure axios defaults
-axios.defaults.withCredentials = true;
+import axiosInstance from '../config/axios';
 
 const authService = {
   register: async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, {
+      const response = await axiosInstance.post('/auth/register', {
         correo: userData.email,
         password: userData.password
       });
       return response.data;
     } catch (error) {
+      // Mejor manejo de errores: mostrar mensaje del backend si existe
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       }
-      throw error.response?.data || error.message;
+      if (error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      }
+      if (typeof error.response?.data === 'string') {
+        throw new Error(error.response.data);
+      }
+      throw new Error(error.message || 'Error al registrar usuario');
     }
   },
   forgotPassword: async (email) => {
-    const res = await axios.post(`${API_URL}/api/auth/forgot-password`, { correo: email });
+    const res = await axiosInstance.post('/auth/forgot-password', { correo: email });
     return res.data;
   },
   resetPassword: async ({ correo, code, newPassword }) => {
-    const res = await axios.post(`${API_URL}/api/auth/reset-password`, { correo, code, newPassword });
+    const res = await axiosInstance.post('/auth/reset-password', { correo, code, newPassword });
     return res.data;
   }
 };

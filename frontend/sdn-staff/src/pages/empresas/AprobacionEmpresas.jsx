@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../config/axios";
 
-const AprobacionEmpresas = () => {
+const AprobacionEmpresas = ({ onAprobarORechazar }) => {
   const [pendientes, setPendientes] = useState([]);
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // 'success', 'error'
   const [cargando, setCargando] = useState(true);
   const [procesando, setProcesando] = useState(null); // ID de la empresa que se está procesando
   const [modalEmpresa, setModalEmpresa] = useState(null);
+  // Modal de motivo de rechazo
+  const [showMotivoModal, setShowMotivoModal] = useState(false);
+  const [motivoRechazo, setMotivoRechazo] = useState("");
+  const [empresaRechazoId, setEmpresaRechazoId] = useState(null);
 
   useEffect(() => {
     const fetchPendientes = async () => {
       try {
         setCargando(true);
-        const res = await axios.get("/api/empresasExpositoras/pendientes");
+        const res = await axios.get("/empresas-expositoras/pendientes");
         setPendientes(res.data.data || []);
       } catch {
         setPendientes([]);
@@ -38,9 +42,10 @@ const AprobacionEmpresas = () => {
   const aprobar = async (id) => {
     setProcesando(id);
     try {
-      await axios.post(`/api/empresasExpositoras/${id}/aprobar`);
+      await axios.post(`/empresas-expositoras/${id}/aprobar`);
       setPendientes((prev) => prev.filter((emp) => emp.id_empresa !== id));
       mostrarMensaje("Empresa aprobada exitosamente", "success");
+      if (onAprobarORechazar) onAprobarORechazar();
     } catch {
       mostrarMensaje("Error al aprobar la empresa", "error");
     } finally {
@@ -48,16 +53,29 @@ const AprobacionEmpresas = () => {
     }
   };
 
-  const rechazar = async (id) => {
-    setProcesando(id);
+  // Cambia la función rechazar para abrir el modal
+  const rechazar = (id) => {
+    setEmpresaRechazoId(id);
+    setMotivoRechazo("");
+    setShowMotivoModal(true);
+  };
+
+  // Nueva función para confirmar el rechazo con motivo
+  const confirmarRechazo = async () => {
+    if (!motivoRechazo.trim()) return;
+    setProcesando(empresaRechazoId);
     try {
-      await axios.post(`/api/empresasExpositoras/${id}/rechazar`);
-      setPendientes((prev) => prev.filter((emp) => emp.id_empresa !== id));
+      await axios.post(`/empresas-expositoras/${empresaRechazoId}/rechazar`, { motivo: motivoRechazo });
+      setPendientes((prev) => prev.filter((emp) => emp.id_empresa !== empresaRechazoId));
       mostrarMensaje("Empresa rechazada exitosamente", "success");
+      if (onAprobarORechazar) onAprobarORechazar();
     } catch {
       mostrarMensaje("Error al rechazar la empresa", "error");
     } finally {
       setProcesando(null);
+      setShowMotivoModal(false);
+      setMotivoRechazo("");
+      setEmpresaRechazoId(null);
     }
   };
 
@@ -340,60 +358,16 @@ const AprobacionEmpresas = () => {
                         <button
                           onClick={() => aprobar(emp.id_empresa)}
                           disabled={procesando === emp.id_empresa}
-                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors mr-2 disabled:opacity-50"
                         >
-                          {procesando === emp.id_empresa ? (
-                            <>
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
-                              Procesando...
-                            </>
-                          ) : (
-                            <>
-                              <svg
-                                className="w-4 h-4 mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              Aprobar
-                            </>
-                          )}
+                          ✓ Aprobar
                         </button>
                         <button
                           onClick={() => rechazar(emp.id_empresa)}
                           disabled={procesando === emp.id_empresa}
-                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                          className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                         >
-                          {procesando === emp.id_empresa ? (
-                            <>
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
-                              Procesando...
-                            </>
-                          ) : (
-                            <>
-                              <svg
-                                className="w-4 h-4 mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                              Rechazar
-                            </>
-                          )}
+                          ✗ Rechazar
                         </button>
                       </div>
                     </td>
@@ -410,7 +384,7 @@ const AprobacionEmpresas = () => {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div
-              className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
               onClick={cerrarModal}
             ></div>
 
@@ -421,30 +395,20 @@ const AprobacionEmpresas = () => {
               &#8203;
             </span>
 
-            <div className="relative inline-block align-bottom bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-600">
-              <div className="bg-gray-800 px-6 pt-6 pb-4">
+            <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+              <div className="bg-white px-6 pt-6 pb-4">
                 <div className="flex items-start justify-between">
-                  <h3 className="text-lg leading-6 font-medium text-white">
-                    Detalles de la Empresa Pendiente
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Detalles de la Empresa
                   </h3>
                   <button
                     type="button"
-                    className="bg-gray-700 rounded-md text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onClick={cerrarModal}
                   >
                     <span className="sr-only">Cerrar</span>
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
@@ -459,37 +423,27 @@ const AprobacionEmpresas = () => {
                         <img
                           src={modalEmpresa.logo_url}
                           alt={`Logo ${modalEmpresa.nombre_empresa}`}
-                          className="w-16 h-16 object-cover rounded-lg border border-gray-600 shadow-sm"
+                          className="w-16 h-16 object-cover rounded-lg border shadow-sm"
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-lg bg-blue-600 flex items-center justify-center">
-                          <span className="text-white font-bold text-lg">
-                            {modalEmpresa.nombre_empresa
-                              .charAt(0)
-                              .toUpperCase()}
+                        <div className="w-16 h-16 rounded-lg bg-indigo-100 flex items-center justify-center">
+                          <span className="text-indigo-600 font-bold text-lg">
+                            {modalEmpresa.nombre_empresa.charAt(0).toUpperCase()}
                           </span>
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xl font-bold text-white">
-                        {modalEmpresa.nombre_empresa}
-                      </h4>
+                      <h4 className="text-xl font-bold text-gray-900">{modalEmpresa.nombre_empresa}</h4>
                       {modalEmpresa.razon_social && (
-                        <p className="text-sm text-gray-400 mt-1">
-                          {modalEmpresa.razon_social}
-                        </p>
+                        <p className="text-sm text-gray-500 mt-1">{modalEmpresa.razon_social}</p>
                       )}
                       <div className="flex items-center space-x-3 mt-2">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-900 text-yellow-200">
                           Pendiente
                         </span>
                         {modalEmpresa.tamaño_empresa && (
-                          <span
-                            className={getTamañoBadge(
-                              modalEmpresa.tamaño_empresa
-                            )}
-                          >
+                          <span className={getTamañoBadge(modalEmpresa.tamaño_empresa)}>
                             {modalEmpresa.tamaño_empresa}
                           </span>
                         )}
@@ -500,87 +454,43 @@ const AprobacionEmpresas = () => {
                   {/* Información en grid */}
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <h5 className="text-sm font-medium text-white mb-3">
-                        Información Básica
-                      </h5>
+                      <h5 className="text-sm font-medium text-gray-900 mb-3">Información Básica</h5>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-xs font-medium text-gray-400">
-                            RUC
-                          </dt>
-                          <dd className="text-sm text-gray-200">
-                            {modalEmpresa.ruc}
-                          </dd>
+                          <dt className="text-xs font-medium text-gray-500">RUC</dt>
+                          <dd className="text-sm text-gray-900">{modalEmpresa.ruc}</dd>
                         </div>
                         <div>
-                          <dt className="text-xs font-medium text-gray-400">
-                            Sector
-                          </dt>
-                          <dd className="text-sm text-gray-200">
-                            {modalEmpresa.sector}
-                          </dd>
+                          <dt className="text-xs font-medium text-gray-500">Sector</dt>
+                          <dd className="text-sm text-gray-900">{modalEmpresa.sector}</dd>
                         </div>
                         <div>
-                          <dt className="text-xs font-medium text-gray-400">
-                            Fecha de Registro
-                          </dt>
-                          <dd className="text-sm text-gray-200">
-                            {formatFecha(modalEmpresa.created_at)}
-                          </dd>
+                          <dt className="text-xs font-medium text-gray-500">Fecha de Registro</dt>
+                          <dd className="text-sm text-gray-900">{formatFecha(modalEmpresa.created_at)}</dd>
                         </div>
                       </dl>
                     </div>
-
                     <div>
-                      <h5 className="text-sm font-medium text-white mb-3">
-                        Contacto
-                      </h5>
+                      <h5 className="text-sm font-medium text-gray-900 mb-3">Contacto</h5>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-xs font-medium text-gray-400">
-                            Email
-                          </dt>
-                          <dd className="text-sm text-gray-200">
-                            {modalEmpresa.email_contacto}
-                          </dd>
+                          <dt className="text-xs font-medium text-gray-500">Email</dt>
+                          <dd className="text-sm text-gray-900">{modalEmpresa.email_contacto}</dd>
                         </div>
                         {modalEmpresa.telefono_contacto && (
                           <div>
-                            <dt className="text-xs font-medium text-gray-400">
-                              Teléfono
-                            </dt>
-                            <dd className="text-sm text-gray-200">
-                              {modalEmpresa.telefono_contacto}
-                            </dd>
+                            <dt className="text-xs font-medium text-gray-500">Teléfono</dt>
+                            <dd className="text-sm text-gray-900">{modalEmpresa.telefono_contacto}</dd>
                           </div>
                         )}
-                        {modalEmpresa.sitio_web && (
+                        {modalEmpresa.nombre_contacto && (
                           <div>
-                            <dt className="text-xs font-medium text-gray-400">
-                              Sitio Web
-                            </dt>
-                            <dd className="text-sm">
-                              <a
-                                href={modalEmpresa.sitio_web}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-400 hover:text-blue-300 inline-flex items-center"
-                              >
-                                {modalEmpresa.sitio_web}
-                                <svg
-                                  className="w-3 h-3 ml-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                  />
-                                </svg>
-                              </a>
+                            <dt className="text-xs font-medium text-gray-500">Persona de contacto</dt>
+                            <dd className="text-sm text-gray-900">
+                              {modalEmpresa.nombre_contacto}
+                              {modalEmpresa.cargo_contacto && (
+                                <span className="text-gray-500"> - {modalEmpresa.cargo_contacto}</span>
+                              )}
                             </dd>
                           </div>
                         )}
@@ -591,35 +501,39 @@ const AprobacionEmpresas = () => {
                   {/* Ubicación */}
                   {(modalEmpresa.direccion || modalEmpresa.ciudad) && (
                     <div>
-                      <h5 className="text-sm font-medium text-white mb-3">
-                        Ubicación
-                      </h5>
-                      <p className="text-sm text-gray-200">
-                        {[
-                          modalEmpresa.direccion,
-                          modalEmpresa.ciudad,
-                          modalEmpresa.pais,
-                        ]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </p>
+                      <h5 className="text-sm font-medium text-gray-900 mb-3">Ubicación</h5>
+                      <p className="text-sm text-gray-900">{[modalEmpresa.direccion, modalEmpresa.ciudad, modalEmpresa.pais].filter(Boolean).join(", ")}</p>
                     </div>
                   )}
 
                   {/* Descripción */}
                   {modalEmpresa.descripcion && (
                     <div>
-                      <h5 className="text-sm font-medium text-white mb-3">
-                        Descripción
-                      </h5>
-                      <p className="text-sm text-gray-300">
-                        {modalEmpresa.descripcion}
-                      </p>
+                      <h5 className="text-sm font-medium text-gray-900 mb-3">Descripción</h5>
+                      <p className="text-sm text-gray-700">{modalEmpresa.descripcion}</p>
+                    </div>
+                  )}
+
+                  {/* Sitio web */}
+                  {modalEmpresa.sitio_web && (
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-900 mb-3">Sitio Web</h5>
+                      <a
+                        href={modalEmpresa.sitio_web}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-indigo-600 hover:text-indigo-500 inline-flex items-center"
+                      >
+                        {modalEmpresa.sitio_web}
+                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
                     </div>
                   )}
 
                   {/* Acciones en el modal */}
-                  <div className="flex justify-end space-x-3 pt-4 border-t border-gray-600">
+                  <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                     <button
                       onClick={() => {
                         rechazar(modalEmpresa.id_empresa);
@@ -628,18 +542,8 @@ const AprobacionEmpresas = () => {
                       disabled={procesando === modalEmpresa.id_empresa}
                       className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                     >
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                       Rechazar
                     </button>
@@ -651,24 +555,45 @@ const AprobacionEmpresas = () => {
                       disabled={procesando === modalEmpresa.id_empresa}
                       className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                     >
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       Aprobar
                     </button>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para motivo de rechazo */}
+      {showMotivoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-600 shadow-lg">
+            <h3 className="text-lg font-bold text-white mb-4">Motivo de rechazo</h3>
+            <textarea
+              className="w-full h-24 p-2 rounded bg-gray-700 border border-gray-500 text-white mb-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+              placeholder="Escribe el motivo del rechazo..."
+              value={motivoRechazo}
+              onChange={e => setMotivoRechazo(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                onClick={() => { setShowMotivoModal(false); setMotivoRechazo(""); setEmpresaRechazoId(null); }}
+                disabled={procesando}
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                onClick={confirmarRechazo}
+                disabled={!motivoRechazo.trim() || procesando}
+              >
+                Confirmar rechazo
+              </button>
             </div>
           </div>
         </div>

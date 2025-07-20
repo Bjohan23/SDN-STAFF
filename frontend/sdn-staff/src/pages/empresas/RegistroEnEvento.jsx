@@ -9,7 +9,7 @@ const RegistroEnEvento = ({ idEmpresa }) => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const res = await axios.get("/api/evento");
+        const res = await axios.get("/evento");
         setEventos(res.data.data || []);
       } catch {
         setEventos([]);
@@ -22,7 +22,7 @@ const RegistroEnEvento = ({ idEmpresa }) => {
     e.preventDefault();
     setMensaje("");
     try {
-      await axios.post(`/api/empresasExpositoras/${idEmpresa}/eventos`, {
+      await axios.post(`/empresas-expositoras/${idEmpresa}/eventos`, {
         id_evento: eventoSeleccionado,
       });
       setMensaje("Empresa registrada en evento");

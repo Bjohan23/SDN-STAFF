@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
+import { useStands } from '../../contexts/StandsContext';
 import standsService from '../../services/standsService';
 import ListadoStands from './ListadoStands';
 import AgregarStand from './AgregarStand';
@@ -59,6 +60,7 @@ const DashboardStands = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const { user } = useAuth();
+  const { refreshTrigger, triggerRefresh } = useStands();
 
   const allowedRoles = ["administrador", "manager", "staff"];
   const userRoles = Array.isArray(user?.roles)
@@ -68,7 +70,7 @@ const DashboardStands = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -310,6 +312,9 @@ const DashboardStands = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Área
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                          Precio
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-gray-700 divide-y divide-gray-600">
@@ -342,6 +347,15 @@ const DashboardStands = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                             {stand.area} m²
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            {stand.precio_personalizado ? (
+                              <span className="text-green-400 font-medium">
+                                S/ {parseFloat(stand.precio_personalizado).toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-gray-500 italic">No especificado</span>
+                            )}
                           </td>
                         </tr>
                       ))}

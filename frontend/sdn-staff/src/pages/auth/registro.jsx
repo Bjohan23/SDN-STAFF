@@ -10,6 +10,7 @@ const Registro = () => {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -22,6 +23,7 @@ const Registro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     // Validaciones
@@ -42,7 +44,10 @@ const Registro = () => {
         email: formData.email,
         password: formData.password
       });
-      navigate('/login', { state: { message: 'Registro exitoso. Por favor inicia sesión.' } });
+      setSuccess('¡Registro exitoso!');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (err) {
       setError(err.message || 'Error al registrar usuario');
     } finally {
@@ -69,13 +74,16 @@ const Registro = () => {
           </div>
         </div>
         <h2 className="text-center text-2xl font-bold text-gray-700 mb-6">Crear Cuenta</h2>
-        
+        {success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+            {success}
+          </div>
+        )}
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600 mb-1">Correo Electrónico</label>

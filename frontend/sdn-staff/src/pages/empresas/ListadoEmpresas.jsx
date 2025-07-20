@@ -91,6 +91,28 @@ const ListadoEmpresas = () => {
   const [modalEmpresa, setModalEmpresa] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [modalError, setModalError] = useState("");
+  // Nuevo: mensaje de éxito global
+  const [globalSuccess, setGlobalSuccess] = useState("");
+
+  // Nueva función para recargar empresas
+  const recargarEmpresas = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/empresas-expositoras/");
+      setEmpresas(res.data.data || []);
+    } catch {
+      setError("Error obteniendo empresas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Nuevo: función para mostrar mensaje de éxito
+  const handleEmpresaRegistrada = () => {
+    setGlobalSuccess("¡Empresa registrada exitosamente! Está pendiente de aprobación.");
+    setTimeout(() => setGlobalSuccess(""), 3500);
+    recargarEmpresas();
+  };
 
   const handleOpenModal = async (id) => {
     setModalEmpresaId(id);
@@ -98,7 +120,7 @@ const ListadoEmpresas = () => {
     setModalError("");
     setModalEmpresa(null);
     try {
-      const res = await axios.get(`/api/empresasExpositoras/${id}`);
+      const res = await axios.get(`/empresas-expositoras/${id}`);
       setModalEmpresa(res.data.data);
     } catch {
       setModalError("No se pudo cargar la empresa");
@@ -114,17 +136,7 @@ const ListadoEmpresas = () => {
   };
 
   useEffect(() => {
-    const fetchEmpresas = async () => {
-      try {
-        const res = await axios.get("/api/empresasExpositoras/");
-        setEmpresas(res.data.data || []);
-      } catch {
-        setError("Error obteniendo empresas");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEmpresas();
+    recargarEmpresas();
   }, []);
 
   if (loading) {
@@ -195,6 +207,17 @@ const ListadoEmpresas = () => {
 
         {/* Content */}
         <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+          {/* Toast de éxito global */}
+          {globalSuccess && (
+            <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+              <div className="bg-green-900 border border-green-600 rounded-lg px-6 py-3 flex items-center shadow-lg animate-fade-in-out">
+                <svg className="h-5 w-5 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-green-200 font-medium">{globalSuccess}</span>
+              </div>
+            </div>
+          )}
           {activeTab === "listado" && (
             <div>
               {/* Stats Header */}
@@ -343,12 +366,12 @@ const ListadoEmpresas = () => {
           )}
           {activeTab === "agregar" && (
             <div className="p-6 bg-gray-800">
-              <AgregarEmpresa />
+              <AgregarEmpresa onSuccess={handleEmpresaRegistrada} />
             </div>
           )}
           {activeTab === "pendientes" && (
             <div className="p-6 bg-gray-800">
-              <AprobacionEmpresas />
+              <AprobacionEmpresas onAprobarORechazar={recargarEmpresas} />
             </div>
           )}
           {activeTab === "documentos" && (
