@@ -271,9 +271,8 @@ class StandService {
         dataToUpdate.precio_personalizado = updateData.precio_personalizado;
       }
 
-      const updatedStand = await AuditService.updateWithAudit(Stand, dataToUpdate, {
-        where: { id_stand: id }
-      }, userId);
+      const standInstance = await Stand.findByPk(id);
+      const updatedStand = await AuditService.updateWithAudit(standInstance, dataToUpdate, userId);
       
       return await this.getStandById(id, true);
     } catch (error) {
