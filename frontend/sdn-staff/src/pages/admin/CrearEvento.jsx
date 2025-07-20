@@ -295,7 +295,18 @@ const CrearEvento = () => {
         setLoading(false);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Error al crear evento");
+      const errorData = err.response?.data;
+      let errorMessage = "Error al crear evento";
+
+      if (errorData?.details?.length > 0) {
+        // Si hay errores específicos de validación
+        errorMessage = errorData.details.map(detail => `${detail.field}: ${detail.message}`).join("\n");
+      } else if (errorData?.error) {
+        // Si hay un mensaje de error general
+        errorMessage = errorData.error;
+      }
+
+      setError(errorMessage);
       setLoading(false);
     }
   };

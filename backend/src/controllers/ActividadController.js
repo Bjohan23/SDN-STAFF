@@ -62,9 +62,9 @@ class ActividadController {
       // Búsqueda por texto
       if (search) {
         whereCondition[Op.or] = [
-          { titulo: { [Op.iLike]: `%${search}%` } },
-          { descripcion: { [Op.iLike]: `%${search}%` } },
-          { descripcion_corta: { [Op.iLike]: `%${search}%` } }
+          { titulo: { [Op.like]: `%${search}%` } },
+          { descripcion: { [Op.like]: `%${search}%` } },
+          { descripcion_corta: { [Op.like]: `%${search}%` } }
         ];
       }
 
