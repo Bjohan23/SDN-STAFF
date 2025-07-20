@@ -30,6 +30,18 @@ const TiposCredencial = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [tipoEditando, setTipoEditando] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [nuevoTipo, setNuevoTipo] = useState({
+    nombre_tipo: '',
+    descripcion: '',
+    nivel_acceso: 'basico',
+    color_identificacion: '#3B82F6',
+    duracion_validez_horas: 24,
+    es_imprimible: true,
+    requiere_aprobacion: false,
+    permite_reingreso: true,
+    activo: true
+  });
   const { notification, showSuccess, showError, hideNotification } = useNotification();
 
   useEffect(() => {
@@ -89,9 +101,18 @@ const TiposCredencial = () => {
         </p>
       </div>
       <div className="bg-gray-800 rounded-lg border border-gray-600 p-6 mt-4">
-        <h2 className="text-xl font-semibold text-white mb-4">
-          Listado de Tipos de Credencial
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-white">
+            Listado de Tipos de Credencial
+          </h2>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <PlusIcon className="h-5 w-5" />
+            <span>Crear Tipo</span>
+          </button>
+        </div>
         {loading ? (
           <div className="text-gray-400">Cargando tipos de credencial...</div>
         ) : error ? (
@@ -285,6 +306,198 @@ const TiposCredencial = () => {
         type={confirmAction?.type || "warning"}
       />
 
+      {/* Modal de Crear Tipo */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg border border-gray-600 p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Crear Nuevo Tipo de Credencial</h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form onSubmit={crearTipo} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Nombre del Tipo *
+                  </label>
+                  <input
+                    type="text"
+                    value={nuevoTipo.nombre_tipo}
+                    onChange={(e) => setNuevoTipo({ ...nuevoTipo, nombre_tipo: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Nivel de Acceso *
+                  </label>
+                  <select
+                    value={nuevoTipo.nivel_acceso}
+                    onChange={(e) => setNuevoTipo({ ...nuevoTipo, nivel_acceso: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="basico">Básico</option>
+                    <option value="intermedio">Intermedio</option>
+                    <option value="avanzado">Avanzado</option>
+                    <option value="administrador">Administrador</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Color de Identificación *
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={nuevoTipo.color_identificacion}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, color_identificacion: e.target.value })}
+                      className="w-12 h-10 rounded border border-gray-600"
+                    />
+                    <input
+                      type="text"
+                      value={nuevoTipo.color_identificacion}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, color_identificacion: e.target.value })}
+                      className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="#3B82F6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Duración de Validez (horas) *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="8760"
+                    value={nuevoTipo.duracion_validez_horas}
+                    onChange={(e) => setNuevoTipo({ ...nuevoTipo, duracion_validez_horas: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Descripción
+                </label>
+                <textarea
+                  value={nuevoTipo.descripcion}
+                  onChange={(e) => setNuevoTipo({ ...nuevoTipo, descripcion: e.target.value })}
+                  rows="3"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Descripción del tipo de credencial..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Características</h4>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <PrinterIcon className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-gray-300 text-sm">Es Imprimible</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={nuevoTipo.es_imprimible}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, es_imprimible: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <CheckBadgeIcon className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-gray-300 text-sm">Requiere Aprobación</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={nuevoTipo.requiere_aprobacion}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, requiere_aprobacion: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <EyeIcon className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-gray-300 text-sm">Permite Reingreso</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={nuevoTipo.permite_reingreso}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, permite_reingreso: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <ShieldCheckIcon className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-gray-300 text-sm">Activo</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={nuevoTipo.activo}
+                      onChange={(e) => setNuevoTipo({ ...nuevoTipo, activo: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Vista Previa</h4>
+                  <div className="bg-gray-700 rounded-lg border border-gray-600 p-4">
+                    <div className="flex items-center mb-2">
+                      <span 
+                        className="inline-block w-4 h-4 rounded-full mr-3"
+                        style={{ backgroundColor: nuevoTipo.color_identificacion }}
+                      ></span>
+                      <span className="text-white font-medium">{nuevoTipo.nombre_tipo || 'Nombre del Tipo'}</span>
+                    </div>
+                    <div className="text-sm text-gray-300 mb-2">
+                      {nuevoTipo.descripcion || 'Sin descripción'}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Nivel: {nuevoTipo.nivel_acceso} | Validez: {nuevoTipo.duracion_validez_horas}h
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-600">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Creando...' : 'Crear Tipo'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Toast de Notificación */}
       <NotificationToast
         message={notification.message}
@@ -297,6 +510,49 @@ const TiposCredencial = () => {
   );
 
   // Funciones para las acciones
+  async function crearTipo(e) {
+    e.preventDefault();
+    
+    if (!nuevoTipo.nombre_tipo.trim()) {
+      showError('El nombre del tipo es requerido');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+      
+      const response = await CredencialService.createTipo(nuevoTipo);
+      
+      // Actualizar la lista de tipos
+      setTipos(prevTipos => [...prevTipos, response.data]);
+      
+      // Resetear el formulario
+      setNuevoTipo({
+        nombre_tipo: '',
+        descripcion: '',
+        nivel_acceso: 'basico',
+        color_identificacion: '#3B82F6',
+        duracion_validez_horas: 24,
+        es_imprimible: true,
+        requiere_aprobacion: false,
+        permite_reingreso: true,
+        activo: true
+      });
+      
+      setShowCreateModal(false);
+      showSuccess('Tipo de credencial creado exitosamente');
+      
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || 'Error al crear el tipo de credencial';
+      setError(errorMessage);
+      showError(errorMessage);
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function editarTipo(tipo) {
     setTipoEditando(tipo);
     setShowEditModal(true);

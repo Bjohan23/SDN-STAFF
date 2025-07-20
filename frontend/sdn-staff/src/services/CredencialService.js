@@ -16,6 +16,11 @@ const CredencialService = {
     const res = await axios.post("/credenciales/validar-qr", { codigoQR });
     return res.data;
   },
+  // Crear tipo de credencial
+  createTipo: async (tipoData) => {
+    const res = await axios.post("/credenciales/tipos", tipoData);
+    return res.data;
+  },
 };
 
 export default CredencialService;
