@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm install:*)",
+      "Bash(npm start)",
+      "Bash(ls:*)",
+      "Bash(timeout 10s npx nodemon:*)",
+      "Bash(timeout 15s npm start)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(timeout 10s npm start)",
+      "Bash(node:*)",
+      "Bash(timeout:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

@@ -388,6 +388,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'historicoAsignaciones'
     });
 
+    // Relación con PreRegistro
+    Evento.hasMany(models.PreRegistro, {
+      foreignKey: 'evento_id',
+      as: 'preRegistros'
+    });
+
     // Asociaciones de auditoría
     Evento.belongsTo(models.Usuario, {
       foreignKey: "created_by",

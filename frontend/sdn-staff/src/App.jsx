@@ -33,6 +33,15 @@ import ListadoStands from "./pages/stands/ListadoStands";
 import AgregarStand from "./pages/stands/AgregarStand";
 import DashboardStands from "./pages/stands/DashboardStands";
 
+// Nuevas funcionalidades Spring 3
+import PreRegistroVisitantes from "./pages/publico/PreRegistroVisitantes";
+import ReportesEventos from "./pages/admin/ReportesEventos";
+import InteractiveCalendar from "./components/Calendar/InteractiveCalendar";
+import GestionCredenciales from "./pages/admin/GestionCredenciales";
+import ValidacionQR from "./pages/admin/ValidacionQR";
+import TiposCredencial from "./pages/admin/TiposCredencial";
+import CalendarioEvento from "./pages/eventos/CalendarioEvento";
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -43,7 +52,10 @@ function App() {
     location.pathname.startsWith("/profile") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/empresas") ||
-    location.pathname.startsWith("/stands");
+    location.pathname.startsWith("/stands") ||
+    location.pathname.startsWith("/eventos") ||
+    location.pathname.startsWith("/credenciales") ||
+    location.pathname.startsWith("/calendario");
 
   return (
     <AuthProvider>
@@ -158,6 +170,60 @@ function App() {
                     </RoleRoute>
                   }
                 />
+
+                {/* Nuevas Rutas - Sistema de Credenciales */}
+                <Route
+                  path="/admin/credenciales"
+                  element={
+                    <RoleRoute allowedRoles={["administrador", "manager"]}>
+                      <GestionCredenciales />
+                    </RoleRoute>
+                  }
+                />
+                <Route
+                  path="/admin/tipos-credencial"
+                  element={
+                    <RoleRoute allowedRoles={["administrador", "manager"]}>
+                      <TiposCredencial />
+                    </RoleRoute>
+                  }
+                />
+                <Route
+                  path="/admin/validacion"
+                  element={
+                    <RoleRoute allowedRoles={["administrador", "manager", "editor"]}>
+                      <ValidacionQR />
+                    </RoleRoute>
+                  }
+                />
+
+                {/* Nuevas Rutas - Reportes */}
+                <Route
+                  path="/admin/reportes"
+                  element={
+                    <RoleRoute allowedRoles={["administrador", "manager"]}>
+                      <ReportesEventos />
+                    </RoleRoute>
+                  }
+                />
+
+                {/* Nuevas Rutas - Calendario */}
+                <Route
+                  path="/calendario/:eventoId"
+                  element={
+                    <PrivateRoute>
+                      <CalendarioEvento />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/eventos/:eventoId/calendario"
+                  element={
+                    <RoleRoute allowedRoles={["administrador", "manager", "editor"]}>
+                      <CalendarioEvento />
+                    </RoleRoute>
+                  }
+                />
               </Routes>
             </main>
           </div>
@@ -167,6 +233,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Ruta pública de pre-registro */}
+            <Route path="/pre-registro/:eventoId" element={<PreRegistroVisitantes />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />

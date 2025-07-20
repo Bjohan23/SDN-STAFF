@@ -1,0 +1,88 @@
+🚀 Iniciando SDN-STAFF Backend...
+Executing (default): SELECT 1+1 AS result
+✅ Conexión a la base de datos establecida correctamente.
+🔧 Verificando y corrigiendo datos NULL...
+✅ Datos NULL corregidos.
+🔧 Sincronizando con opciones: { force: false, alter: false }
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'usuario' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `usuario` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'tipo_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `tipo_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'tipo_credencial' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `tipo_credencial` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'plantilla_credencial' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `plantilla_credencial` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'empresa_expositora' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `empresa_expositora` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'credencial' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `credencial` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'acceso_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `acceso_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'track_tematico' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `track_tematico` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sala_virtual' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `sala_virtual` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'actividad' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `actividad` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'ponente' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `ponente` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'actividad_ponente' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `actividad_ponente` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'recurso' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `recurso` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'actividad_recurso' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `actividad_recurso` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'categoria_comercial' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `categoria_comercial` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'configuracion_tipo_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `configuracion_tipo_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'tipo_stand' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `tipo_stand` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'stand' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `stand` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'conflicto_asignacion' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `conflicto_asignacion` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'conflicto_programacion' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `conflicto_programacion` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'empresa_categoria' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `empresa_categoria` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'etiqueta_libre' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `etiqueta_libre` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'empresa_etiqueta' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `empresa_etiqueta` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'empresa_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `empresa_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'solicitud_asignacion' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `solicitud_asignacion` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'historico_asignacion' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `historico_asignacion` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'inscripcion_actividad' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `inscripcion_actividad` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'log_validacion' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `log_validacion` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'plantilla_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `plantilla_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'pre_registros' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `pre_registros` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'rol' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `rol` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'servicio_adicional' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `servicio_adicional` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'stand_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `stand_evento` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'stand_servicio' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `stand_servicio` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'usuariorol' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `usuariorol` FROM `sdnStaff`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'validacion_tipo_evento' AND TABLE_SCHEMA = 'sdnStaff'
+Executing (default): SHOW INDEX FROM `validacion_tipo_evento` FROM `sdnStaff`
+✅ Modelos sincronizados con la base de datos.
+🚀 Servidor ejecutándose en puerto 3000
+🔗 Health check: http://localhost:3000/health
+📊 API Base URL: http://localhost:3000/api
+📚 Documentación Swagger: http://localhost:3000/api-docs
+📋 JSON Schema: http://localhost:3000/api-docs.json
+🔧 Sync config - Force: false, Alter: false
+GET /api/ - 2025-07-20T06:42:57.216Z
