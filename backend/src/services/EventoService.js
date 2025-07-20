@@ -201,10 +201,22 @@ class EventoService {
         throw new Error('Evento no encontrado');
       }
 
+      // Filtrar solo los campos permitidos
+      const camposPermitidos = [
+        "nombre_evento", "descripcion", "fecha_inicio", "fecha_fin", "ubicacion",
+        "url_virtual", "id_tipo_evento", "estado", "imagen_logo", "configuracion_especifica",
+        "url_amigable", "capacidad_maxima", "precio_entrada", "moneda",
+        "requiere_aprobacion", "fecha_limite_registro"
+      ];
+      const updateClean = {};
+      for (const campo of camposPermitidos) {
+        if (updateData[campo] !== undefined) updateClean[campo] = updateData[campo];
+      }
+
       // Validar fechas si se están actualizando
-      if (updateData.fecha_inicio || updateData.fecha_fin) {
-        const fechaInicio = updateData.fecha_inicio || evento.fecha_inicio;
-        const fechaFin = updateData.fecha_fin || evento.fecha_fin;
+      if (updateClean.fecha_inicio || updateClean.fecha_fin) {
+        const fechaInicio = updateClean.fecha_inicio || evento.fecha_inicio;
+        const fechaFin = updateClean.fecha_fin || evento.fecha_fin;
         
         if (new Date(fechaFin) <= new Date(fechaInicio)) {
           throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');
@@ -212,14 +224,25 @@ class EventoService {
       }
 
       // Validar tipo de evento si se está cambiando
-      if (updateData.id_tipo_evento) {
-        const tipoEvento = await TipoEvento.findByPk(updateData.id_tipo_evento);
+      if (updateClean.id_tipo_evento) {
+        const tipoEvento = await TipoEvento.findByPk(updateClean.id_tipo_evento);
         if (!tipoEvento) {
           throw new Error('Tipo de evento no encontrado');
         }
       }
 
-      await AuditService.updateWithAudit(evento, updateData, userId);
+      // Validar estado
+      if (updateClean.estado) {
+        const estadosValidos = ["borrador", "publicado", "activo", "finalizado", "archivado"];
+        if (!estadosValidos.includes(updateClean.estado)) {
+          updateClean.estado = evento.estado || "borrador";
+        }
+      }
+
+      // Log para depuración
+      console.log('Actualizando evento:', updateClean);
+
+      await AuditService.updateWithAudit(evento, updateClean, userId);
       
       return await this.getEventoById(id);
     } catch (error) {

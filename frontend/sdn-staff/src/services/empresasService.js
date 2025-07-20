@@ -1,66 +1,66 @@
 // Servicios para empresas expositoras y su participación en eventos
 
 import axios from "../config/axios";
-const API = "/api/empresasExpositoras";
-const CLASIFICACION_API = "/api/clasificacion";
-const CATEGORIAS_API = "/api/categorias";
+const API = "/empresas-expositoras";
+const CLASIFICACION_API = "/clasificacion";
+const CATEGORIAS_API = "/categorias";
 
 export async function registrarEmpresaPublica(data) {
-  // POST /api/empresasExpositoras/registro-publico
+  // POST /empresas-expositoras/registro-publico
   const res = await axios.post(`${API}/registro-publico`, data);
   return res.data;
 }
 
 export async function listarEmpresas() {
-  // GET /api/empresasExpositoras
+  // GET /empresas-expositoras
   const res = await axios.get(API);
   return res.data.data || [];
 }
 
 export async function obtenerEmpresa(id) {
-  // GET /api/empresasExpositoras/:id
+  // GET /empresas-expositoras/:id
   const res = await axios.get(`${API}/${id}`);
   return res.data;
 }
 
 export async function aprobarEmpresa(id) {
-  // POST /api/empresasExpositoras/:id/aprobar
+  // POST /empresas-expositoras/:id/aprobar
   const res = await axios.post(`${API}/${id}/aprobar`);
   return res.data;
 }
 
 export async function rechazarEmpresa(id) {
-  // POST /api/empresasExpositoras/:id/rechazar
+  // POST /empresas-expositoras/:id/rechazar
   const res = await axios.post(`${API}/${id}/rechazar`);
   return res.data;
 }
 
 export async function suspenderEmpresa(id) {
-  // POST /api/empresasExpositoras/:id/suspender
+  // POST /empresas-expositoras/:id/suspender
   const res = await axios.post(`${API}/${id}/suspender`);
   return res.data;
 }
 
 export async function listarEmpresasPendientes() {
-  // GET /api/empresasExpositoras/pendientes
+  // GET /empresas-expositoras/pendientes
   const res = await axios.get(`${API}/pendientes`);
   return res.data;
 }
 
 export async function dashboardEmpresas() {
-  // GET /api/empresasExpositoras/stats
+  // GET /empresas-expositoras/stats
   const res = await axios.get(`${API}/stats`);
   return res.data;
 }
 
 export async function empresasDocumentosPorVencer() {
-  // GET /api/empresasExpositoras/documentos-vencer
+  // GET /empresas-expositoras/documentos-vencer
   const res = await axios.get(`${API}/documentos-vencer`);
   return res.data;
 }
 
 export async function registrarEmpresaEnEvento(idEmpresa, idEvento) {
-  // POST /api/empresasExpositoras/:id/eventos
+  // POST /empresas-expositoras/:id/eventos
   const res = await axios.post(`${API}/${idEmpresa}/eventos`, {
     id_evento: idEvento,
   });
@@ -68,25 +68,25 @@ export async function registrarEmpresaEnEvento(idEmpresa, idEvento) {
 }
 
 export async function obtenerHistorialParticipacion(idEmpresa) {
-  // GET /api/empresasExpositoras/:id
+  // GET /empresas-expositoras/:id
   const res = await axios.get(`${API}/${idEmpresa}`);
   return res.data?.participaciones || [];
 }
 
 export async function detalleParticipacionEvento(idEmpresa, idEvento) {
-  // GET /api/empresasExpositoras/:id/eventos/:evento_id
+  // GET /empresas-expositoras/:id/eventos/:evento_id
   const res = await axios.get(`${API}/${idEmpresa}/eventos/${idEvento}`);
   return res.data;
 }
 
 export async function buscarEmpresaPorRuc(ruc) {
-  // GET /api/empresasExpositoras/ruc/:ruc
+  // GET /empresas-expositoras/ruc/:ruc
   const res = await axios.get(`${API}/ruc/${ruc}`);
   return res.data;
 }
 
 export async function buscarEmpresaPorEmail(email) {
-  // GET /api/empresasExpositoras/email/:email
+  // GET /empresas-expositoras/email/:email
   const res = await axios.get(`${API}/email/${email}`);
   return res.data;
 }
@@ -107,7 +107,7 @@ export async function empresasEnEvento(idEmpresa, idEvento) {
 
 // Obtener categorías de una empresa
 export async function obtenerCategoriasEmpresa(empresaId) {
-  const res = await axios.get(`/api/clasificacion/empresas/${empresaId}/categorias`);
+  const res = await axios.get(`${CLASIFICACION_API}/empresas/${empresaId}/categorias`);
   return res.data;
 }
 
@@ -139,7 +139,7 @@ export async function removerCategoriaEmpresa(empresaId, categoriaId) {
 // Obtener todas las categorías disponibles
 export async function obtenerCategoriasDisponibles() {
   // Usar el endpoint correcto según el backend
-  const res = await axios.get('/api/categorias');
+  const res = await axios.get(CATEGORIAS_API);
   return res.data;
 }
 

@@ -1,8 +1,8 @@
 import axios from "../config/axios";
 
-const ASIGNACION_API = "/api/asignacionAutomatica";
-const SOLICITUDES_API = "/api/solicitudesAsignacion";
-const CONFLICTOS_API = "/api/conflictosAsignacion";
+const ASIGNACION_API = "/asignacionAutomatica";
+const SOLICITUDES_API = "/solicitudesAsignacion";
+const CONFLICTOS_API = "/conflictosAsignacion";
 
 // ==================== ASIGNACIÓN AUTOMÁTICA ====================
 

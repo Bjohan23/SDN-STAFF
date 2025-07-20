@@ -1,29 +1,26 @@
-import axios from "../config/axios";
+import axios from '../config/axios';
 
-export const getActividades = async (params = {}) => {
-  const response = await axios.get(`/api/actividades`, { params });
-  return response.data;
+const actividadesService = {
+  async getActividades(params) {
+    const response = await axios.get(`/actividades`, { params });
+    return response.data;
+  },
+  async getActividadById(id) {
+    const response = await axios.get(`/actividades/${id}`);
+    return response.data;
+  },
+  async crearActividad(data) {
+    const response = await axios.post('/actividades', data);
+    return response.data;
+  },
+  async actualizarActividad(id, data) {
+    const response = await axios.put(`/actividades/${id}`, data);
+    return response.data;
+  },
+  async eliminarActividad(id) {
+    const response = await axios.delete(`/actividades/${id}`);
+    return response.data;
+  },
 };
 
-export const getActividadById = async (id) => {
-  const response = await axios.get(`/api/actividades/${id}`);
-  return response.data;
-};
-
-// Crear actividad
-export const crearActividad = async (data) => {
-  const response = await axios.post('/api/actividades', data);
-  return response.data;
-};
-
-// Actualizar actividad
-export const actualizarActividad = async (id, data) => {
-  const response = await axios.put(`/api/actividades/${id}`, data);
-  return response.data;
-};
-
-// Eliminar actividad
-export const eliminarActividad = async (id) => {
-  const response = await axios.delete(`/api/actividades/${id}`);
-  return response.data;
-};
+export default actividadesService;

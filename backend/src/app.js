@@ -17,9 +17,18 @@ const errorHandler = require('../src/middlewares/errorHandler');
 const app = express();
 // Middlewares globales
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173',
-    'http://161.132.41.106', 'http://161.132.41.106:80','https://dominant-compare-unified-filing.trycloudflare.com', 
-    /\.trycloudflare\.com$/, "*"],
+  origin: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.100.8:5173', // IP local de tu red
+    'http://192.168.100.8',
+    'http://localhost:3000',
+    'http://192.168.100.8:3000',
+    'http://0.0.0.0:5173',
+    'http://0.0.0.0:3000',
+    /\.trycloudflare\.com$/,
+    '*'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

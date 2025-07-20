@@ -9,15 +9,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     numero_stand: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(50),
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: 'El número del stand no puede estar vacío'
         },
         len: {
-          args: [1, 20],
-          msg: 'El número del stand debe tener entre 1 y 20 caracteres'
+          args: [1, 50],
+          msg: 'El número del stand debe tener entre 1 y 50 caracteres'
         }
       }
     },
@@ -129,7 +130,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true
     },
-    estado: {
+    estado_general: {
       type: DataTypes.ENUM('activo', 'inactivo', 'temporal'),
       defaultValue: 'activo',
       validate: {
@@ -216,13 +217,13 @@ module.exports = (sequelize, DataTypes) => {
       active: {
         where: {
           deleted_at: null,
-          estado: 'activo'
+          estado_general: 'activo'
         }
       },
       disponible: {
         where: {
           deleted_at: null,
-          estado: 'activo',
+          estado_general: 'activo',
           estado_fisico: 'disponible'
         }
       },
@@ -240,7 +241,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Stand.prototype.isActive = function() {
-    return this.estado === 'activo' && !this.isDeleted();
+    return this.estado_general === 'activo' && !this.isDeleted();
   };
 
   Stand.prototype.isDisponible = function() {

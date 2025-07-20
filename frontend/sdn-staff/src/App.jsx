@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
+import { StandsProvider } from "./contexts/StandsContext";
 import PrivateRoute from "./auth/PrivateRoute";
 import RoleRoute from "./auth/RoleRoute";
 import Home from "./pages/Home";
@@ -46,7 +47,8 @@ function App() {
 
   return (
     <AuthProvider>
-      {showLayout ? (
+      <StandsProvider>
+        {showLayout ? (
         <div className="flex h-screen bg-gray-100">
           <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
  
@@ -185,6 +187,7 @@ function App() {
           </Routes>
         </div>
       )}
+      </StandsProvider>
     </AuthProvider>
   );
 }

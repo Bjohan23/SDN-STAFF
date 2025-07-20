@@ -14,7 +14,7 @@ const GestionCategorias = () => {
     nombre_categoria: '',
     descripcion: '',
     color: '#3B82F6',
-    activo: true
+    estado: 'activa'
   });
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const GestionCategorias = () => {
   const cargarCategorias = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/categorias?includeInactivas=true');
+      const res = await axios.get('/categorias?includeInactivas=true');
       setCategorias(res.data.data || []);
     } catch (err) {
       console.error('Error al cargar categorías:', err);
@@ -40,20 +40,26 @@ const GestionCategorias = () => {
     setError('');
     setSuccess('');
 
+    // Construye el payload solo con los campos requeridos
+    const { color, ...rest } = form;
+    const payload = {
+      ...rest,
+      color_hex: color
+    };
+
     try {
       if (editingCategoria) {
-        await axios.put(`/api/categorias/${editingCategoria.id_categoria}`, form);
+        await axios.put(`/categorias/${editingCategoria.id_categoria}`, payload);
         setSuccess('Categoría actualizada exitosamente');
       } else {
-        await axios.post('/api/categorias', form);
+        await axios.post('/categorias', payload);
         setSuccess('Categoría creada exitosamente');
       }
-      
       setForm({
         nombre_categoria: '',
         descripcion: '',
         color: '#3B82F6',
-        activo: true
+        estado: 'activa'
       });
       setEditingCategoria(null);
       setShowModal(false);
@@ -70,8 +76,8 @@ const GestionCategorias = () => {
     setForm({
       nombre_categoria: categoria.nombre_categoria,
       descripcion: categoria.descripcion || '',
-      color: categoria.color || '#3B82F6',
-      activo: categoria.activo
+      color: categoria.color_hex || '#3B82F6',
+      estado: categoria.estado || 'activa'
     });
     setShowModal(true);
   };
@@ -79,7 +85,7 @@ const GestionCategorias = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
       try {
-        await axios.delete(`/api/categorias/${id}`);
+        await axios.delete(`/categorias/${id}`);
         setSuccess('Categoría eliminada exitosamente');
         cargarCategorias();
       } catch (err) {
@@ -88,11 +94,13 @@ const GestionCategorias = () => {
     }
   };
 
-  const toggleActivo = async (categoria) => {
+  const toggleEstado = async (categoria, nuevoEstado) => {
     try {
-      await axios.put(`/api/categorias/${categoria.id_categoria}`, {
-        ...categoria,
-        activo: !categoria.activo
+      const { color, ...rest } = categoria;
+      await axios.put(`/categorias/${categoria.id_categoria}`, {
+        ...rest,
+        color_hex: categoria.color_hex,
+        estado: nuevoEstado
       });
       setSuccess('Estado actualizado exitosamente');
       cargarCategorias();
@@ -183,7 +191,7 @@ const GestionCategorias = () => {
                   <div className="flex items-center space-x-2">
                     <div 
                       className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: categoria.color }}
+                      style={{ backgroundColor: categoria.color_hex }}
                     ></div>
                     <h3 className="text-lg font-semibold text-white">{categoria.nombre_categoria}</h3>
                   </div>
@@ -300,16 +308,19 @@ const GestionCategorias = () => {
 
                   {/* Estado */}
                   <div>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="activo"
-                        checked={form.activo}
-                        onChange={(e) => setForm(prev => ({ ...prev, activo: e.target.checked }))}
-                        className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-300">Categoría activa</span>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Estado de la categoría
                     </label>
+                    <select
+                      name="estado"
+                      value={form.estado}
+                      onChange={e => setForm(prev => ({ ...prev, estado: e.target.value }))}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="activa">Activa</option>
+                      <option value="inactiva">Inactiva</option>
+                      <option value="archivada">Archivada</option>
+                    </select>
                   </div>
                 </div>
 

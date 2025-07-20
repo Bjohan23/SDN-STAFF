@@ -11,7 +11,7 @@ const DocumentosPorVencer = () => {
     const fetchEmpresas = async () => {
       try {
         setLoading(true);
-        const res = await axios.get('/api/empresasExpositoras/documentos-vencer');
+        const res = await axios.get('/empresas-expositoras/documentos-vencer');
         setEmpresas(res.data.data || []);
       } catch {
         setError('No se pudo obtener la información de documentos');

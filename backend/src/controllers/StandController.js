@@ -73,8 +73,8 @@ class StandController {
       }
 
       // Mapea campos de un formulario antiguo a los campos del modelo nuevo
-      if (standData.nombre_stand && !standData.numero_stand) {
-        standData.numero_stand = standData.nombre_stand;
+      if (standData.nombre_stand && !standData.codigo_stand) {
+        standData.codigo_stand = standData.nombre_stand;
       }
       if (standData.estado && !standData.estado_fisico) {
         standData.estado_fisico = standData.estado === 'reservado' ? 'ocupado' : standData.estado;
@@ -85,8 +85,8 @@ class StandController {
         return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand es requerido' }]);
       }
 
-      if (!ValidationUtils.isValidLength(standData.numero_stand, 1, 20)) {
-        return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand debe tener entre 1 y 20 caracteres' }]);
+      if (!ValidationUtils.isValidLength(standData.numero_stand, 1, 50)) {
+        return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand debe tener entre 1 y 50 caracteres' }]);
       }
 
       if (!ValidationUtils.isValidId(standData.id_tipo_stand)) {
@@ -279,8 +279,8 @@ class StandController {
       }
 
       // Mapea campos de un formulario antiguo a los campos del modelo nuevo
-      if (updateData.nombre_stand && !updateData.numero_stand) {
-        updateData.numero_stand = updateData.nombre_stand;
+      if (updateData.nombre_stand && !updateData.codigo_stand) {
+        updateData.codigo_stand = updateData.nombre_stand;
       }
       if (updateData.estado && !updateData.estado_fisico) {
         updateData.estado_fisico = updateData.estado === 'reservado' ? 'ocupado' : updateData.estado;
@@ -291,8 +291,8 @@ class StandController {
       }
 
       // Validaciones opcionales para campos que se están actualizando
-      if (updateData.numero_stand && !ValidationUtils.isValidLength(updateData.numero_stand, 1, 20)) {
-        return ApiResponse.validation(res, [{ field: 'numero_stand', message: 'El número del stand debe tener entre 1 y 20 caracteres' }]);
+      if (updateData.codigo_stand && !ValidationUtils.isValidLength(updateData.codigo_stand, 1, 50)) {
+        return ApiResponse.validation(res, [{ field: 'codigo_stand', message: 'El código del stand debe tener entre 1 y 50 caracteres' }]);
       }
 
       const estadosFisicosValidos = ['disponible', 'ocupado', 'mantenimiento', 'fuera_de_servicio'];
@@ -301,8 +301,8 @@ class StandController {
       }
 
       // Sanitizar datos de texto
-      if (updateData.numero_stand) {
-        updateData.numero_stand = ValidationUtils.sanitizeString(updateData.numero_stand);
+      if (updateData.codigo_stand) {
+        updateData.codigo_stand = ValidationUtils.sanitizeString(updateData.codigo_stand);
       }
       if (updateData.nombre_stand) {
         updateData.nombre_stand = ValidationUtils.sanitizeString(updateData.nombre_stand);
