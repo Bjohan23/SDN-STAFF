@@ -471,6 +471,156 @@ class ValidationController {
       });
     }
   }
+
+  /**
+   * Obtener historial general de validaciones (sin credencial específica)
+   */
+  static async obtenerHistorialGeneral(req, res) {
+    try {
+      const { limite = 50, desde, hasta, id_evento } = req.query;
+
+      const where = {};
+      if (id_evento) where.id_evento = id_evento;
+      if (desde) where.fecha_validacion = { [require('sequelize').Op.gte]: new Date(desde) };
+      if (hasta) {
+        if (where.fecha_validacion) {
+          where.fecha_validacion[require('sequelize').Op.lte] = new Date(hasta);
+        } else {
+          where.fecha_validacion = { [require('sequelize').Op.lte]: new Date(hasta) };
+        }
+      }
+
+      const historial = await LogValidacion.findAll({
+        where,
+        limit: parseInt(limite),
+        order: [['fecha_validacion', 'DESC']],
+        include: [
+          {
+            model: Credencial,
+            as: 'credencial',
+            attributes: ['codigo_unico', 'nombre_completo', 'empresa_organizacion']
+          }
+        ]
+      });
+
+      res.status(200).json({
+        success: true,
+        data: historial
+      });
+
+    } catch (error) {
+      console.error('Error al obtener historial general:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  }
+
+  /**
+   * Obtener estadísticas generales de validaciones (sin evento específico)
+   */
+  static async obtenerEstadisticasGenerales(req, res) {
+    try {
+      const { periodo = '24h' } = req.query;
+
+      // Calcular fecha límite basada en el período
+      let fecha_limite;
+      switch (periodo) {
+        case '1h':
+          fecha_limite = new Date(Date.now() - 60 * 60 * 1000);
+          break;
+        case '24h':
+          fecha_limite = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          break;
+        case '7d':
+          fecha_limite = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case '30d':
+          fecha_limite = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          fecha_limite = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      }
+
+      const estadisticas = await LogValidacion.findAll({
+        where: {
+          fecha_validacion: { [require('sequelize').Op.gte]: fecha_limite }
+        },
+        attributes: [
+          'resultado',
+          [require('sequelize').fn('COUNT', '*'), 'total']
+        ],
+        group: ['resultado'],
+        raw: true
+      });
+
+      // Calcular totales
+      const totales = estadisticas.reduce((acc, stat) => {
+        acc[`validaciones_${stat.resultado}`] = parseInt(stat.total);
+        return acc;
+      }, {
+        validaciones_exitosas: 0,
+        validaciones_fallidas: 0,
+        validaciones_sospechosas: 0,
+        total_validaciones: 0
+      });
+
+      totales.total_validaciones = Object.values(totales).reduce((sum, val) => sum + val, 0);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          periodo,
+          fecha_inicio: fecha_limite,
+          estadisticas: estadisticas,
+          totales: totales
+        }
+      });
+
+    } catch (error) {
+      console.error('Error al obtener estadísticas generales:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  }
+
+  /**
+   * Validar credencial (método genérico para el frontend)
+   */
+  static async validarCredencial(req, res) {
+    try {
+      const { qr_data, codigo_unico, id_evento } = req.body;
+      
+      // Si se proporciona código único, usar ese método
+      if (codigo_unico) {
+        req.body.codigo_unico = codigo_unico;
+        return await ValidationController.validarPorCodigo(req, res);
+      }
+      
+      // Si se proporciona QR data, usar ese método
+      if (qr_data) {
+        return await ValidationController.validarQR(req, res);
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere qr_data o codigo_unico para validar'
+      });
+
+    } catch (error) {
+      console.error('Error al validar credencial:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  }
 }
 
 module.exports = ValidationController;

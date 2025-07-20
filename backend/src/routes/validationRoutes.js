@@ -347,6 +347,11 @@ router.get('/tiempo-real/:id_evento', authenticate, ValidationController.obtener
  */
 router.get('/recientes', authenticate, ValidationController.obtenerValidacionesRecientes);
 
+// Rutas adicionales que necesita el frontend
+router.get('/historial', authenticate, ValidationController.obtenerHistorialGeneral);
+router.get('/estadisticas', authenticate, ValidationController.obtenerEstadisticasGenerales);
+router.post('/validar', authenticate, ValidationController.validarCredencial);
+
 /**
  * @swagger
  * /api/validation/patrones-sospechosos:

@@ -37,10 +37,11 @@ import DashboardStands from "./pages/stands/DashboardStands";
 import PreRegistroVisitantes from "./pages/publico/PreRegistroVisitantes";
 import ReportesEventos from "./pages/admin/ReportesEventos";
 import InteractiveCalendar from "./components/Calendar/InteractiveCalendar";
-import GestionCredenciales from "./pages/admin/GestionCredenciales";
-import ValidacionQR from "./pages/admin/ValidacionQR";
+import Credenciales from "./pages/admin/Credenciales";
 import TiposCredencial from "./pages/admin/TiposCredencial";
-import CalendarioEvento from "./pages/eventos/CalendarioEvento";
+import ValidacionQR from "./pages/admin/ValidacionQR";
+import CalendarioEventos from "./pages/admin/CalendarioEventos";
+import RegistrarUsuario from "./pages/admin/RegistrarUsuario";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,201 +62,217 @@ function App() {
     <AuthProvider>
       <StandsProvider>
         {showLayout ? (
-        <div className="flex h-screen bg-gray-100">
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
- 
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <Navbar setSidebarOpen={setSidebarOpen} />
+          <div className="flex h-screen bg-gray-100">
+            <Sidebar
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+            />
 
-            <main className="flex-1 overflow-y-auto bg-gray-100">
-              <Routes>
-                <Route
-                  path="/dashboard"
-                  element={
-                    <PrivateRoute>
-                      <Dashboard />
-                    </PrivateRoute>
-                  }
-                />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Navbar setSidebarOpen={setSidebarOpen} />
 
-                <Route
-                  path="/profile"
-                  element={
-                    <PrivateRoute>
-                      <Profile />
-                    </PrivateRoute>
-                  }
-                />
+              <main className="flex-1 overflow-y-auto bg-gray-100">
+                <Routes>
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <PrivateRoute>
+                        <Dashboard />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/admin/roles"
-                  element={
-                    <RoleRoute allowedRoles={["administrador"]}>
-                      <RoleManagement />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/admin/crear-evento"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <CrearEvento />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/admin/categorias"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <GestionCategorias />
-                    </RoleRoute>
-                  }
-                />
-                {/* Rutas de Empresas */}
-                <Route
-                  path="/empresas"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <ListadoEmpresas />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/empresas/detalle/:id"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <DetalleEmpresa />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/empresas/aprobacion"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <AprobacionEmpresas />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/empresas/dashboard"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <DashboardEmpresas />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/empresas/documentos-vencer"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <DocumentosPorVencer />
-                    </RoleRoute>
-                  }
-                />
+                  <Route
+                    path="/profile"
+                    element={
+                      <PrivateRoute>
+                        <Profile />
+                      </PrivateRoute>
+                    }
+                  />
 
-                {/* Rutas de Stands */}
-                <Route
-                  path="/stands"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <DashboardStands />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/stands/*"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <DashboardStands />
-                    </RoleRoute>
-                  }
-                />
+                  <Route
+                    path="/admin/roles"
+                    element={
+                      <RoleRoute allowedRoles={["administrador"]}>
+                        <RoleManagement />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/crear-evento"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <CrearEvento />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/categorias"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <GestionCategorias />
+                      </RoleRoute>
+                    }
+                  />
+                  {/* Rutas de Empresas */}
+                  <Route
+                    path="/empresas"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <ListadoEmpresas />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/empresas/detalle/:id"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <DetalleEmpresa />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/empresas/aprobacion"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <AprobacionEmpresas />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/empresas/dashboard"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <DashboardEmpresas />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/empresas/documentos-vencer"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <DocumentosPorVencer />
+                      </RoleRoute>
+                    }
+                  />
 
-                {/* Nuevas Rutas - Sistema de Credenciales */}
-                <Route
-                  path="/admin/credenciales"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <GestionCredenciales />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/admin/tipos-credencial"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <TiposCredencial />
-                    </RoleRoute>
-                  }
-                />
-                <Route
-                  path="/admin/validacion"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager", "editor"]}>
-                      <ValidacionQR />
-                    </RoleRoute>
-                  }
-                />
+                  {/* Rutas de Stands */}
+                  <Route
+                    path="/stands"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <DashboardStands />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/stands/*"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <DashboardStands />
+                      </RoleRoute>
+                    }
+                  />
 
-                {/* Nuevas Rutas - Reportes */}
-                <Route
-                  path="/admin/reportes"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager"]}>
-                      <ReportesEventos />
-                    </RoleRoute>
-                  }
-                />
+                  {/* Nuevas Rutas - Sistema de Credenciales */}
+                  <Route
+                    path="/admin/credenciales"
+                    element={
+                      <RoleRoute allowedRoles={["administrador"]}>
+                        <Credenciales />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/tipos-credencial"
+                    element={
+                      <RoleRoute allowedRoles={["administrador"]}>
+                        <TiposCredencial />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/validacion"
+                    element={
+                      <RoleRoute allowedRoles={["administrador"]}>
+                        <ValidacionQR />
+                      </RoleRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/registrar-usuario"
+                    element={
+                      <RoleRoute allowedRoles={["administrador"]}>
+                        <RegistrarUsuario />
+                      </RoleRoute>
+                    }
+                  />
 
-                {/* Nuevas Rutas - Calendario */}
-                <Route
-                  path="/calendario/:eventoId"
-                  element={
-                    <PrivateRoute>
-                      <CalendarioEvento />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/eventos/:eventoId/calendario"
-                  element={
-                    <RoleRoute allowedRoles={["administrador", "manager", "editor"]}>
-                      <CalendarioEvento />
-                    </RoleRoute>
-                  }
-                />
-              </Routes>
-            </main>
+                  {/* Nuevas Rutas - Reportes */}
+                  <Route
+                    path="/admin/reportes"
+                    element={
+                      <RoleRoute allowedRoles={["administrador", "manager"]}>
+                        <ReportesEventos />
+                      </RoleRoute>
+                    }
+                  />
+
+                  {/* Nuevas Rutas - Calendario */}
+                  <Route
+                    path="/calendario/:eventoId"
+                    element={
+                      <PrivateRoute>
+                        <CalendarioEventos />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/eventos/:eventoId/calendario"
+                    element={
+                      <RoleRoute
+                        allowedRoles={["administrador", "manager", "editor"]}
+                      >
+                        {/* <CalendarioEvento /> */}
+                      </RoleRoute>
+                    }
+                  />
+                </Routes>
+              </main>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="min-h-screen bg-gray-50">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            
-            {/* Ruta pública de pre-registro */}
-            <Route path="/pre-registro/:eventoId" element={<PreRegistroVisitantes />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            {/* Registro público de empresa */}
-            <Route
-              path="/empresas/registro"
-              element={<RegistroEmpresaPublica />}
-            />
-            {/* ruta para paginas no encontradas  */}
-            <Route
-              path="*"
-              element={
-                <h1 className="text-center text-2xl mt-10">
-                  Página no encontrada
-                </h1>
-              }
-            />
-          </Routes>
-        </div>
-      )}
+        ) : (
+          <div className="min-h-screen bg-gray-50">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+
+              {/* Ruta pública de pre-registro */}
+              <Route
+                path="/pre-registro/:eventoId"
+                element={<PreRegistroVisitantes />}
+              />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              {/* Registro público de empresa */}
+              <Route
+                path="/empresas/registro"
+                element={<RegistroEmpresaPublica />}
+              />
+              {/* ruta para paginas no encontradas  */}
+              <Route
+                path="*"
+                element={
+                  <h1 className="text-center text-2xl mt-10">
+                    Página no encontrada
+                  </h1>
+                }
+              />
+            </Routes>
+          </div>
+        )}
       </StandsProvider>
     </AuthProvider>
   );

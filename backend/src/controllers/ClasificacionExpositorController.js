@@ -384,7 +384,8 @@ class ClasificacionExpositorController {
         }
 
         // Verificar permisos de uso
-        const esAdmin = req.user.rol === 'administrador';
+        const userRoles = req.user.roles ? req.user.roles.map(rol => rol.nombre_rol) : [];
+        const esAdmin = userRoles.includes('administrador');
         if (!etiqueta.puedeSerUsadaPor(empresaId, esAdmin)) {
           continue;
         }

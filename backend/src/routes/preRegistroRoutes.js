@@ -526,8 +526,10 @@ router.use('/evento/:eventoId/*', authenticate, (req, res, next) => {
 
   // Solo administradores y organizadores pueden gestionar pre-registros
   const rolesPermitidos = ['administrador', 'organizador', 'coordinador'];
+  const userRoles = user.roles ? user.roles.map(rol => rol.nombre_rol) : [];
+  const tienePermiso = userRoles.some(rol => rolesPermitidos.includes(rol));
   
-  if (!rolesPermitidos.includes(user.rol)) {
+  if (!tienePermiso) {
     return res.status(403).json({
       success: false,
       message: 'No tienes permisos para realizar esta acción'

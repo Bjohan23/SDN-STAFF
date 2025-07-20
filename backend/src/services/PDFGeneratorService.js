@@ -122,6 +122,18 @@ class PDFGeneratorService {
     handlebars.registerHelper('qrCode', (dataURL, size = 100) => {
       return new handlebars.SafeString(`<img src="${dataURL}" width="${size}" height="${size}" alt="QR Code" />`);
     });
+    
+    // Helper para obtener iniciales de un nombre
+    handlebars.registerHelper('getIniciales', (nombre) => {
+      if (!nombre) return '';
+      
+      return nombre
+        .split(' ')
+        .filter(word => word.length > 0)
+        .map(word => word.charAt(0).toUpperCase())
+        .slice(0, 2) // Máximo 2 iniciales
+        .join('');
+    });
   }
   
   /**

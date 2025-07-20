@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useStands } from '../../contexts/StandsContext';
+import ConfirmationModal from '../../components/ConfirmationModal';
+import NotificationToast from '../../components/NotificationToast';
+import { useNotification } from '../../hooks/useNotification';
 import axios from '../../config/axios';
 
 const ListadoStands = () => {
@@ -31,6 +34,9 @@ const ListadoStands = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState('');
   const [editSuccess, setEditSuccess] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const { notification, showSuccess, showError, hideNotification } = useNotification();
   const { refreshTrigger, triggerRefresh } = useStands();
 
   const estadosFisicos = [
@@ -80,16 +86,51 @@ const ListadoStands = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este stand?')) {
-      return;
-    }
-    
-    try {
-      await axios.delete(`/stands/${id}`);
-      fetchStands();
-    } catch (err) {
-      setError('Error al eliminar el stand');
-    }
+    const stand = stands.find(s => s.id_stand === id);
+    setConfirmAction({
+      title: "Eliminar Stand",
+      message: `¿Está seguro de que desea eliminar el stand "${stand?.numero_stand || stand?.nombre_stand}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      type: "danger",
+      action: async () => {
+        try {
+          const response = await axios.delete(`/stands/${id}`);
+          if (response.data.success) {
+            showSuccess(response.data.message || 'Stand eliminado correctamente');
+            fetchStands();
+          }
+        } catch (err) {
+          const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al eliminar el stand';
+          setError(errorMsg);
+          showError(errorMsg);
+        }
+      }
+    });
+    setShowConfirmModal(true);
+  };
+
+  const handleRestore = async (id) => {
+    const stand = stands.find(s => s.id_stand === id);
+    setConfirmAction({
+      title: "Restaurar Stand",
+      message: `¿Está seguro de que desea restaurar el stand "${stand?.numero_stand || stand?.nombre_stand}"?`,
+      confirmText: "Restaurar",
+      type: "info",
+      action: async () => {
+        try {
+          const response = await axios.post(`/stands/${id}/restore`);
+          if (response.data.success) {
+            showSuccess(response.data.message || 'Stand restaurado correctamente');
+            fetchStands();
+          }
+        } catch (err) {
+          const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al restaurar el stand';
+          setError(errorMsg);
+          showError(errorMsg);
+        }
+      }
+    });
+    setShowConfirmModal(true);
   };
 
   // Funciones para el modal de edición
@@ -134,16 +175,20 @@ const ListadoStands = () => {
         precio_personalizado: editForm.precio_personalizado ? parseFloat(editForm.precio_personalizado) : null
       };
 
-      await axios.put(`/stands/${editingStand.id_stand}`, payload);
-      setEditSuccess('Stand actualizado exitosamente');
-      setShowEditModal(false);
+      const response = await axios.put(`/stands/${editingStand.id_stand}`, payload);
       
-      // Disparar actualización de la lista de stands
-      triggerRefresh();
-      
-      fetchStands();
+      if (response.data.success) {
+        showSuccess(response.data.message || 'Stand actualizado exitosamente');
+        setShowEditModal(false);
+        
+        // Disparar actualización de la lista de stands
+        triggerRefresh();
+        fetchStands();
+      }
     } catch (err) {
-      setEditError(err.response?.data?.message || 'Error al actualizar el stand');
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al actualizar el stand';
+      setEditError(errorMsg);
+      showError(errorMsg);
     } finally {
       setEditLoading(false);
     }
@@ -329,18 +374,31 @@ const ListadoStands = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(stand)}
-                          className="text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => handleDelete(stand.id_stand)}
-                          className="text-red-400 hover:text-red-300 transition-colors"
-                        >
-                          Eliminar
-                        </button>
+                        {stand.deleted_at ? (
+                          // Si está eliminado, mostrar botón de restaurar
+                          <button
+                            onClick={() => handleRestore(stand.id_stand)}
+                            className="text-green-400 hover:text-green-300 transition-colors"
+                          >
+                            Restaurar
+                          </button>
+                        ) : (
+                          // Si no está eliminado, mostrar botones normales
+                          <>
+                            <button
+                              onClick={() => handleEdit(stand)}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                              Editar
+                            </button>
+                            <button
+                              onClick={() => handleDelete(stand.id_stand)}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                            >
+                              Eliminar
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -565,6 +623,27 @@ const ListadoStands = () => {
           </div>
         </div>
       )}
+
+      {/* Modal de Confirmación */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={confirmAction?.action || (() => {})}
+        title={confirmAction?.title || ""}
+        message={confirmAction?.message || ""}
+        confirmText={confirmAction?.confirmText || "Confirmar"}
+        cancelText="Cancelar"
+        type={confirmAction?.type || "warning"}
+      />
+
+      {/* Toast de Notificación */}
+      <NotificationToast
+        message={notification.message}
+        type={notification.type}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
     </div>
   );
 };

@@ -106,6 +106,43 @@ router.post('/lote', authenticate, CredencialController.crearLote);
  */
 router.get('/', authenticate, CredencialController.listar);
 
+// ========================
+// RUTAS ESPECÍFICAS PRIMERO (antes de /:id)
+// ========================
+
+/**
+ * @swagger
+ * /api/credenciales/tipos:
+ *   get:
+ *     summary: Listar tipos de credencial
+ *     tags: [Tipos de Credencial]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/tipos', authenticate, TipoCredencialController.listar);
+
+/**
+ * @swagger
+ * /api/credenciales/tipos/activos:
+ *   get:
+ *     summary: Obtener tipos activos para formularios
+ *     tags: [Tipos de Credencial]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/tipos/activos', authenticate, TipoCredencialController.obtenerActivos);
+
+/**
+ * @swagger
+ * /api/credenciales/estadisticas:
+ *   get:
+ *     summary: Obtener estadísticas de credenciales
+ *     tags: [Credenciales]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/estadisticas', authenticate, CredencialController.obtenerEstadisticas);
+
 /**
  * @swagger
  * /api/credenciales/{id}:
@@ -273,28 +310,6 @@ router.get('/evento/:id_evento/reporte', authenticate, CredencialController.gene
  *       - bearerAuth: []
  */
 router.post('/tipos', authenticate, TipoCredencialController.crear);
-
-/**
- * @swagger
- * /api/credenciales/tipos:
- *   get:
- *     summary: Listar tipos de credencial
- *     tags: [Tipos de Credencial]
- *     security:
- *       - bearerAuth: []
- */
-router.get('/tipos', authenticate, TipoCredencialController.listar);
-
-/**
- * @swagger
- * /api/credenciales/tipos/activos:
- *   get:
- *     summary: Obtener tipos activos para formularios
- *     tags: [Tipos de Credencial]
- *     security:
- *       - bearerAuth: []
- */
-router.get('/tipos/activos', authenticate, TipoCredencialController.obtenerActivos);
 
 /**
  * @swagger

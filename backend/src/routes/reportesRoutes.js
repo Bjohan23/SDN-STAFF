@@ -66,13 +66,27 @@ router.use((req, res, next) => {
   // Solo administradores y organizadores pueden acceder a reportes
   const rolesPermitidos = ['administrador', 'organizador', 'coordinador'];
   
-  if (!rolesPermitidos.includes(user.rol)) {
+  // Obtener los nombres de los roles del usuario
+  const userRoles = user.roles ? user.roles.map(rol => rol.nombre_rol) : [];
+  
+  console.log(`Usuario ID: ${user.id_usuario}, Email: ${user.correo}`);
+  console.log(`Roles del usuario: ${userRoles.join(', ')}`);
+  console.log(`Permisos requeridos: ${rolesPermitidos.join(', ')}`);
+  
+  // Verificar si el usuario tiene al menos uno de los roles permitidos
+  const tienePermiso = userRoles.some(rol => rolesPermitidos.includes(rol));
+  
+  if (!tienePermiso) {
+    console.log(`❌ Acceso denegado. Usuario no tiene los permisos necesarios.`);
     return res.status(403).json({
       success: false,
-      message: 'No tienes permisos para acceder a los reportes'
+      message: 'No tienes permisos para acceder a los reportes',
+      userRoles: userRoles,
+      requiredRoles: rolesPermitidos
     });
   }
 
+  console.log(`✅ Acceso permitido a reportes`);
   next();
 });
 

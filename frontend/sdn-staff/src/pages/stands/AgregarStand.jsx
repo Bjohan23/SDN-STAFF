@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useStands } from '../../contexts/StandsContext';
+import NotificationToast from '../../components/NotificationToast';
+import { useNotification } from '../../hooks/useNotification';
 import standsService from '../../services/standsService';
 
 const AgregarStand = () => {
@@ -34,6 +36,7 @@ const AgregarStand = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const { notification, showSuccess, showError, hideNotification } = useNotification();
   const [fieldErrors, setFieldErrors] = useState({});
   const [precioCalculado, setPrecioCalculado] = useState(0);
   const { user } = useAuth();
@@ -191,7 +194,9 @@ const AgregarStand = () => {
       const response = await standsService.createStand(payload);
       console.log('✅ Respuesta del backend:', response);
       
-      setSuccess('Stand creado exitosamente');
+      const successMessage = response.message || 'Stand creado exitosamente';
+      setSuccess(successMessage);
+      showSuccess(successMessage);
       console.log('✅ Mensaje de éxito establecido');
       
       // Mantener el mensaje visible por 3 segundos antes de actualizar la lista
@@ -232,7 +237,9 @@ const AgregarStand = () => {
       console.log('❌ Tipo de error:', typeof err);
       console.log('❌ Error.message:', err.message);
       console.log('❌ Error.error:', err.error);
-      setError(err.message || err.error || 'Error al crear el stand');
+      const errorMessage = err.message || err.error || 'Error al crear el stand';
+      setError(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -704,6 +711,15 @@ const AgregarStand = () => {
           </div>
         </form>
       </div>
+
+      {/* Toast de Notificación */}
+      <NotificationToast
+        message={notification.message}
+        type={notification.type}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
     </div>
   );
 };

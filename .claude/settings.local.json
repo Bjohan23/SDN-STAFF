@@ -13,7 +13,14 @@
       "Bash(node:*)",
       "Bash(timeout:*)",
       "Bash(grep:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx sequelize-cli:*)",
+      "Bash(mysql:*)",
+      "Bash(rm:*)",
+      "Bash(npm run dev:*)",
+      "Bash(true)"
     ],
     "deny": []
   }

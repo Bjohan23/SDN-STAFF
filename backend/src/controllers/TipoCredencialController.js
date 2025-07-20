@@ -60,6 +60,7 @@ class TipoCredencialController {
    */
   static async listar(req, res) {
     try {
+      console.log('🔍 TipoCredencialController.listar called');
       const {
         page = 1,
         limit = 10,
@@ -91,6 +92,8 @@ class TipoCredencialController {
         offset: offset,
         order: [['nombre_tipo', 'ASC']]
       });
+
+      console.log(`📊 Found ${count} tipos, returning ${tipos.length} rows`);
 
       res.status(200).json({
         success: true,

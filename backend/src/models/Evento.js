@@ -372,26 +372,44 @@ module.exports = (sequelize, DataTypes) => {
 
     // Relación con SolicitudAsignacion
     Evento.hasMany(models.SolicitudAsignacion, {
-      foreignKey: 'id_evento',
-      as: 'solicitudesAsignacion'
+      foreignKey: "id_evento",
+      as: "solicitudesAsignacion",
     });
 
     // Relación con ConflictoAsignacion
     Evento.hasMany(models.ConflictoAsignacion, {
-      foreignKey: 'id_evento',
-      as: 'conflictosAsignacion'
+      foreignKey: "id_evento",
+      as: "conflictosAsignacion",
     });
 
     // Relación con HistoricoAsignacion
     Evento.hasMany(models.HistoricoAsignacion, {
-      foreignKey: 'id_evento',
-      as: 'historicoAsignaciones'
+      foreignKey: "id_evento",
+      as: "historicoAsignaciones",
     });
 
     // Relación con PreRegistro
     Evento.hasMany(models.PreRegistro, {
-      foreignKey: 'evento_id',
-      as: 'preRegistros'
+      foreignKey: "evento_id",
+      as: "preRegistros",
+    });
+
+    // Relación con Credencial
+    Evento.hasMany(models.Credencial, {
+      foreignKey: "id_evento",
+      as: "credenciales",
+    });
+
+    // Relación con AccesoEvento
+    Evento.hasMany(models.AccesoEvento, {
+      foreignKey: "id_evento",
+      as: "accesos",
+    });
+
+    // Relación con LogValidacion
+    Evento.hasMany(models.LogValidacion, {
+      foreignKey: "id_evento",
+      as: "logsValidacion",
     });
 
     // Asociaciones de auditoría
